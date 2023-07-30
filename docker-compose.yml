@@ -1,15 +1,16 @@
 version: '3'
 services:
-  backend:
+  app:
+    platform: linux/amd64
+    build:
+      context: .
+      target: app
     ports:
       - 8000:8000
     env_file:
-      - .env
+      - .env.dev
     volumes:
-      - ./app:/workspace/app
-    build:
-      dockerfile: Dockerfile
-      target: dev
+      - ./app:/app
     depends_on:
       - db
 
@@ -17,13 +18,10 @@ services:
     image: postgres:15.2-alpine
     ports:
       - 5432:5432
+    env_file:
+      - .env.dev
     volumes:
       - db-volume:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=loden
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
 
 volumes:
   db-volume:
