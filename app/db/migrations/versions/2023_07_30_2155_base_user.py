@@ -1,8 +1,8 @@
-"""temp
+"""base user
 
-Revision ID: cb064ec366fe
+Revision ID: 5c0ebdbbbf37
 Revises: 
-Create Date: 2023-07-30 21:45:45.644441
+Create Date: 2023-07-30 21:55:31.660513
 
 """
 import fastapi_users_db_sqlalchemy
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "cb064ec366fe"
+revision = "5c0ebdbbbf37"
 down_revision = None
 branch_labels = None
 depends_on = None
