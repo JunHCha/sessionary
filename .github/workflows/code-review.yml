@@ -18,4 +18,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           # optional
           LANGUAGE: Korean
-          PROMPT:
+          OPENAI_API_ENDPOINT: https://api.openai.com/v1
+          MODEL: gpt-3.5-turbo
+          PROMPT: "내 코드를 리뷰해줘. 가능하다면 수정 제안사항을 제시해줘."
+          temperature: 0.8
+          max_tokens: 10000
+          MAX_PATCH_LENGTH: 10000
