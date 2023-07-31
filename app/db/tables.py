@@ -5,18 +5,18 @@ from fastapi_users.db import (
     SQLAlchemyBaseUserTableUUID,
 )
 from sqlalchemy import (
+    UUID,
     Boolean,
     Column,
     DateTime,
     Enum,
     ForeignKey,
     Integer,
-    Mapped,
     String,
     UniqueConstraint,
-    relationship,
 )
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import Mapped, relationship
 
 from app.db.session.base import Base
 
@@ -50,11 +50,10 @@ class Subscription(Base):
 
 
 class Artist(SQLAlchemyBaseUserTableUUID, Base):
-    # TODO: Artist, Lecture, Lesson 간의 M:N relation 모호함
     nickname: str = Column(String, unique=True, nullable=False)
 
     # for orm
-    lectures: List[Mapped["Lecture"]] = relationship(
+    lectures: Mapped[List["Lecture"]] = relationship(
         "Lecture", back_populates="artist", lazy="joined"
     )
 
@@ -63,14 +62,14 @@ class Artist(SQLAlchemyBaseUserTableUUID, Base):
 
 class Lecture(Base):
     id = Column(Integer, primary_key=True)
-    artist_id = Column(Integer, ForeignKey("artist.id"), nullable=False)
+    artist_id = Column(UUID, ForeignKey("artist.id"), nullable=False)
     title: str = Column(String, nullable=False)
     description: str = Column(String, nullable=False)
     length_sec: int = Column(Integer, nullable=False)
 
     # for orm
     artist: Mapped[Artist] = relationship("Artist", back_populates="lectures")
-    lessons: List[Mapped["Lesson"]] = relationship()
+    lessons: Mapped[List["Lesson"]] = relationship("lesson", back_populates="lecture")
 
     __tablename__ = "lecture"
 
@@ -82,7 +81,7 @@ class Lesson(Base):
     sheetmusic_img: str = Column(String, nullable=False)
 
     # for orm
-    lecture: Mapped[Lecture] = relationship("Lecture")
+    lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
     artist: Mapped[Artist] = association_proxy("lecture", "artist")
 
     __tablename__ = "lesson"
