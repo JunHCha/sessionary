@@ -6,7 +6,7 @@ from app.core.settings.base import AppSettings
 class DevAppSettings(AppSettings):
     debug: bool = True
 
-    title: str = "Dev FastAPI example application"
+    title: str = "Dev Session Away Backend Server"
 
     logging_level: int = logging.DEBUG
 

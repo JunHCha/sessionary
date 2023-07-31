@@ -8,7 +8,7 @@ from app.core.settings.base import AppSettings
 class TestAppSettings(AppSettings):
     debug: bool = True
 
-    title: str = "Test FastAPI example application"
+    title: str = "Test Session Away Backend Server"
 
     secret_key: SecretStr = SecretStr("test_secret")
 
