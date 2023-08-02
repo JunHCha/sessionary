@@ -3,6 +3,8 @@ from fastapi_users.authentication.strategy import AccessTokenDatabase, DatabaseS
 from fastapi_users.db import SQLAlchemyUserDatabase
 from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.auth.manager import UserManager
 from app.db.tables import AccessToken, User
 
 from .db import get_async_session
@@ -23,3 +25,6 @@ def get_database_strategy(
 ) -> DatabaseStrategy:
     return DatabaseStrategy(access_token_db, lifetime_seconds=3600 * 24 * 7 * 4)
 
+
+async def get_user_manager(user_db=Depends(get_user_db)):
+    yield UserManager(user_db)
