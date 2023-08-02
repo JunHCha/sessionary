@@ -26,5 +26,4 @@ COPY --from=packages /usr/local/bin /usr/local/bin
 COPY --from=packages /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY . ./
 EXPOSE 80
-CMD alembic upgrade head && \
-    uvicorn --host=0.0.0.0 app.main:app
+CMD uvicorn --host=0.0.0.0 app.main:app
