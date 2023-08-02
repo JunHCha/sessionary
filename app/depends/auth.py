@@ -1,24 +1,11 @@
-from typing import AsyncGenerator
-
 from fastapi import Depends
 from fastapi_users.authentication.strategy import AccessTokenDatabase, DatabaseStrategy
 from fastapi_users.db import SQLAlchemyUserDatabase
 from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
-from app.core.config import get_app_settings
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.tables import AccessToken, User
 
-SETTINGS = get_app_settings()
-DATABASE_URL = SETTINGS.database_url
-
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
+from .db import get_async_session
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
@@ -35,3 +22,4 @@ def get_database_strategy(
     access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),
 ) -> DatabaseStrategy:
     return DatabaseStrategy(access_token_db, lifetime_seconds=3600 * 24 * 7 * 4)
+
