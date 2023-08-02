@@ -14,6 +14,7 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    func,
 )
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import Mapped, relationship
@@ -27,6 +28,8 @@ class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
     nickname: str = Column(String, unique=True, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
     subscription: Mapped["Subscription"] = relationship(
@@ -38,7 +41,9 @@ class Subscription(Base):
     id = Column(Integer, primary_key=True)
     type: str = Column(Enum("trial", "personal", "bundle", name="subscription_type"))
     is_active = Column(Boolean, nullable=False)
-    expire_at = Column(DateTime, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
     user: Mapped[User] = relationship("User", back_populates="subscription")
@@ -51,6 +56,8 @@ class Subscription(Base):
 
 class Artist(SQLAlchemyBaseUserTableUUID, Base):
     nickname: str = Column(String, unique=True, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
     lectures: Mapped[List["Lecture"]] = relationship(
@@ -66,6 +73,8 @@ class Lecture(Base):
     title: str = Column(String, nullable=False)
     description: str = Column(String, nullable=False)
     length_sec: int = Column(Integer, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
     artist: Mapped[Artist] = relationship("Artist", back_populates="lectures")
@@ -79,6 +88,8 @@ class Lesson(Base):
     lecture_id = Column(Integer, nullable=False)
     title: str = Column(String, nullable=False)
     sheetmusic_img: str = Column(String, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
     lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
