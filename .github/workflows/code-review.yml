@@ -20,6 +20,6 @@ jobs:
           LANGUAGE: Korean
           OPENAI_API_ENDPOINT: https://api.openai.com/v1
           MODEL: gpt-3.5-turbo-16k
-          PROMPT: "내 코드를 리뷰해줘. 개선해야 할 부분을 중점으로 리뷰해주고, 간결한 문장을 사용해줘. 리뷰에 대한 근거를 자세히 설명해줘. 현재 작성된 코드 내용에 대해서는 설명하지 않아도 돼. 코드 리뷰를 마치면, 리뷰에 대한 요약을 적어줘."
+          PROMPT: "아래는 내가 작성한 코드야. 내가 작성한 코드에 대한 피드백을 줘. 버그 가능성이 있거나 개선할 점은 언제든지 알려줘."
           temperature: 0.8
           max_tokens: 10000
