@@ -4,7 +4,7 @@ from typing import Any, Optional
 from fastapi import Request, Response
 from fastapi_users import BaseUserManager, UUIDIDMixin
 
-from app.db import User
+from app.db.tables import User
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
