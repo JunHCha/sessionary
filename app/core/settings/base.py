@@ -67,7 +67,7 @@ class AppSettings(BaseAppSettings):
                 "Either Database URL OR PostgreSQL credentials must be set"
             )
         return PostgresDsn.build(
-            scheme="postgresql+asyncpg",
+            scheme="postgresql",
             user=values.get("postgres_user"),
             password=values.get("postgres_password"),
             host=values.get("postgres_server"),
