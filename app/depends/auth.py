@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.core.config import get_app_settings
-from app.db.tables import AccessToken, User
+from app.db.tables import AccessToken, OAuthAccount, User
 
 from .db import get_async_session
 
@@ -14,7 +14,7 @@ SETTINGS = get_app_settings()
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(session, User)
+    yield SQLAlchemyUserDatabase(session, User, OAuthAccount)
 
 
 async def get_access_token_db(
