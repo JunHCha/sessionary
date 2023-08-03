@@ -82,8 +82,8 @@ class AppSettings(BaseAppSettings):
     auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
 
     # OAuth2
-    google_client_id: str
-    google_client_secret: str
+    google_client_id: str = "GOOGLE_CLIENT_ID"
+    google_client_secret: str = "GOOGLE_CLIENT_SECRET"
 
     # Logging
     logging_level: int = logging.INFO
