@@ -20,10 +20,14 @@ RUN apt-get update -y && \
 RUN curl -sSL https://install.python-poetry.org | python3 -
 RUN poetry install --no-interaction --no-ansi --without dev
 
+FROM base as dev
+COPY --from=packages /usr/local/bin /usr/local/bin
+COPY --from=packages /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+EXPOSE 80
 
-FROM base as app
+FROM base as prod
 COPY --from=packages /usr/local/bin /usr/local/bin
 COPY --from=packages /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY . ./
 EXPOSE 80
-CMD uvicorn --host=0.0.0.0 app.main:app
+CMD uvicorn --host 0.0.0.0 app.main:app
