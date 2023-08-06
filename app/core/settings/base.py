@@ -79,6 +79,11 @@ class AppSettings(BaseAppSettings):
     api_prefix: str = "/api"
     jwt_token_prefix: str = "Token"
     allowed_hosts: List[str] = ["*"]
+    auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
+
+    # OAuth2
+    google_client_id: str = "GOOGLE_CLIENT_ID"
+    google_client_secret: str = "GOOGLE_CLIENT_SECRET"
 
     # Logging
     logging_level: int = logging.INFO

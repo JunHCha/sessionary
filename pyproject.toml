@@ -16,6 +16,7 @@ asyncpg = "^0.28.0"
 fastapi-users = {extras = ["oauth2", "sqlalchemy"], version = "^12.1.0"}
 loguru = "^0.7.0"
 psycopg2 = "^2.9.6"
+httpx-oauth = "^0.13.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
