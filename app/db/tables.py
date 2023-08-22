@@ -57,8 +57,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 
 class Subscription(Base):
     id = Column(Integer, primary_key=True)
-    type: str = Column(Enum("trial", "personal", "bundle", name="subscription_type"))
-    is_active = Column(Boolean, nullable=False)
+    is_individual = Column(Boolean, nullable=False)
     expires_at = Column(DateTime, nullable=False)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
@@ -68,10 +67,10 @@ class Subscription(Base):
 
 class Lecture(Base):
     id = Column(Integer, primary_key=True)
-    user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
-    title: str = Column(String, nullable=False)
-    description: str = Column(String, nullable=False)
-    length_sec: int = Column(Integer, nullable=False)
+    artist_id = Column(UUID, ForeignKey("user.id"), nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    length_sec = Column(Integer, nullable=False)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
@@ -85,13 +84,16 @@ class Lecture(Base):
 class Lesson(Base):
     id = Column(Integer, primary_key=True)
     lecture_id = Column(Integer, ForeignKey("lecture.id"), nullable=False)
-    title: str = Column(String, nullable=False)
-    sheetmusic_img: str = Column(String, nullable=False)
+    title = Column(String, nullable=False)
+    sheetmusic_img = Column(String, nullable=False)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
     lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
-    artist: Mapped[User] = association_proxy("lecture", "artist")
+    playlists = relationship(
+        "Playlist", secondary="playlist_x_lesson", back_populates="lessons"
+    )
+    artist = association_proxy("lecture", "artist")
 
     __tablename__ = "lesson"
