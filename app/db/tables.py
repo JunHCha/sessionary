@@ -12,7 +12,6 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
-    Enum,
     ForeignKey,
     Integer,
     String,
@@ -37,11 +36,10 @@ def random_nickname():
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    nickname: str = Column(String, default=random_nickname, unique=True, nullable=False)
-    is_artist: bool = Column(Boolean, default=False, nullable=False)
+    nickname = Column(String, default=random_nickname, unique=True, nullable=False)
+    is_artist = Column(Boolean, default=False, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
     subscription_id = Column(Integer, ForeignKey("subscription.id"), nullable=True)
-    # TODO: 자동구독 작업후 nullable False로 바꾸기
-
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
@@ -97,3 +95,28 @@ class Lesson(Base):
     artist = association_proxy("lecture", "artist")
 
     __tablename__ = "lesson"
+
+
+class Playlist(Base):
+    id = Column(Integer, primary_key=True)
+    owner_id = Column(UUID, ForeignKey("user.id"), nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    length_sec = Column(Integer, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # for orm
+    owner: Mapped[User] = relationship("User", back_populates="playlists")
+    lessons = relationship(
+        "Lesson", secondary="playlist_x_lesson", back_populates="playlists"
+    )
+
+    __tablename__ = "playlist"
+
+
+class PlaylistXLesson(Base):
+    playlist_id = Column(Integer, ForeignKey("playlist.id"), primary_key=True)
+    lesson_id = Column(Integer, ForeignKey("lesson.id"), primary_key=True)
+
+    __tablename__ = "playlist_x_lesson"
