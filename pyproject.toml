@@ -13,7 +13,7 @@ alembic = "^1.11.1"
 pytest = "^7.4.0"
 pydantic = "^1.10.9"
 asyncpg = "^0.28.0"
-fastapi-users = {extras = ["oauth2", "sqlalchemy"], version = "^12.1.0"}
+fastapi-users = { extras = ["oauth2", "sqlalchemy"], version = "^12.1.0" }
 loguru = "^0.7.0"
 psycopg2 = "^2.9.6"
 httpx-oauth = "^0.13.0"
@@ -25,7 +25,6 @@ mypy = "^1.4.1"
 
 [tool.mypy]
 max-line-length = 88
-
 
 [build-system]
 requires = ["poetry-core"]
