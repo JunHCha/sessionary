@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 
-from . import auth, ping
+from app.api.routes import user
 
 api_router = APIRouter()
-api_router.include_router(ping.router, prefix="/ping", tags=["ping"])
-api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(user.app_router, prefix="/user", tags=["user"])
