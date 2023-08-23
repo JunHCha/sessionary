@@ -17,7 +17,6 @@ from sqlalchemy import (
     String,
     func,
 )
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
 from app.db.session.base import Base
@@ -65,36 +64,49 @@ class Subscription(Base):
 
 class Lecture(Base):
     id = Column(Integer, primary_key=True)
-    artist_id = Column(UUID, ForeignKey("user.id"), nullable=False)
     title = Column(String, nullable=False)
+    artists = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    length_sec = Column(Integer, nullable=False)
+    length_sec = Column(Integer, default=0, nullable=False)
+    lecture_count = Column(Integer, default=0, nullable=False)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
-    artist: Mapped[User] = relationship("User", back_populates="lectures")
-    lessons: Mapped[List["Lesson"]] = relationship("Lesson", back_populates="lecture")
+    lessons: Mapped[List["Lesson"]] = relationship(
+        "Lesson", secondary="lecture_x_lesson", back_populates="lecture"
+    )
 
     __tablename__ = "lecture"
 
 
 class Lesson(Base):
     id = Column(Integer, primary_key=True)
-    lecture_id = Column(Integer, ForeignKey("lecture.id"), nullable=False)
     title = Column(String, nullable=False)
-    sheetmusic_img = Column(String, nullable=False)
+    artist_id = Column(UUID, ForeignKey("user.id"), nullable=False)
+    sheetmusic_url = Column(String)
+    video_url = Column(String)
+    text = Column(String)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
-    lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
+    lectures = relationship(
+        "Lecture", secondary="lecture_x_lesson", back_populates="lessons"
+    )
     playlists = relationship(
         "Playlist", secondary="playlist_x_lesson", back_populates="lessons"
     )
-    artist = association_proxy("lecture", "artist")
+    artist = relationship("User", back_populates="lectures")
 
     __tablename__ = "lesson"
+
+
+class LectureXLesson(Base):
+    lecture_id = Column(Integer, ForeignKey("lecture.id"), primary_key=True)
+    lesson_id = Column(Integer, ForeignKey("lesson.id"), primary_key=True)
+
+    __tablename__ = "lecture_x_lesson"
 
 
 class Playlist(Base):
