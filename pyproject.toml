@@ -19,6 +19,7 @@ psycopg2 = "^2.9.6"
 httpx-oauth = "^0.13.0"
 asgi-lifespan = "^2.1.0"
 pytest-asyncio = "^0.21.1"
+sqlalchemy-utils = "^0.41.1"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
