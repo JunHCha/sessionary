@@ -29,6 +29,11 @@ mypy = "^1.4.1"
 [tool.mypy]
 max-line-length = 88
 
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = ['--asyncio-mode=auto']
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
