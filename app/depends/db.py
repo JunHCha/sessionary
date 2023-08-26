@@ -1,22 +1,15 @@
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import get_app_settings
-
-
-def get_asyncpg_url(database_url: str) -> str:
-    return database_url.replace("postgresql://", "postgresql+asyncpg://")
+from app.db.session import SessionManager
+from app.depends.config import get_app_settings
 
 
-SETTINGS = get_app_settings()
-DATABASE_URL = get_asyncpg_url(SETTINGS.database_url)
-
-
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
+async def get_session(
+    settings=Depends(get_app_settings),
+) -> AsyncGenerator[AsyncSession, None]:
+    session_manager = SessionManager(settings)
+    async with session_manager.async_session() as async_session:
+        yield async_session

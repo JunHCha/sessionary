@@ -19,7 +19,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, relationship
 
-from app.db.session.base import Base
+from app.db.base import Base
 
 
 class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):

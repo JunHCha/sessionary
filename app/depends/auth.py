@@ -5,22 +5,17 @@ from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDataba
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
-from app.core.config import get_app_settings
 from app.db.tables import AccessToken, OAuthAccount, User
 from app.depends.config import get_app_settings
 
-from .db import get_async_session
-
-SETTINGS = get_app_settings()
+from .db import get_session
 
 
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+async def get_user_db(session: AsyncSession = Depends(get_session)):
     yield SQLAlchemyUserDatabase(session, User, OAuthAccount)
 
 
-async def get_access_token_db(
-    session: AsyncSession = Depends(get_async_session),
-):
+async def get_access_token_db(session: AsyncSession = Depends(get_session)):
     yield SQLAlchemyAccessTokenDatabase(session, AccessToken)
 
 
