@@ -6,8 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.errors.http_error import http_error_handler
 from app.api.errors.validation_error import http422_error_handler
 from app.api.routes import api_router
-from app.core.config import get_app_settings
-from app.core.events import create_start_app_handler, create_stop_app_handler
+from app.depends.config import get_app_settings
 
 
 def get_application() -> FastAPI:

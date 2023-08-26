@@ -4,13 +4,13 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import AuthenticationBackend, CookieTransport
 from httpx_oauth.clients.google import GoogleOAuth2
 
-from app.core.config import get_app_settings
 from app.db.tables import User
 from app.depends.auth import get_database_strategy, get_user_manager
+from app.depends.config import get_app_settings
 
-SETTINGS = get_app_settings()
+settings = get_app_settings()
 
-cookie_transport = CookieTransport(cookie_max_age=SETTINGS.auth_session_expire_seconds)
+cookie_transport = CookieTransport(cookie_max_age=settings.auth_session_expire_seconds)
 
 auth_backend = AuthenticationBackend(
     name="database",
@@ -24,5 +24,5 @@ fastapi_users = FastAPIUsers[User, uuid.UUID](
 )
 
 google_oauth_client = GoogleOAuth2(
-    SETTINGS.google_client_id, SETTINGS.google_client_secret
+    settings.google_client_id, settings.google_client_secret
 )
