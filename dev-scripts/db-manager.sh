@@ -3,7 +3,7 @@
 set +ex
 
 ARGS="$@"
-DATABASE_URL=postgresql://user:password@localhost:5432/loden
+DATABASE_URL=postgresql://user:password@127.0.0.1:5432/sessionaway
 SECRET_KEY=TEMP
 
 if [[ "$ARGS" == "upgrade" ]]; then

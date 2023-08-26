@@ -4,7 +4,8 @@ from enum import Enum
 from typing import Any, Dict, List, Tuple
 
 from loguru import logger
-from pydantic import BaseSettings, PostgresDsn, SecretStr, validator
+from pydantic import ConfigDict, PostgresDsn, SecretStr, field_validator
+from pydantic_settings import BaseSettings
 
 from app.core.logging import InterceptHandler
 
@@ -18,8 +19,7 @@ class AppEnv(Enum):
 class BaseAppSettings(BaseSettings):
     app_env: AppEnv = AppEnv.prod
 
-    class Config:
-        env_file = ".env"
+    model_config = ConfigDict(env_file=".env", extra="ignore")
 
 
 class AppSettings(BaseAppSettings):
@@ -45,15 +45,15 @@ class AppSettings(BaseAppSettings):
         }
 
     # PostgreSQL DB
-    postgres_server: str | None
-    postgres_user: str | None
-    postgres_password: str | None
-    postgres_db: str | None
-    database_url: PostgresDsn | None
+    postgres_server: str | None = None
+    postgres_user: str | None = None
+    postgres_password: str | None = None
+    postgres_db: str | None = None
+    database_url: PostgresDsn
     max_connection_count: int = 10
     min_connection_count: int = 10
 
-    @validator("database_url", pre=True)
+    @field_validator("database_url", mode="before")
     def assemble_db_connection(cls, v: str | None, values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
@@ -97,5 +97,4 @@ class AppSettings(BaseAppSettings):
 
         logger.configure(handlers=[{"sink": sys.stderr, "level": self.logging_level}])
 
-    class Config:
-        validate_assignment = True
+    model_config = BaseAppSettings.model_config.update({"validate_assignment": True})

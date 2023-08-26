@@ -10,5 +10,4 @@ class DevAppSettings(AppSettings):
 
     logging_level: int = logging.DEBUG
 
-    class Config(AppSettings.Config):
-        env_file = ".env.dev"
+    model_config = AppSettings.model_config.update({"env_file": ".env.dev"})

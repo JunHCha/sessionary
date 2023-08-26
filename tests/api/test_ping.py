@@ -1,11 +1,14 @@
-from fastapi.testclient import TestClient
+import pytest
+from httpx import AsyncClient
+
+pytestmark = pytest.mark.asyncio
 
 
-def test_create_device(client: TestClient) -> None:
+async def test_ping(client: AsyncClient) -> None:
     # when
-    response = client.get("/ping")
+    response = await client.get("/api/ping")
 
     # then
-    content = response.json()
     assert response.status_code == 200
+    content = response.json()
     assert content == {"ping": "pong!"}

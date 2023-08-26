@@ -12,16 +12,14 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
-    Enum,
     ForeignKey,
     Integer,
     String,
     func,
 )
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
-from app.db.session.base import Base
+from app.db.base import Base
 
 
 class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
@@ -37,11 +35,10 @@ def random_nickname():
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    nickname: str = Column(String, default=random_nickname, unique=True, nullable=False)
-    is_artist: bool = Column(Boolean, default=False, nullable=False)
+    nickname = Column(String, default=random_nickname, unique=True, nullable=False)
+    is_artist = Column(Boolean, default=False, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
     subscription_id = Column(Integer, ForeignKey("subscription.id"), nullable=True)
-    # TODO: 자동구독 작업후 nullable False로 바꾸기
-
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
@@ -57,8 +54,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 
 class Subscription(Base):
     id = Column(Integer, primary_key=True)
-    type: str = Column(Enum("trial", "personal", "bundle", name="subscription_type"))
-    is_active = Column(Boolean, nullable=False)
+    is_individual = Column(Boolean, nullable=False)
     expires_at = Column(DateTime, nullable=False)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
@@ -68,30 +64,71 @@ class Subscription(Base):
 
 class Lecture(Base):
     id = Column(Integer, primary_key=True)
-    user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
-    title: str = Column(String, nullable=False)
-    description: str = Column(String, nullable=False)
-    length_sec: int = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
+    artists = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    length_sec = Column(Integer, default=0, nullable=False)
+    lecture_count = Column(Integer, default=0, nullable=False)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
-    artist: Mapped[User] = relationship("User", back_populates="lectures")
-    lessons: Mapped[List["Lesson"]] = relationship("Lesson", back_populates="lecture")
+    lessons: Mapped[List["Lesson"]] = relationship(
+        "Lesson", secondary="lecture_x_lesson", back_populates="lecture"
+    )
 
     __tablename__ = "lecture"
 
 
 class Lesson(Base):
     id = Column(Integer, primary_key=True)
-    lecture_id = Column(Integer, ForeignKey("lecture.id"), nullable=False)
-    title: str = Column(String, nullable=False)
-    sheetmusic_img: str = Column(String, nullable=False)
+    title = Column(String, nullable=False)
+    artist_id = Column(UUID, ForeignKey("user.id"), nullable=False)
+    sheetmusic_url = Column(String)
+    video_url = Column(String)
+    text = Column(String)
     time_created = Column(DateTime, default=func.now())
     time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # for orm
-    lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
-    artist: Mapped[User] = association_proxy("lecture", "artist")
+    lectures = relationship(
+        "Lecture", secondary="lecture_x_lesson", back_populates="lessons"
+    )
+    playlists = relationship(
+        "Playlist", secondary="playlist_x_lesson", back_populates="lessons"
+    )
+    artist = relationship("User", back_populates="lectures")
 
     __tablename__ = "lesson"
+
+
+class LectureXLesson(Base):
+    lecture_id = Column(Integer, ForeignKey("lecture.id"), primary_key=True)
+    lesson_id = Column(Integer, ForeignKey("lesson.id"), primary_key=True)
+
+    __tablename__ = "lecture_x_lesson"
+
+
+class Playlist(Base):
+    id = Column(Integer, primary_key=True)
+    owner_id = Column(UUID, ForeignKey("user.id"), nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    length_sec = Column(Integer, nullable=False)
+    time_created = Column(DateTime, default=func.now())
+    time_updated = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # for orm
+    owner: Mapped[User] = relationship("User", back_populates="playlists")
+    lessons = relationship(
+        "Lesson", secondary="playlist_x_lesson", back_populates="playlists"
+    )
+
+    __tablename__ = "playlist"
+
+
+class PlaylistXLesson(Base):
+    playlist_id = Column(Integer, ForeignKey("playlist.id"), primary_key=True)
+    lesson_id = Column(Integer, ForeignKey("lesson.id"), primary_key=True)
+
+    __tablename__ = "playlist_x_lesson"
