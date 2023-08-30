@@ -69,6 +69,18 @@ files = [
 sniffio = "*"
 
 [[package]]
+name = "async-timeout"
+version = "4.0.3"
+description = "Timeout context manager for asyncio programs"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
+    {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
+]
+
+[[package]]
 name = "asyncpg"
 version = "0.28.0"
 description = "An asyncio PostgreSQL driver"
@@ -451,6 +463,7 @@ makefun = ">=1.11.2,<2.0.0"
 passlib = {version = "1.7.4", extras = ["bcrypt"]}
 pyjwt = {version = "2.8.0", extras = ["crypto"]}
 python-multipart = "0.0.6"
+redis = {version = ">=4.3.3,<6.0.0", optional = true, markers = "extra == \"redis\""}
 
 [package.extras]
 beanie = ["fastapi-users-db-beanie (>=3.0.0)"]
@@ -1440,6 +1453,25 @@ files = [
 ]
 
 [[package]]
+name = "redis"
+version = "5.0.0"
+description = "Python client for Redis database and key-value store"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "redis-5.0.0-py3-none-any.whl", hash = "sha256:06570d0b2d84d46c21defc550afbaada381af82f5b83e5b3777600e05d8e2ed0"},
+    {file = "redis-5.0.0.tar.gz", hash = "sha256:5cea6c0d335c9a7332a460ed8729ceabb4d0c489c7285b0a86dbbf8a017bd120"},
+]
+
+[package.dependencies]
+async-timeout = {version = ">=4.0.2", markers = "python_full_version <= \"3.11.2\""}
+
+[package.extras]
+hiredis = ["hiredis (>=1.0.0)"]
+ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
+
+[[package]]
 name = "sniffio"
 version = "1.3.0"
 description = "Sniff out which async library your code is running under"
@@ -1864,4 +1896,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "390162f71d6ecc0bdff1282db4d0518501bb4cc2df8d129045a7cff834f717eb"
+content-hash = "191451da56f905803d9bdfbd12f489606db5e142c46bc84830afdc3e546f3e21"
