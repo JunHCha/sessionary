@@ -17,6 +17,7 @@ services:
 
   db:
     image: postgres:15.2-alpine
+    command: -c log_statement=all
     ports:
       - 5432:5432
     env_file:
@@ -29,11 +30,11 @@ services:
     ports:
       - 5433:5432
     environment:
-      - POSTGRES_SERVER=test-db
-      - POSTGRES_DB=sessionaway
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+      POSTGRES_SERVER: test-db
+      POSTGRES_DB: sessionaway
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8
 
 volumes:
   db-volume:
