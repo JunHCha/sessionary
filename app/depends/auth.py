@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.db.tables import AccessToken, OAuthAccount, User
-from app.depends.config import get_app_settings
 
+from .config import get_app_settings
 from .db import get_session
 
 
