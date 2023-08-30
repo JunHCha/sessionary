@@ -1,7 +1,11 @@
 from fastapi import APIRouter
 
 from app.api.schemas import UserResponseSchema, UserUpdateSchema
-from app.core.auth.backend import auth_backend, fastapi_users, google_oauth_client
+from app.core.auth.backend_builder import (
+    auth_backend,
+    fastapi_users,
+    google_oauth_client,
+)
 
 app_router = APIRouter()
 
