@@ -10,7 +10,10 @@ from app.depends.config import get_app_settings
 
 settings = get_app_settings()
 
-cookie_transport = CookieTransport(cookie_max_age=settings.auth_session_expire_seconds)
+cookie_transport = CookieTransport(
+    cookie_name=settings.cookie_name,
+    cookie_max_age=settings.auth_session_expire_seconds,
+)
 
 auth_backend = AuthenticationBackend(
     name="database",
@@ -18,10 +21,8 @@ auth_backend = AuthenticationBackend(
     get_strategy=get_database_strategy,
 )
 
-fastapi_users = FastAPIUsers[User, uuid.UUID](
-    get_user_manager,
-    [auth_backend],
-)
+fastapi_users = FastAPIUsers[User, uuid.UUID](get_user_manager, [auth_backend])
+current_active_user = fastapi_users.current_user()
 
 google_oauth_client = GoogleOAuth2(
     settings.google_client_id, settings.google_client_secret
