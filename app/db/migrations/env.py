@@ -5,8 +5,8 @@ from pydantic import PostgresDsn
 from sqlalchemy import pool
 from sqlalchemy.engine import engine_from_config
 
+from app.core.config import get_app_settings
 from app.core.settings.base import AppEnv
-from app.depends.config import get_app_settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -1,32 +1,5 @@
-from fastapi import Depends
-from fastapi_users.authentication.strategy import AccessTokenDatabase, DatabaseStrategy
-from fastapi_users.db import SQLAlchemyUserDatabase
-from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.core.auth.manager import UserManager
-from app.db.tables import AccessToken, OAuthAccount, User
-
-from .config import get_app_settings
-from .db import get_session
+from app.core.fastapi_users_config.backend import fastapi_users_components
 
 
-async def get_user_db(session: AsyncSession = Depends(get_session)):
-    yield SQLAlchemyUserDatabase(session, User, OAuthAccount)
-
-
-async def get_access_token_db(session: AsyncSession = Depends(get_session)):
-    yield SQLAlchemyAccessTokenDatabase(session, AccessToken)
-
-
-def get_database_strategy(
-    access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),
-    settings=Depends(get_app_settings),
-) -> DatabaseStrategy:
-    return DatabaseStrategy(
-        access_token_db, lifetime_seconds=settings.auth_session_expire_seconds
-    )
-
-
-async def get_user_manager(user_db=Depends(get_user_db)):
-    yield UserManager(user_db)
+async def get_current_user():
+    yield fastapi_users_components.current_user()

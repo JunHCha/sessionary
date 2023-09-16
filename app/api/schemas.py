@@ -1,12 +1,14 @@
-from pydantic import BaseModel
+import uuid
+
+from fastapi_users import schemas
 
 
-class UserResponseSchema(BaseModel):
+class UserRead(schemas.BaseUser[uuid.UUID]):
     nickname: str
     email: str
     is_artist: bool
     is_superuser: bool
 
 
-class UserUpdateSchema(BaseModel):
+class UserUpdate(schemas.BaseUserUpdate):
     nickname: str
