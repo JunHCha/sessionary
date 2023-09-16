@@ -1,5 +1,5 @@
-from app.core.fastapi_users_config.backend import fastapi_users_components
+from app.core.auth.backend import fastapi_users_component
 
 
 async def get_current_user():
-    yield fastapi_users_components.current_user()
+    yield fastapi_users_component.current_user()
