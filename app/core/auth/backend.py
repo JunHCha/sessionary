@@ -42,7 +42,7 @@ class AuthBackend:
         return AuthenticationBackend(
             name="database",
             transport=self.cookie_transport,
-            get_strategy=self._get_database_strategy,
+            get_strategy=self._get_redis_strategy,
         )
 
     @property
