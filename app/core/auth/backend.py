@@ -5,19 +5,15 @@ import redis
 from fastapi import Depends
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import AuthenticationBackend, CookieTransport
-from fastapi_users.authentication.strategy import (
-    AccessTokenDatabase,
-    DatabaseStrategy,
-    RedisStrategy,
-)
+from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.models import UserProtocol
 from httpx_oauth.clients.google import GoogleOAuth2
 
 from app.core.auth.manager import UserManager
 from app.core.config import get_app_settings
 from app.core.settings.base import AppSettings
-from app.db.tables import AccessToken, User
-from app.depends.db import get_access_token_db, get_user_db
+from app.db.tables import User
+from app.depends.db import get_user_db
 
 
 class AuthBackend:
@@ -58,14 +54,6 @@ class AuthBackend:
             lifetime_seconds=self.cookie_max_age,
             key_prefix="auth-session:",
         )
-
-    def _get_database_strategy(
-        self,
-        access_token_db: AccessTokenDatabase[AccessToken] = Depends(
-            get_access_token_db
-        ),
-    ) -> DatabaseStrategy:
-        return DatabaseStrategy(access_token_db, lifetime_seconds=self.cookie_max_age)
 
     async def _get_user_manager(self, user_db=Depends(get_user_db)):
         yield UserManager(user_db)
