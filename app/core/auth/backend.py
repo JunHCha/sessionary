@@ -1,10 +1,15 @@
 import uuid
 from typing import Any
 
+import redis
 from fastapi import Depends
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import AuthenticationBackend, CookieTransport
-from fastapi_users.authentication.strategy import AccessTokenDatabase, DatabaseStrategy
+from fastapi_users.authentication.strategy import (
+    AccessTokenDatabase,
+    DatabaseStrategy,
+    RedisStrategy,
+)
 from fastapi_users.models import UserProtocol
 from httpx_oauth.clients.google import GoogleOAuth2
 
@@ -43,6 +48,15 @@ class AuthBackend:
     @property
     def google_oauth_client(self) -> GoogleOAuth2:
         return GoogleOAuth2(self.google_client_id, self.google_client_secret)
+
+    def _get_redis_strategy(self) -> RedisStrategy:
+        redis_client = redis.asyncio.from_url("", decode_responses=True)
+        return RedisStrategy(
+            redis=redis_client,
+            lifetime_seconds=self.cookie_max_age,
+            key_prefix="auth-session:",
+        )
+        ...
 
     def _get_database_strategy(
         self,
