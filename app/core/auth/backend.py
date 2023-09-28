@@ -50,13 +50,14 @@ class AuthBackend:
         return GoogleOAuth2(self.google_client_id, self.google_client_secret)
 
     def _get_redis_strategy(self) -> RedisStrategy:
-        redis_client = redis.asyncio.from_url("", decode_responses=True)
+        redis_client = redis.asyncio.from_url(
+            "redis://auth-redis:6379", decode_responses=True
+        )
         return RedisStrategy(
             redis=redis_client,
             lifetime_seconds=self.cookie_max_age,
             key_prefix="auth-session:",
         )
-        ...
 
     def _get_database_strategy(
         self,
