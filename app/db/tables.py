@@ -26,10 +26,6 @@ class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
     pass
 
 
-class AccessToken(SQLAlchemyBaseAccessTokenTableUUID, Base):
-    pass
-
-
 def random_nickname():
     return "".join(random.choices(string.ascii_lowercase, k=5))
 
