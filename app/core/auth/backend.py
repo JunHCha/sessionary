@@ -36,7 +36,7 @@ class AuthBackend:
     @property
     def auth_backend(self) -> AuthenticationBackend[UserProtocol, Any]:
         return AuthenticationBackend(
-            name="database",
+            name="redis",
             transport=self.cookie_transport,
             get_strategy=self._get_redis_strategy,
         )
@@ -52,7 +52,7 @@ class AuthBackend:
         return RedisStrategy(
             redis=redis_client,
             lifetime_seconds=self.cookie_max_age,
-            key_prefix="auth-session:",
+            key_prefix="auth-session-id:",
         )
 
     async def _get_user_manager(self, user_db=Depends(get_user_db)):
