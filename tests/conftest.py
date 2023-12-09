@@ -8,8 +8,8 @@ from httpx import AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
+from app.core.config import get_app_settings
 from app.core.settings.base import AppSettings
-from app.depends.config import get_app_settings
 
 
 @pytest.fixture(scope="session", autouse=True)

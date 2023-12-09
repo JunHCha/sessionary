@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Any, Dict, List, Tuple
 
 from loguru import logger
-from pydantic import ConfigDict, PostgresDsn, SecretStr, field_validator
+from pydantic import ConfigDict, PostgresDsn, SecretStr
 from pydantic_settings import BaseSettings
 
 from app.core.logging import InterceptHandler
@@ -45,40 +45,17 @@ class AppSettings(BaseAppSettings):
         }
 
     # PostgreSQL DB
-    postgres_server: str | None = None
-    postgres_user: str | None = None
-    postgres_password: str | None = None
-    postgres_db: str | None = None
     database_url: PostgresDsn
     max_connection_count: int = 10
     min_connection_count: int = 10
 
-    @field_validator("database_url", mode="before")
-    def assemble_db_connection(cls, v: str | None, values: Dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        if not (
-            values.get("postgres_server")
-            and values.get("postgres_db")
-            and values.get("postgres_user")
-            and values.get("postgres_password")
-        ):
-            raise ValueError(
-                "Either Database URL OR PostgreSQL credentials must be set"
-            )
-        return PostgresDsn.build(
-            scheme="postgresql",
-            user=values.get("postgres_user"),
-            password=values.get("postgres_password"),
-            host=values.get("postgres_server"),
-            path=f"/{values.get('postgres_db') or ''}",
-        )
-
     # Security
     secret_key: SecretStr
     api_prefix: str = "/api"
-    jwt_token_prefix: str = "Token"
     allowed_hosts: List[str] = ["*"]
+
+    # Authentication
+    cookie_name: str
     auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
 
     # OAuth2
@@ -96,5 +73,3 @@ class AppSettings(BaseAppSettings):
             logging_logger.handlers = [InterceptHandler(level=self.logging_level)]
 
         logger.configure(handlers=[{"sink": sys.stderr, "level": self.logging_level}])
-
-    model_config = BaseAppSettings.model_config.update({"validate_assignment": True})

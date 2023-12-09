@@ -15,7 +15,7 @@ from app.core.settings.base import AppSettings
 class SessionManager:
     def __init__(self, settings: AppSettings):
         self._engine = create_async_engine(
-            settings.db_url,
+            settings.database_url.unicode_string(),
             pool_size=settings.min_connection_count,
             max_overflow=settings.max_connection_count,
         )
