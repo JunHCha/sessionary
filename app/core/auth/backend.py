@@ -9,11 +9,11 @@ from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.models import UserProtocol
 from httpx_oauth.clients.google import GoogleOAuth2
 
-from app.core.config import get_app_settings
+from app.core.auth.manager import UserManager
+from app.core.settings import get_app_settings
 from app.core.settings.base import AppSettings
 from app.db.tables import User
 from app.depends.db import get_user_db
-from app.user.auth.manager import UserManager
 
 
 class AuthBackend:
