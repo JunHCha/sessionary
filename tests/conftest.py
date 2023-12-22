@@ -1,53 +1,63 @@
 from os import environ
+from typing import AsyncGenerator
 
 import pytest
-from alembic import command as alembic_command
-from alembic import config as alembic_config
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
 from app.core.settings import get_app_settings
-from app.core.settings.base import AppSettings
+from app.db.session import SessionManager
 
 
 @pytest.fixture(scope="session", autouse=True)
-def test_settings():
+def setup_env():
     environ["APP_ENV"] = "test"
     environ[
         "DATABASE_URL"
     ] = "postgresql+asyncpg://user:password@127.0.0.1:5433/sessionaway"
-    return get_app_settings()
+    yield
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_test_database(test_settings: AppSettings):
-    db_url = str(test_settings.database_url).replace(
-        "postgresql+asyncpg://", "postgresql://"
+def setup_test_database():
+    from app.db.tables import Base
+
+    sync_engine = create_engine(
+        get_app_settings()
+        .database_url.unicode_string()
+        .replace("postgresql+asyncpg://", "postgresql://")
     )
-    engine = create_engine(db_url)  # type: ignore
 
-    if database_exists(db_url):
-        drop_database(db_url)
-    create_database(db_url)
+    if database_exists(sync_engine.url):
+        drop_database(sync_engine.url)
 
-    config = alembic_config.Config()
-    config.set_main_option("script_location", "app/db/migrations")
-    config.set_main_option("test_mode", "true")
-    config.set_main_option("sqlalchemy.url", db_url)
-    alembic_command.upgrade(config, "head")
+    create_database(sync_engine.url)
+    Base.metadata.create_all(sync_engine)
 
     yield
 
-    engine.dispose()
+    sync_engine.dispose()
 
 
 @pytest.fixture
-async def app() -> FastAPI:
+async def test_session() -> AsyncGenerator[AsyncSession, None]:
+    settings = get_app_settings()
+    session_manager = SessionManager(settings)
+    async with session_manager.async_session() as async_session:
+        yield async_session
+
+
+@pytest.fixture
+async def app(test_session) -> FastAPI:
+    from app.depends.db import get_session
     from app.main import get_application
 
     app = get_application()
+
+    app.dependency_overrides[get_session] = test_session
     return app
 
 
@@ -59,3 +69,14 @@ async def client(app: FastAPI) -> AsyncClient:
         headers={"Content-Type": "application/json"},
     ) as client:
         yield client
+
+
+@pytest.fixture(autouse=True)
+async def teardown(test_session: AsyncSession):
+    yield
+
+    from app.db.tables import Base
+
+    for table in reversed(Base.metadata.sorted_tables):
+        await test_session.execute(table.delete())
+    await test_session.commit()
