@@ -21,3 +21,8 @@ app_router.include_router(
         user_schema=UserRead, user_update_schema=UserUpdate
     )
 )
+
+
+@app_router.get("/artists")
+async def get_artists():
+    return {"artists": "artists!"}
