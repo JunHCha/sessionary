@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.api.schemas.user import UserRead, UserUpdate
 from app.core.auth.backend import auth_backend, fastapi_users_component
-from app.services.user import UserService, get_user_service
+from app.user.service import UserService, get_user_service
 
 app_router = APIRouter()
 

@@ -3,9 +3,9 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from app.api.errors.http_error import http_error_handler
-from app.api.errors.validation_error import http400_error_handler
 from app.api.routes import api_router
+from app.core.errors.http_error import http_error_handler
+from app.core.errors.validation_error import http400_error_handler
 from app.core.settings import get_app_settings
 
 
