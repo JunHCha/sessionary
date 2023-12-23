@@ -18,19 +18,24 @@ class SessionManager:
             settings.database_url.unicode_string(),
             pool_size=settings.min_connection_count,
             max_overflow=settings.max_connection_count,
+            echo=True,
         )
         self._async_session_factory = async_scoped_session(
-            async_sessionmaker(self._engine, expire_on_commit=False),
+            async_sessionmaker(
+                self._engine,
+                expire_on_commit=False,
+                autoflush=False,
+            ),
             scopefunc=current_task,
         )
 
     @asynccontextmanager
     async def async_session(self) -> AsyncGenerator[AsyncSession, None]:
-        async with self._async_session_factory() as session:
-            try:
-                yield session
-            except Exception:
-                await session.rollback()
-                raise
-            finally:
-                await session.close()
+        session = self._async_session_factory()
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
