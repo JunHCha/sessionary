@@ -12,8 +12,8 @@ from httpx_oauth.clients.google import GoogleOAuth2
 from app.core.auth.manager import UserManager
 from app.core.settings import get_app_settings
 from app.core.settings.base import AppSettings
+from app.db.dependency import get_user_db
 from app.db.tables import User
-from app.depends.db import get_user_db
 
 
 class AuthBackend:
