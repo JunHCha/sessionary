@@ -57,6 +57,7 @@ class AppSettings(BaseAppSettings):
     # Authentication
     cookie_name: str
     auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
+    auth_redis_url: str
 
     # OAuth2
     google_client_id: str = "GOOGLE_CLIENT_ID"

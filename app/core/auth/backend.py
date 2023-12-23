@@ -17,15 +17,15 @@ from app.depends.db import get_user_db
 
 
 class AuthBackend:
-    def __init__(self, settings: AppSettings = get_app_settings()) -> None:
+    def __init__(self, settings: AppSettings) -> None:
         self.cookie_name = settings.cookie_name
         self.cookie_max_age = settings.auth_session_expire_seconds
         self.cookie_transport = CookieTransport(
-            cookie_name=self.cookie_name,
-            cookie_max_age=self.cookie_max_age,
+            cookie_name=self.cookie_name, cookie_max_age=self.cookie_max_age
         )
         self.google_client_id = settings.google_client_id
         self.google_client_secret = settings.google_client_secret
+        self.auth_redis_url = settings.auth_redis_url
 
     @property
     def backend(self) -> FastAPIUsers:
@@ -47,7 +47,7 @@ class AuthBackend:
 
     def _get_redis_strategy(self) -> RedisStrategy:
         redis_client = redis.asyncio.from_url(
-            "redis://auth-redis:6379", decode_responses=True
+            self.auth_redis_url, decode_responses=True
         )
         return RedisStrategy(
             redis=redis_client,
