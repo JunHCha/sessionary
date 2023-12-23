@@ -4,6 +4,7 @@ from typing import AsyncGenerator
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
+from redis.asyncio import Redis
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import create_database, database_exists, drop_database
@@ -18,6 +19,7 @@ def setup_env():
     environ[
         "DATABASE_URL"
     ] = "postgresql+asyncpg://user:password@127.0.0.1:5433/sessionaway"
+    environ["AUTH_REDIS_URL"] = "redis://localhost:6379/4"
     yield
 
 
@@ -51,14 +53,10 @@ async def test_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest.fixture
-async def app(test_session) -> FastAPI:
-    from app.depends.db import get_session
+async def app() -> FastAPI:
     from app.main import get_application
 
-    app = get_application()
-
-    app.dependency_overrides[get_session] = test_session
-    return app
+    return get_application()
 
 
 @pytest.fixture
@@ -69,6 +67,35 @@ async def client(app: FastAPI) -> AsyncClient:
         headers={"Content-Type": "application/json"},
     ) as client:
         yield client
+
+
+@pytest.fixture
+async def test_user(test_session):
+    from app.db.tables import User
+
+    user = User(
+        email="test@gmail.com",
+        nickname="test",
+        hashed_password="password",
+        is_active=True,
+        is_superuser=False,
+        is_artist=False,
+    )
+    test_session.add(user)
+    await test_session.commit()
+    await test_session.flush(user)
+    return user
+
+
+@pytest.fixture
+async def authorized_client(client: AsyncClient, test_user) -> AsyncClient:
+    auth_redis = Redis.from_url(
+        get_app_settings().auth_redis_url, decode_responses=True, socket_timeout=1
+    )
+    await auth_redis.set("auth-session-id:SESSIONTOKEN", str(test_user.id))
+    client.cookies = {get_app_settings().cookie_name: "SESSIONTOKEN"}
+    yield client
+    await auth_redis.flushdb()
 
 
 @pytest.fixture(autouse=True)
