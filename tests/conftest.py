@@ -48,8 +48,8 @@ def setup_test_database():
 async def test_session() -> AsyncGenerator[AsyncSession, None]:
     settings = get_app_settings()
     session_manager = SessionManager(settings)
-    async with session_manager.async_session() as async_session:
-        yield async_session
+    async with session_manager.async_session() as session:
+        yield session
 
 
 @pytest.fixture
@@ -70,19 +70,19 @@ async def client(app: FastAPI) -> AsyncClient:
 
 
 @pytest.fixture
-async def test_user(test_session):
+async def test_user(test_session: AsyncSession):
     from app.db.tables import User
 
     user = User(
-        email="test@gmail.com",
+        email="test@test.com",
         nickname="test",
         hashed_password="password",
-        is_active=True,
-        is_superuser=False,
         is_artist=False,
+        is_superuser=False,
+        is_active=True,
     )
-    test_session.add(user)
-    await test_session.commit()
+    async with test_session.begin():
+        test_session.add(user)
     await test_session.flush(user)
     return user
 
