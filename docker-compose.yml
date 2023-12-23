@@ -17,6 +17,7 @@ services:
 
   test-db:
     image: postgres:15.2-alpine
+    command: ["postgres", "-c", "log_statement=all"]
     ports:
       - 5433:5432
     environment:
