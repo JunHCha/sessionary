@@ -65,7 +65,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
         test_session.add_all([artist_1, artist_2, user_1, admin_1])
 
 
-async def test_fetch_artists(client: AsyncClient, dummy_users) -> None:
+async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
     # when
     response = await client.get("/api/user/artists")
 
@@ -79,7 +79,7 @@ async def test_fetch_artists(client: AsyncClient, dummy_users) -> None:
     }
 
 
-async def test_get_me(authorized_client: AsyncClient, test_user) -> None:
+async def test_sut_get_me(authorized_client: AsyncClient, test_user) -> None:
     # when
     response = await authorized_client.get("/api/user/me")
 
