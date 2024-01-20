@@ -26,8 +26,6 @@ flake8 = "^6.0.0"
 black = "^23.3.0"
 mypy = "^1.4.1"
 
-[tool.mypy]
-max-line-length = 88
 
 [tool.pytest.ini_options]
 minversion = "7.0"
