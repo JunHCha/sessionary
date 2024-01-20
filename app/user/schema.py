@@ -1,7 +1,7 @@
 import uuid
 
 from fastapi_users import schemas
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
@@ -15,5 +15,12 @@ class UserUpdate(schemas.BaseUserUpdate):
     nickname: str
 
 
+class UserReadPublic(BaseModel):
+    nickname: str
+    is_artist: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class GetArtistsResponse(BaseModel):
-    data: list[UserRead]
+    data: list[UserReadPublic]
