@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi_users import schemas
+from pydantic import BaseModel
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
@@ -12,3 +13,7 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
 
 class UserUpdate(schemas.BaseUserUpdate):
     nickname: str
+
+
+class GetArtistsResponse(BaseModel):
+    data: list[UserRead]
