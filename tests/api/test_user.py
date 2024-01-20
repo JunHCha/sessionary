@@ -77,3 +77,17 @@ async def test_fetch_artists(client: AsyncClient, dummy_users) -> None:
         "artist1",
         "artist2",
     }
+
+
+async def test_get_me(authorized_client: AsyncClient, test_user) -> None:
+    # when
+    response = await authorized_client.get("/api/user/me")
+
+    # then
+    assert response.status_code == 200
+    content = response.json()
+    assert content.get("nickname") == "test"
+    assert content.get("is_superuser") is False
+    assert content.get("time_created") is not None
+    assert content.get("lectures") == []
+    assert content.get("lessons") == []
