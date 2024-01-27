@@ -21,5 +21,8 @@
     ],
     "isort.args": [
         "--profile=black"
-    ]
+    ],
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    }
 }
