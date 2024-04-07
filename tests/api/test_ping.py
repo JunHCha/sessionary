@@ -6,7 +6,7 @@ pytestmark = pytest.mark.asyncio
 
 async def test_ping(client: AsyncClient) -> None:
     # when
-    response = await client.get("/api/ping")
+    response = await client.get("/ping")
 
     # then
     assert response.status_code == 200
@@ -16,7 +16,7 @@ async def test_ping(client: AsyncClient) -> None:
 
 async def test_auth_ping(authorized_client: AsyncClient) -> None:
     # when
-    response = await authorized_client.get("/api/ping/auth")
+    response = await authorized_client.get("/ping/auth")
 
     # then
     assert response.status_code == 200

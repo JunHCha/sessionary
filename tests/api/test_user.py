@@ -67,7 +67,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
 
 async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
     # when
-    response = await client.get("/api/user/artists")
+    response = await client.get("/user/artists")
 
     # then
     assert response.status_code == 200
@@ -81,7 +81,7 @@ async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
 
 async def test_sut_get_me(authorized_client: AsyncClient, test_user) -> None:
     # when
-    response = await authorized_client.get("/api/user/me")
+    response = await authorized_client.get("/user/me")
 
     # then
     assert response.status_code == 200

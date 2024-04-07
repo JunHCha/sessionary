@@ -51,7 +51,6 @@ class AppSettings(BaseAppSettings):
 
     # Security
     secret_key: SecretStr
-    api_prefix: str = "/api"
     allowed_hosts: List[str] = ["*"]
 
     # Authentication

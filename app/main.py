@@ -30,7 +30,7 @@ def get_application() -> FastAPI:
     api_router = APIRouter()
     api_router.include_router(user_api.app_router, prefix="/user", tags=["user"])
     api_router.include_router(ping_api.app_router, prefix="/ping", tags=["ping"])
-    application.include_router(api_router, prefix=settings.api_prefix)
+    application.include_router(api_router)
 
     return application
 
