@@ -19,7 +19,7 @@ class AppEnv(Enum):
 class BaseAppSettings(BaseSettings):
     app_env: AppEnv = AppEnv.prod
 
-    model_config = ConfigDict(env_file=".env", extra="ignore")
+    model_config = ConfigDict(extra="ignore")
 
 
 class AppSettings(BaseAppSettings):
@@ -51,12 +51,12 @@ class AppSettings(BaseAppSettings):
 
     # Security
     secret_key: SecretStr
-    api_prefix: str = "/api"
     allowed_hosts: List[str] = ["*"]
 
     # Authentication
     cookie_name: str
     auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
+    auth_redis_url: str
 
     # OAuth2
     google_client_id: str = "GOOGLE_CLIENT_ID"

@@ -1,54 +1,61 @@
 from os import environ
+from typing import AsyncGenerator
 
 import pytest
-from alembic import command as alembic_command
-from alembic import config as alembic_config
 from fastapi import FastAPI
 from httpx import AsyncClient
+from redis.asyncio import Redis
 from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
-from app.core.config import get_app_settings
-from app.core.settings.base import AppSettings
+from app.core.settings import get_app_settings
+from app.db.session import SessionManager
 
 
-@pytest.fixture(scope="session", autouse=True)
-def test_settings():
+@pytest.fixture(scope="session")
+def setup_env():
     environ["APP_ENV"] = "test"
-    environ[
-        "DATABASE_URL"
-    ] = "postgresql+asyncpg://user:password@127.0.0.1:5433/sessionaway"
-    return get_app_settings()
-
-
-@pytest.fixture(scope="session", autouse=True)
-def setup_test_database(test_settings: AppSettings):
-    db_url = str(test_settings.database_url).replace(
-        "postgresql+asyncpg://", "postgresql://"
-    )
-    engine = create_engine(db_url)  # type: ignore
-
-    if database_exists(db_url):
-        drop_database(db_url)
-    create_database(db_url)
-
-    config = alembic_config.Config()
-    config.set_main_option("script_location", "app/db/migrations")
-    config.set_main_option("test_mode", "true")
-    config.set_main_option("sqlalchemy.url", db_url)
-    alembic_command.upgrade(config, "head")
 
     yield
 
-    engine.dispose()
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_database(setup_env):
+    from app.db.tables import Base
+
+    sync_engine = create_engine(
+        get_app_settings().database_url.replace(
+            "postgresql+asyncpg://", "postgresql://"
+        )
+    )
+
+    if database_exists(sync_engine.url):
+        drop_database(sync_engine.url)
+
+    create_database(sync_engine.url)
+    Base.metadata.create_all(sync_engine)
+
+    yield
+
+    Base.metadata.drop_all(sync_engine)
+    drop_database(sync_engine.url)
+    sync_engine.dispose()
+
+
+@pytest.fixture
+async def test_session() -> AsyncGenerator[AsyncSession, None]:
+    settings = get_app_settings()
+    session_manager = SessionManager(settings)
+    async with session_manager.async_session() as session:
+        yield session
 
 
 @pytest.fixture
 async def app() -> FastAPI:
     from app.main import get_application
 
-    app = get_application()
-    return app
+    return get_application()
 
 
 @pytest.fixture
@@ -59,3 +66,32 @@ async def client(app: FastAPI) -> AsyncClient:
         headers={"Content-Type": "application/json"},
     ) as client:
         yield client
+
+
+@pytest.fixture
+async def test_user(test_session: AsyncSession):
+    from app.db.tables import User
+
+    user = User(
+        email="test@test.com",
+        nickname="test",
+        hashed_password="password",
+        is_artist=False,
+        is_superuser=False,
+        is_active=True,
+    )
+    async with test_session.begin():
+        test_session.add(user)
+    await test_session.flush(user)
+    return user
+
+
+@pytest.fixture
+async def authorized_client(client: AsyncClient, test_user) -> AsyncClient:
+    auth_redis = Redis.from_url(
+        get_app_settings().auth_redis_url, decode_responses=True, socket_timeout=1
+    )
+    await auth_redis.set("auth-session-id:SESSIONTOKEN", str(test_user.id))
+    client.cookies = {get_app_settings().cookie_name: "SESSIONTOKEN"}
+    yield client
+    await auth_redis.flushdb()

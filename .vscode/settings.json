@@ -1,19 +1,25 @@
 {
     "python.languageServer": "Pylance",
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": true
-        },
-        "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
     },
+    "editor.defaultFormatter": "ms-python.black-formatter",
     "python.testing.pytestArgs": [
+        "-s",
         "tests"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
-    "files.associations": {
-        "docker-compose.test.yml": "docker-compose.yml"
-    },
+    "flake8.args": [
+        "--max-line-length=88",
+        "--ignore=E203,W503"
+    ],
+    "isort.args": [
+        "--profile=black"
+    ],
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    }
 }

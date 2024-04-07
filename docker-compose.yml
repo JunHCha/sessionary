@@ -1,45 +1,27 @@
 version: '3'
 services:
-  app:
-    platform: linux/amd64
-    build:
-      context: .
-      target: dev
-    command: uvicorn --host 0.0.0.0 --port 8000 app.main:app --reload
-    ports:
-      - 8000:8000
-    env_file:
-      - .env.dev
-    volumes:
-      - ./:/workspace
-    depends_on:
-      - db
-
   db:
+    container_name: db
     image: postgres:15.2-alpine
     command: -c log_statement=all
     ports:
       - 5432:5432
-    env_file:
-      - .env.dev
+    environment:
+      POSTGRES_SERVER: db
+      POSTGRES_DB: sessionary
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8
     volumes:
       - db-volume:/var/lib/postgresql/data
 
+
   auth-redis:
+    container_name: auth-redis
     image: redis:7.2-alpine
     ports:
       - 6379:6379
 
-  test-db:
-    image: postgres:15.2-alpine
-    ports:
-      - 5433:5432
-    environment:
-      POSTGRES_SERVER: test-db
-      POSTGRES_DB: sessionaway
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_INITDB_ARGS: --encoding=UTF-8
 
 volumes:
   db-volume:
