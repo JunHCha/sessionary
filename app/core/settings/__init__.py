@@ -16,4 +16,8 @@ environments: Dict[AppEnv, AppSettings] = {
 def get_app_settings() -> AppSettings:
     app_env = BaseAppSettings().app_env
     config = environments[app_env]
+
+    if config == DevAppSettings:
+        config.model_config.update({"env_file": ".env.dev"})
+
     return config()

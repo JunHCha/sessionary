@@ -13,24 +13,21 @@ from app.core.settings import get_app_settings
 from app.db.session import SessionManager
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def setup_env():
     environ["APP_ENV"] = "test"
-    environ[
-        "DATABASE_URL"
-    ] = "postgresql+asyncpg://user:password@127.0.0.1:5433/sessionaway"
-    environ["AUTH_REDIS_URL"] = "redis://localhost:6379/4"
+
     yield
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_test_database():
+def setup_test_database(setup_env):
     from app.db.tables import Base
 
     sync_engine = create_engine(
-        get_app_settings()
-        .database_url.unicode_string()
-        .replace("postgresql+asyncpg://", "postgresql://")
+        get_app_settings().database_url.replace(
+            "postgresql+asyncpg://", "postgresql://"
+        )
     )
 
     if database_exists(sync_engine.url):
@@ -41,6 +38,8 @@ def setup_test_database():
 
     yield
 
+    Base.metadata.drop_all(sync_engine)
+    drop_database(sync_engine.url)
     sync_engine.dispose()
 
 
@@ -96,14 +95,3 @@ async def authorized_client(client: AsyncClient, test_user) -> AsyncClient:
     client.cookies = {get_app_settings().cookie_name: "SESSIONTOKEN"}
     yield client
     await auth_redis.flushdb()
-
-
-@pytest.fixture(autouse=True)
-async def teardown(test_session: AsyncSession):
-    yield
-
-    from app.db.tables import Base
-
-    for table in reversed(Base.metadata.sorted_tables):
-        await test_session.execute(table.delete())
-    await test_session.commit()

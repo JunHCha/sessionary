@@ -6,10 +6,15 @@ services:
     command: -c log_statement=all
     ports:
       - 5432:5432
-    env_file:
-      - .env.dev
+    environment:
+      POSTGRES_SERVER: db
+      POSTGRES_DB: sessionary
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8
     volumes:
       - db-volume:/var/lib/postgresql/data
+
 
   auth-redis:
     container_name: auth-redis
@@ -17,17 +22,6 @@ services:
     ports:
       - 6379:6379
 
-  test-db:
-    container_name: test-db
-    image: postgres:15.2-alpine
-    ports:
-      - 5433:5432
-    environment:
-      POSTGRES_SERVER: test-db
-      POSTGRES_DB: sessionaway
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_INITDB_ARGS: --encoding=UTF-8
 
 volumes:
   db-volume:

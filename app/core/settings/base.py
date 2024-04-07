@@ -19,7 +19,7 @@ class AppEnv(Enum):
 class BaseAppSettings(BaseSettings):
     app_env: AppEnv = AppEnv.prod
 
-    model_config = ConfigDict(env_file=".env", extra="ignore")
+    model_config = ConfigDict(extra="ignore")
 
 
 class AppSettings(BaseAppSettings):
