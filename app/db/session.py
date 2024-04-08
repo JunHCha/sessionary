@@ -29,6 +29,10 @@ class SessionManager:
             scopefunc=current_task,
         )
 
+    @property
+    def engine(self):
+        return self._engine
+
     @asynccontextmanager
     async def async_session(self) -> AsyncGenerator[AsyncSession, None]:
         session = self._async_session_factory()
