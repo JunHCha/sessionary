@@ -1,6 +1,6 @@
 import logging
 
-from pydantic import SecretStr
+from pydantic import PostgresDsn, SecretStr
 
 from app.core.settings.base import AppSettings
 
@@ -10,7 +10,9 @@ class TestAppSettings(AppSettings):
     debug: bool = True
 
     # PostgreSQL DB
-    database_url: str = "postgresql+asyncpg://user:password@localhost:5432/test-db"
+    database_url: PostgresDsn = (
+        "postgresql+asyncpg://user:password@localhost:5432/test-db"
+    )
     max_connection_count: int = 2
     min_connection_count: int = 2
 

@@ -25,9 +25,9 @@ def setup_test_database(setup_env):
     from app.db.tables import Base
 
     sync_engine = create_engine(
-        get_app_settings().database_url.replace(
-            "postgresql+asyncpg://", "postgresql://"
-        )
+        get_app_settings()
+        .database_url.unicode_string()
+        .replace("postgresql+asyncpg://", "postgresql://")
     )
 
     if database_exists(sync_engine.url):
