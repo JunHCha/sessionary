@@ -29,7 +29,7 @@ class AppSettings(BaseAppSettings):
     openapi_prefix: str = ""
     openapi_url: str = "/openapi.json"
     redoc_url: str = "/redoc"
-    title: str = "Session Away Backend Server"
+    title: str = "Sessionary Backend Server"
     version: str = "0.0.0"
 
     @property
