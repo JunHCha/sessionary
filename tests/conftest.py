@@ -4,7 +4,7 @@ from typing import AsyncGenerator, Iterator
 
 import pytest
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from redis.asyncio import Redis
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +18,10 @@ from app.db.session import SessionManager
 def event_loop() -> Iterator[asyncio.AbstractEventLoop]:
     policy = asyncio.get_event_loop_policy()
     loop = policy.new_event_loop()
+
     yield loop
+
+    loop.close()
 
 
 @pytest.fixture(scope="session")
@@ -80,7 +83,7 @@ async def app() -> FastAPI:
 @pytest.fixture
 async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
-        app=app,
+        transport=ASGITransport(app=app),
         base_url="http://testserver",
         headers={"Content-Type": "application/json"},
     ) as client:
