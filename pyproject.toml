@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "session-away-backend"
+name = "sessionary-backend-server"
 version = "0.1.0"
 description = ""
 authors = ["junhcha <quffl9612@naver.com>"]

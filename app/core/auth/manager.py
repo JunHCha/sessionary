@@ -8,6 +8,8 @@ from app.db.tables import User
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
+    reset_password_token_secret = "SECRET"
+
     async def on_after_register(
         self, user: Any, request: Request | None = None
     ) -> None:
@@ -22,3 +24,8 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     ):
         # TODO: Make subscription session
         pass
+
+    async def on_after_forgot_password(
+        self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"User {user.id} has forgot their password. Reset token: {token}")

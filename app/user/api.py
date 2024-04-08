@@ -14,6 +14,10 @@ async def get_artists(user_svc: UserService = Depends(get_user_service)):
 
 
 app_router.include_router(
+    fastapi_users_component.get_auth_router(auth_backend.auth_backend), prefix="/auth"
+)
+
+app_router.include_router(
     fastapi_users_component.get_oauth_router(
         auth_backend.google_oauth_client,
         auth_backend.auth_backend,

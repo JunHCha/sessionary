@@ -4,7 +4,11 @@ from typing import Any
 import redis
 from fastapi import Depends
 from fastapi_users import FastAPIUsers
-from fastapi_users.authentication import AuthenticationBackend, CookieTransport
+from fastapi_users.authentication import (
+    AuthenticationBackend,
+    BearerTransport,
+    CookieTransport,
+)
 from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.models import UserProtocol
 from httpx_oauth.clients.google import GoogleOAuth2
@@ -23,6 +27,8 @@ class AuthBackend:
         self.cookie_transport = CookieTransport(
             cookie_name=self.cookie_name, cookie_max_age=self.cookie_max_age
         )
+        self.bearer_transport = BearerTransport(tokenUrl="/user/auth/login")
+        self.auth_session_age = settings.auth_session_expire_seconds
         self.google_client_id = settings.google_client_id
         self.google_client_secret = settings.google_client_secret
         self.auth_redis_url = settings.auth_redis_url
@@ -37,7 +43,7 @@ class AuthBackend:
     def auth_backend(self) -> AuthenticationBackend[UserProtocol, Any]:
         return AuthenticationBackend(
             name="redis",
-            transport=self.cookie_transport,
+            transport=self.bearer_transport,
             get_strategy=self._get_redis_strategy,
         )
 
@@ -51,7 +57,7 @@ class AuthBackend:
         )
         return RedisStrategy(
             redis=redis_client,
-            lifetime_seconds=self.cookie_max_age,
+            lifetime_seconds=self.auth_session_age,
             key_prefix="auth-session-id:",
         )
 

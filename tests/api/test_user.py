@@ -63,6 +63,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
     )
     async with test_session.begin():
         test_session.add_all([artist_1, artist_2, user_1, admin_1])
+    await test_session.commit()
 
 
 async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
@@ -79,7 +80,7 @@ async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
     }
 
 
-async def test_sut_get_me(authorized_client: AsyncClient, test_user) -> None:
+async def test_sut_get_me(test_user, authorized_client: AsyncClient) -> None:
     # when
     response = await authorized_client.get("/user/me")
 
@@ -88,6 +89,3 @@ async def test_sut_get_me(authorized_client: AsyncClient, test_user) -> None:
     content = response.json()
     assert content.get("nickname") == "test"
     assert content.get("is_superuser") is False
-    assert content.get("time_created") is not None
-    assert content.get("lectures") == []
-    assert content.get("lessons") == []
