@@ -14,7 +14,7 @@ class BaseUserService(abc.ABC):
 
     @abc.abstractmethod
     async def get_artists(self) -> List[User]:
-        pass
+        raise NotImplementedError
 
 
 class UserService(BaseUserService):
