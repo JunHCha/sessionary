@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.core.auth.backend import auth_backend, fastapi_users_component
-from app.user.schema import GetArtistsResponse, UserRead, UserUpdate
+from app.user.schemas import GetArtistsResponse, UserRead, UserUpdate
 from app.user.service import UserService, get_user_service
 
 app_router = APIRouter()
