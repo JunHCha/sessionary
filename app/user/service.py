@@ -4,8 +4,8 @@ from typing import List
 from fastapi import Depends
 
 from app.db.tables import User
+from app.user.api.schemas import UserRead
 from app.user.repository import BaseUserRepository, get_user_repository
-from app.user.schemas import UserRead
 
 
 class BaseUserService(abc.ABC):
