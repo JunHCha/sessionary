@@ -18,7 +18,8 @@ class BaseLectureService(abc.ABC):
         raise NotImplementedError
 
 
-class LectureService(BaseLectureService): ...
+class LectureService(BaseLectureService):
+    pass
 
 
 def get_lecture_service(
