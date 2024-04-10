@@ -3,8 +3,7 @@ from typing import List
 
 from fastapi import Depends
 
-from app.db.tables import User
-from app.user.api.schemas import UserRead
+from app.user.models import UserArtistInfo
 from app.user.repository import BaseUserRepository, get_user_repository
 
 
@@ -13,12 +12,12 @@ class BaseUserService(abc.ABC):
         self.user_repository = repository
 
     @abc.abstractmethod
-    async def get_artists(self) -> List[User]:
+    async def get_artists(self) -> List[UserArtistInfo]:
         raise NotImplementedError
 
 
 class UserService(BaseUserService):
-    async def get_artists(self) -> list[UserRead]:
+    async def get_artists(self) -> list[UserArtistInfo]:
         results = await self.user_repository.get_artists()
         return results
 
