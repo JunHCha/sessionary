@@ -41,7 +41,7 @@ class UserRepository(BaseUserRepository):
                 id=row.id,
                 nickname=row.nickname,
                 time_created=row.time_created,
-                lectures=[lecture.title for lecture in row.lectures],
+                lectures=[lecture for lecture in row.lectures],
             )
             for row in results
         ]
