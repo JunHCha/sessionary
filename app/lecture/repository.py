@@ -11,7 +11,8 @@ class BaseLectureRepository(abc.ABC):
         self.session = session
 
 
-class LectureRepository(BaseLectureRepository): ...
+class LectureRepository(BaseLectureRepository):
+    pass
 
 
 def get_lecture_repository(session=Depends(get_session)) -> BaseLectureRepository:

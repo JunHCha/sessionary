@@ -2,7 +2,7 @@ from typing import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
-from httpx import ASGITransport, AsyncClient
+from httpx import ASGITransport, AsyncClient, Headers
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,7 +19,7 @@ async def app() -> FastAPI:
 @pytest.fixture
 async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
-        transport=ASGITransport(app=app),
+        transport=ASGITransport(app=app),  # type: ignore
         base_url="http://testserver",
         headers={"Content-Type": "application/json"},
     ) as client:
@@ -40,7 +40,7 @@ async def test_user(test_session: AsyncSession):
     )
     async with test_session.begin():
         test_session.add(user)
-    await test_session.flush(user)
+    await test_session.commit()
     return user
 
 
@@ -52,6 +52,6 @@ async def authorized_client(
         get_app_settings().auth_redis_url, decode_responses=True, socket_timeout=1
     )
     await auth_redis.set("auth-session-id:SESSIONTOKEN", str(test_user.id))
-    client.headers = {"authorization": "bearer SESSIONTOKEN"}
+    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN"})
     yield client
     await auth_redis.flushdb()

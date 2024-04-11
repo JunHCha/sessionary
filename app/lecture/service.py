@@ -19,7 +19,10 @@ class BaseLectureService(abc.ABC):
 
 
 class LectureService(BaseLectureService):
-    pass
+    async def get_recommended(
+        self, artist_id: uuid.UUID | None = None
+    ) -> list[Lecture]:
+        return []
 
 
 def get_lecture_service(
