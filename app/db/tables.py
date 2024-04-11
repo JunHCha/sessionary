@@ -63,7 +63,6 @@ class Subscription(Base):
 class Lecture(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    artists = Column(String, nullable=False)
     description = Column(String, nullable=False)
     length_sec = Column(Integer, default=0, nullable=False)
     lecture_count = Column(Integer, default=0, nullable=False)

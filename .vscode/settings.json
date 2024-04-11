@@ -9,6 +9,9 @@
         "-s",
         "tests"
     ],
+    "mypy-type-checker.args": [
+        "--config-file=pyproject.toml"
+    ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.testing.autoTestDiscoverOnSaveEnabled": true,

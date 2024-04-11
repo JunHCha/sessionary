@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 
 from app.core.auth.backend import auth_backend, fastapi_users_component
-from app.user.schema import GetArtistsResponse, UserRead, UserUpdate
-from app.user.service import UserService, get_user_service
+from app.user.api.schemas import GetArtistsResponse, UserRead, UserUpdate
+from app.user.service import BaseUserService, get_user_service
 
 app_router = APIRouter()
 
 
 @app_router.get("/artists", response_model=GetArtistsResponse)
-async def get_artists(user_svc: UserService = Depends(get_user_service)):
+async def get_artists(user_svc: BaseUserService = Depends(get_user_service)):
     results = await user_svc.get_artists()
     return GetArtistsResponse(data=results)
 

@@ -2,31 +2,25 @@ import abc
 from typing import List
 
 from fastapi import Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.dependency import get_session
-from app.db.tables import User
-from app.user.schema import UserRead
+from app.user.models import UserArtistInfo
+from app.user.repository import BaseUserRepository, get_user_repository
 
 
 class BaseUserService(abc.ABC):
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
+    def __init__(self, repository: BaseUserRepository) -> None:
+        self.user_repository = repository
 
     @abc.abstractmethod
-    async def get_artists(self) -> List[User]:
-        pass
+    async def get_artists(self) -> List[UserArtistInfo]:
+        raise NotImplementedError
 
 
 class UserService(BaseUserService):
-    async def get_artists(self) -> list[UserRead]:
-        stmt = select(
-            User.id, User.nickname, User.email, User.is_artist, User.is_superuser
-        ).where(User.is_artist)
-        results = (await self.session.execute(stmt)).all()
-        return [UserRead.model_validate(row) for row in results]
+    async def get_artists(self) -> list[UserArtistInfo]:
+        results = await self.user_repository.get_artists()
+        return results
 
 
-def get_user_service(session=Depends(get_session)):
-    return UserService(session=session)
+def get_user_service(repository=Depends(get_user_repository)):
+    return UserService(repository=repository)
