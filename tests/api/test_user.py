@@ -107,7 +107,7 @@ async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
     assert len(content.get("data")[0].get("lectures")) == 2
 
 
-async def test_sut_get_me(test_user, authorized_client: AsyncClient) -> None:
+async def test_sut_get_me(authorized_client: AsyncClient) -> None:
     # when
     response = await authorized_client.get("/user/me")
 
