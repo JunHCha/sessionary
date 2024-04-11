@@ -1,3 +1,3 @@
-# Session Away Backend
+# Sessionary Backend
 
 Session Away Backend Server
