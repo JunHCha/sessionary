@@ -2,7 +2,6 @@ import uuid
 from typing import Any
 
 import redis
-from fastapi import Depends
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
@@ -13,10 +12,9 @@ from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.models import UserProtocol
 from httpx_oauth.clients.google import GoogleOAuth2
 
-from app.core.auth.manager import UserManager
+from app.core.auth.dependancy import get_user_manager
 from app.core.settings import get_app_settings
 from app.core.settings.base import AppSettings
-from app.db.dependency import get_user_db
 from app.db.tables import User
 
 
@@ -35,9 +33,7 @@ class AuthBackend:
 
     @property
     def backend(self) -> FastAPIUsers:
-        return FastAPIUsers[User, uuid.UUID](
-            self._get_user_manager, [self.auth_backend]
-        )
+        return FastAPIUsers[User, uuid.UUID](get_user_manager, [self.auth_backend])
 
     @property
     def auth_backend(self) -> AuthenticationBackend[UserProtocol, Any]:
@@ -60,9 +56,6 @@ class AuthBackend:
             lifetime_seconds=self.auth_session_age,
             key_prefix="auth-session-id:",
         )
-
-    async def _get_user_manager(self, user_db=Depends(get_user_db)):
-        yield UserManager(user_db)
 
 
 auth_backend = AuthBackend(settings=get_app_settings())
