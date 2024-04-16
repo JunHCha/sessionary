@@ -3,6 +3,7 @@ from os import environ
 from typing import AsyncGenerator, Iterator
 
 import pytest
+from redis.asyncio import Redis
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import create_database, database_exists, drop_database
@@ -68,3 +69,13 @@ def migrate_table_schemas(stub_sess_manager: SessionManager):
 async def test_session(stub_sess_manager) -> AsyncGenerator[AsyncSession, None]:
     async with stub_sess_manager.async_session() as session:
         yield session
+
+
+@pytest.fixture
+async def auth_redis() -> AsyncGenerator[Redis, None]:
+    settings = get_app_settings()
+    auth_redis = Redis.from_url(
+        settings.auth_redis_url, decode_responses=True, socket_timeout=1
+    )
+    yield auth_redis
+    await auth_redis.flushdb()

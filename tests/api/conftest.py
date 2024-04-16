@@ -6,7 +6,7 @@ from httpx import ASGITransport, AsyncClient, Headers
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.settings import get_app_settings
+from app.core.auth.strategy import AuthSessionSchema
 
 
 @pytest.fixture
@@ -46,12 +46,11 @@ async def test_user(test_session: AsyncSession):
 
 @pytest.fixture
 async def authorized_client(
-    client: AsyncClient, test_user
+    client: AsyncClient, auth_redis: Redis, test_user
 ) -> AsyncGenerator[AsyncClient, None]:
-    auth_redis = Redis.from_url(
-        get_app_settings().auth_redis_url, decode_responses=True, socket_timeout=1
+    await auth_redis.set(
+        "auth-session-id:SESSIONTOKEN",
+        AuthSessionSchema.model_validate(test_user).model_dump_json(),
     )
-    await auth_redis.set("auth-session-id:SESSIONTOKEN", str(test_user.id))
     client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN"})
     yield client
-    await auth_redis.flushdb()

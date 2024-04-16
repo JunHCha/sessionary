@@ -2,10 +2,10 @@ import datetime
 
 from fastapi import Depends, HTTPException
 
-from app.core.auth.backend import fastapi_users_component
+from app.core.auth.backend import auth_backend
 from app.db.tables import User
 
-current_user = fastapi_users_component.current_user()
+current_user = auth_backend.components.current_user()
 
 
 def authenticated_user(current_user: User = Depends(current_user)):
