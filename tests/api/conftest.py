@@ -6,6 +6,7 @@ from httpx import ASGITransport, AsyncClient, Headers
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.strategy import SessionSchema
 from app.core.settings import get_app_settings
 
 
@@ -51,7 +52,10 @@ async def authorized_client(
     auth_redis = Redis.from_url(
         get_app_settings().auth_redis_url, decode_responses=True, socket_timeout=1
     )
-    await auth_redis.set("auth-session-id:SESSIONTOKEN", str(test_user.id))
+    await auth_redis.set(
+        "auth-session-id:SESSIONTOKEN",
+        SessionSchema.model_validate(test_user).model_dump_json(),
+    )
     client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN"})
     yield client
     await auth_redis.flushdb()

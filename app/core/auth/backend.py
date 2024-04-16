@@ -8,6 +8,7 @@ from fastapi_users.authentication.strategy import RedisStrategy
 from httpx_oauth.clients.google import GoogleOAuth2
 
 from app.core.auth.dependancy import get_user_manager
+from app.core.auth.strategy import CustomRedisStrategy
 from app.core.settings import get_app_settings
 from app.core.settings.base import AppSettings
 from app.db.tables import User
@@ -63,7 +64,7 @@ class AuthBackend:
         redis_client = redis.asyncio.from_url(
             self.auth_redis_url, decode_responses=True
         )
-        return RedisStrategy(
+        return CustomRedisStrategy(
             redis=redis_client,
             lifetime_seconds=self.auth_session_age,
             key_prefix="auth-session-id:",
