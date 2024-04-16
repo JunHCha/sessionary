@@ -43,7 +43,10 @@ class CustomRedisStrategy(RedisStrategy):
         if token is None:
             return None
 
-        user = orjson.loads((await self.redis.get(f"{self.key_prefix}{token}")))
+        try:
+            user = orjson.loads((await self.redis.get(f"{self.key_prefix}{token}")))
+        except orjson.JSONDecodeError:
+            return None
 
         if user is None:
             return None
