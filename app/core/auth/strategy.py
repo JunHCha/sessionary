@@ -11,7 +11,7 @@ from fastapi_users.manager import BaseUserManager
 from pydantic import BaseModel, ConfigDict
 
 
-class SessionSchema(BaseModel):
+class AuthSessionSchema(BaseModel):
     id: uuid.UUID
     email: str
     nickname: str
@@ -51,13 +51,13 @@ class CustomRedisStrategy(RedisStrategy):
         if user is None:
             return None
 
-        return SessionSchema.model_validate(user)
+        return AuthSessionSchema.model_validate(user)
 
     async def write_token(self, user: models.UP) -> str:
         token = secrets.token_urlsafe()
         await self.redis.set(
             f"{self.key_prefix}{token}",
-            SessionSchema.model_validate(user).model_dump_json(),
+            AuthSessionSchema.model_validate(user).model_dump_json(),
             ex=self.lifetime_seconds,
         )
         return token
