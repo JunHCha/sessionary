@@ -3,11 +3,7 @@ import uuid
 import redis
 from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
-from fastapi_users.authentication import (
-    AuthenticationBackend,
-    BearerTransport,
-    CookieTransport,
-)
+from fastapi_users.authentication import AuthenticationBackend, BearerTransport
 from fastapi_users.authentication.strategy import RedisStrategy
 from httpx_oauth.clients.google import GoogleOAuth2
 
@@ -20,26 +16,24 @@ from app.user.api.schemas import UserRead, UserUpdate
 
 class AuthBackend:
     def __init__(self, settings: AppSettings) -> None:
-        self.cookie_name = settings.cookie_name
-        self.cookie_max_age = settings.auth_session_expire_seconds
-        self.cookie_transport = CookieTransport(
-            cookie_name=self.cookie_name, cookie_max_age=self.cookie_max_age
-        )
         self.bearer_transport = BearerTransport(tokenUrl="/user/auth/login")
         self.auth_session_age = settings.auth_session_expire_seconds
-        self.google_client_id = settings.google_client_id
-        self.google_client_secret = settings.google_client_secret
+
         self.auth_redis_url = settings.auth_redis_url
         self.auth_backend = AuthenticationBackend(
             name="redis",
             transport=self.bearer_transport,
             get_strategy=self.get_redis_strategy,
         )
-        self.components = FastAPIUsers[User, uuid.UUID](
-            get_user_manager, [self.auth_backend]
-        )
+
+        self.google_client_id = settings.google_client_id
+        self.google_client_secret = settings.google_client_secret
         self.google_oauth_client = GoogleOAuth2(
             self.google_client_id, self.google_client_secret
+        )
+
+        self.components = FastAPIUsers[User, uuid.UUID](
+            get_user_manager, [self.auth_backend]
         )
 
     @property
