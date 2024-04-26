@@ -103,6 +103,13 @@ async def dummy_users(test_session: AsyncSession) -> None:
     await test_session.commit()
 
 
+async def test_sut_create_subscription_when_register_user(test_user):
+    # then
+    assert test_user.subscription is not None
+    assert test_user.subscription.is_active is True
+    assert test_user.subscription.name == "ticket"
+
+
 async def test_sut_create_auth_session_when_login(
     client: AsyncClient, auth_redis: Redis, user_manager_stub, dummy_users
 ) -> None:
