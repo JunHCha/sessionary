@@ -54,9 +54,10 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     subscription: Mapped["Subscription"] = relationship(
         "Subscription",
         secondary="user_x_subscription",
-        secondaryjoin="and_(user_x_subscription.c.subscription_id == Subscription.id, "
-        "Subscription.is_active == True)",
+        secondaryjoin="and_(user_x_subscription.c.subscription_id == subscription.c.id,"
+        "subscription.c.is_active == True)",
         back_populates="subscribers",
+        lazy="subquery",
     )
     lectures: Mapped[List["Lecture"]] = relationship(
         "Lecture", secondary="artist_x_lecture", back_populates="artists"
