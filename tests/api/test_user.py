@@ -111,7 +111,7 @@ async def test_sut_create_subscription_when_register_user(test_user):
 
 
 async def test_sut_create_auth_session_when_login(
-    client: AsyncClient, auth_redis: Redis, user_manager_stub, dummy_users
+    client: AsyncClient, auth_redis: Redis, test_user
 ) -> None:
 
     # when
@@ -121,7 +121,7 @@ async def test_sut_create_auth_session_when_login(
             "accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded",
         },
-        data={"username": "user1@test.com", "password": "password"},
+        data={"username": "test@test.com", "password": "password"},
     )
 
     # then
@@ -129,7 +129,7 @@ async def test_sut_create_auth_session_when_login(
 
     token = response.json().get("access_token")
     session = await auth_redis.get(f"auth-session-id:{token}")
-    assert orjson.loads(session).get("email") == "user1@test.com"
+    assert orjson.loads(session).get("email") == "test@test.com"
 
 
 async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
