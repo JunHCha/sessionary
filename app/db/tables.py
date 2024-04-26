@@ -69,7 +69,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 
 class Subscription(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4())
-    name: Mapped[str] = mapped_column(String, nullable=False, default="free")
+    name: Mapped[str] = mapped_column(String, nullable=False, default="ticket")
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     ticket_count: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
     expires_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False)
