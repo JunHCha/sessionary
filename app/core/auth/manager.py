@@ -79,15 +79,6 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             await sess.execute(insert_association_stmt)
             await sess.commit()
 
-    async def on_after_login(
-        self,
-        user: User,
-        request: Optional[Request] = None,
-        response: Optional[Response] = None,
-    ):
-        # TODO: Make subscription session
-        pass
-
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
     ):
