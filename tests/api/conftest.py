@@ -10,13 +10,6 @@ from app.core.auth.strategy import AuthSessionSchema
 
 
 @pytest.fixture
-async def app() -> FastAPI:
-    from app.main import get_application
-
-    return get_application()
-
-
-@pytest.fixture
 async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
         transport=ASGITransport(app=app),  # type: ignore

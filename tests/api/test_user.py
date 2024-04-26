@@ -3,13 +3,10 @@ import uuid
 
 import orjson
 import pytest
-from fastapi import Depends, FastAPI
-from fastapi.security import OAuth2PasswordRequestForm
 from httpx import AsyncClient
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.dependency import get_user_db
 from app.db.tables import ArtistXLecture, Lecture, User
 
 pytestmark = pytest.mark.asyncio
@@ -97,31 +94,9 @@ async def dummy_users(test_session: AsyncSession) -> None:
     await test_session.commit()
 
 
-async def stub_user_manager(user_db=Depends(get_user_db)):
-    from fastapi_users import exceptions
-
-    from app.core.auth.manager import UserManager
-
-    class StubUserManager(UserManager):
-        async def authenticate(
-            self, credentials: OAuth2PasswordRequestForm
-        ) -> User | None:
-            try:
-                user = await self.get_by_email(credentials.username)
-            except exceptions.UserNotExists:
-                return None
-            return user
-
-    yield StubUserManager(user_db)
-
-
 async def test_sut_create_auth_session_when_login(
-    app: FastAPI, client: AsyncClient, auth_redis: Redis, dummy_users
+    client: AsyncClient, auth_redis: Redis, user_manager_stub, dummy_users
 ) -> None:
-    # given
-    from app.core.auth.backend import get_user_manager
-
-    app.dependency_overrides[get_user_manager] = stub_user_manager
 
     # when
     response = await client.post(

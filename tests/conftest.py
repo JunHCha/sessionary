@@ -3,6 +3,8 @@ from os import environ
 from typing import AsyncGenerator, Iterator
 
 import pytest
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordRequestForm
 from redis.asyncio import Redis
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -79,3 +81,35 @@ async def auth_redis() -> AsyncGenerator[Redis, None]:
     )
     yield auth_redis
     await auth_redis.flushdb()
+
+
+@pytest.fixture
+async def app() -> FastAPI:
+    from app.main import get_application
+
+    return get_application()
+
+
+@pytest.fixture
+async def user_manager_stub(app):
+    from fastapi_users import exceptions
+
+    from app.core.auth.backend import get_user_manager
+    from app.core.auth.manager import UserManager
+    from app.db.dependency import get_user_db
+    from app.db.tables import User
+
+    async def get_test_user_manager(user_db=Depends(get_user_db)):
+        class StubUserManager(UserManager):
+            async def authenticate(
+                self, credentials: OAuth2PasswordRequestForm
+            ) -> User | None:
+                try:
+                    user = await self.get_by_email(credentials.username)
+                except exceptions.UserNotExists:
+                    return None
+                return user
+
+        yield StubUserManager(user_db)
+
+    app.dependency_overrides[get_user_manager] = get_test_user_manager
