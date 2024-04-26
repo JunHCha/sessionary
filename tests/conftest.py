@@ -84,9 +84,12 @@ async def auth_redis() -> AsyncGenerator[Redis, None]:
 
 
 @pytest.fixture
-async def app() -> FastAPI:
+async def app(test_session) -> FastAPI:
+    from app.db.dependency import get_user_db
     from app.main import get_application
 
+    app = get_application()
+    app.dependency_overrides[get_user_db] = test_session
     return get_application()
 
 
