@@ -2,7 +2,7 @@ import datetime
 import uuid
 from typing import Optional
 
-from fastapi import Request, Response
+from fastapi import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin, exceptions, models, schemas
 from sqlalchemy import insert
 
