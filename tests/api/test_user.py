@@ -147,5 +147,5 @@ async def test_sut_get_me(authorized_client: AsyncClient) -> None:
     # then
     assert response.status_code == 200
     content = response.json()
-    assert content.get("nickname") == "test"
+    assert content.get("email") == "test@test.com"
     assert content.get("is_superuser") is False

@@ -22,5 +22,5 @@ async def test_auth_ping(authorized_client: AsyncClient) -> None:
     assert response.status_code == 200
     content = response.json()
     assert content.get("ping") == "pong!"
-    assert content.get("data").get("nickname") == "test"
+    assert content.get("data").get("email") == "test@test.com"
     assert True
