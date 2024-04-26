@@ -23,3 +23,19 @@ class UserArtistInfo(BaseModel):
     lectures: list[LectureForArtistView]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AuthSessionSchema(BaseModel):
+    id: uuid.UUID
+    email: str
+    nickname: str
+    is_artist: bool
+    subscription_id: int | None
+    time_created: datetime.datetime | None
+    time_updated: datetime.datetime | None
+    hashed_password: str
+    is_active: bool
+    is_superuser: bool
+    is_verified: bool
+
+    model_config = ConfigDict(from_attributes=True)
