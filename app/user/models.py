@@ -3,6 +3,8 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict
 
+from app.subscription.models import Subscription
+
 
 class LectureForArtistView(BaseModel):
     id: int
@@ -30,10 +32,9 @@ class AuthSessionSchema(BaseModel):
     email: str
     nickname: str
     is_artist: bool
-    subscription_id: int | None
+    subscription: Subscription
     time_created: datetime.datetime | None
     time_updated: datetime.datetime | None
-    hashed_password: str
     is_active: bool
     is_superuser: bool
     is_verified: bool

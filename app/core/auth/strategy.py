@@ -7,6 +7,7 @@ from fastapi_users import models
 from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.manager import BaseUserManager
 
+from app.subscription.models import Subscription
 from app.user.models import AuthSessionSchema
 
 
@@ -40,7 +41,18 @@ class CustomRedisStrategy(RedisStrategy):
         token = secrets.token_urlsafe()
         await self.redis.set(
             f"{self.key_prefix}{token}",
-            AuthSessionSchema.model_validate(user).model_dump_json(),
+            AuthSessionSchema(
+                id=user.id,
+                email=user.email,
+                nickname=user.nickname,
+                subscription=Subscription.model_validate(user.subscription),
+                time_created=user.time_created,
+                time_updated=user.time_updated,
+                is_artist=user.is_artist,
+                is_active=user.is_active,
+                is_superuser=user.is_superuser,
+                is_verified=user.is_verified,
+            ).model_dump_json(),
             ex=self.lifetime_seconds,
         )
         return token
