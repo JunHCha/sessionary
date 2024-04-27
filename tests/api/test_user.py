@@ -108,6 +108,7 @@ async def test_sut_create_subscription_when_register_user(test_user):
     assert test_user.subscription is not None
     assert test_user.subscription.is_active is True
     assert test_user.subscription.name == "ticket"
+    assert test_user.subscription.ticket_count == 3
 
 
 async def test_sut_create_auth_session_when_login(
