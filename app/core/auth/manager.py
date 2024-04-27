@@ -56,6 +56,94 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
         return user
 
+    async def oauth_callback(
+        self: "BaseUserManager[models.UOAP, models.ID]",
+        oauth_name: str,
+        access_token: str,
+        account_id: str,
+        account_email: str,
+        expires_at: Optional[int] = None,
+        refresh_token: Optional[str] = None,
+        request: Optional[Request] = None,
+        *,
+        associate_by_email: bool = False,
+        is_verified_by_default: bool = False,
+    ) -> models.UOAP:
+        """
+        Handle the callback after a successful OAuth authentication.
+
+        If the user already exists with this OAuth account, the token is updated.
+
+        If a user with the same e-mail already exists and `associate_by_email` is True,
+        the OAuth account is associated to this user.
+        Otherwise, the `UserNotExists` exception is raised.
+
+        If the user does not exist, it is created and the on_after_register handler
+        is triggered.
+
+        :param oauth_name: Name of the OAuth client.
+        :param access_token: Valid access token for the service provider.
+        :param account_id: models.ID of the user on the service provider.
+        :param account_email: E-mail of the user on the service provider.
+        :param expires_at: Optional timestamp at which the access token expires.
+        :param refresh_token: Optional refresh token to get a
+        fresh access token from the service provider.
+        :param request: Optional FastAPI request that
+        triggered the operation, defaults to None
+        :param associate_by_email: If True, any existing user with the same
+        e-mail address will be associated to this user. Defaults to False.
+        :param is_verified_by_default: If True, the `is_verified` flag will be
+        set to `True` on newly created user. Make sure the OAuth Provider you're
+        using does verify the email address before enabling this flag.
+        Defaults to False.
+        :return: A user.
+        """
+        oauth_account_dict = {
+            "oauth_name": oauth_name,
+            "access_token": access_token,
+            "account_id": account_id,
+            "account_email": account_email,
+            "expires_at": expires_at,
+            "refresh_token": refresh_token,
+        }
+
+        try:
+            user = await self.get_by_oauth_account(oauth_name, account_id)
+        except exceptions.UserNotExists:
+            try:
+                # Associate account
+                user = await self.get_by_email(account_email)
+                if not associate_by_email:
+                    raise exceptions.UserAlreadyExists()
+                user = await self.user_db.add_oauth_account(user, oauth_account_dict)
+            except exceptions.UserNotExists:
+                # Create account
+                password = self.password_helper.generate()
+                user_dict = {
+                    "email": account_email,
+                    "hashed_password": self.password_helper.hash(password),
+                    "is_verified": is_verified_by_default,
+                }
+                user = await self.user_db.create(user_dict)
+                user = await self.user_db.add_oauth_account(user, oauth_account_dict)
+                await self.on_after_register(user, request)
+
+            # query again to get the full user with subscriptions
+            async for sess in get_session():
+                user = await sess.get(User, user.id)
+        else:
+            # Update oauth
+            for existing_oauth_account in user.oauth_accounts:
+                if (
+                    existing_oauth_account.account_id == account_id
+                    and existing_oauth_account.oauth_name == oauth_name
+                ):
+                    user = await self.user_db.update_oauth_account(
+                        user, existing_oauth_account, oauth_account_dict
+                    )
+
+        return user
+
     async def on_after_register(
         self, user: User, request: Request | None = None
     ) -> None:
