@@ -3,14 +3,11 @@ import uuid
 
 import orjson
 import pytest
-from fastapi import Depends, FastAPI
-from fastapi.security import OAuth2PasswordRequestForm
 from httpx import AsyncClient
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.dependency import get_user_db
-from app.db.tables import ArtistXLecture, Lecture, User
+from app.db.tables import ArtistXLecture, Lecture, Subscription, User, UserXSubscription
 
 pytestmark = pytest.mark.asyncio
 
@@ -75,6 +72,13 @@ async def dummy_users(test_session: AsyncSession) -> None:
         is_superuser=False,
         is_active=True,
     )
+    subscription_1 = Subscription(
+        id=uuid.uuid4(), expires_at=datetime.datetime.now() + datetime.timedelta(days=1)
+    )
+    user_x_subscription_1 = UserXSubscription(
+        user_id=user_1.id, subscription_id=subscription_1.id
+    )
+
     admin_1 = User(
         id=uuid.uuid4(),
         subscription_id=None,
@@ -93,35 +97,23 @@ async def dummy_users(test_session: AsyncSession) -> None:
         )
     await test_session.commit()
     async with test_session.begin():
-        test_session.add_all(artist_lecture_associations)
+        test_session.add_all(
+            artist_lecture_associations + [subscription_1, user_x_subscription_1]
+        )
     await test_session.commit()
 
 
-async def stub_user_manager(user_db=Depends(get_user_db)):
-    from fastapi_users import exceptions
-
-    from app.core.auth.manager import UserManager
-
-    class StubUserManager(UserManager):
-        async def authenticate(
-            self, credentials: OAuth2PasswordRequestForm
-        ) -> User | None:
-            try:
-                user = await self.get_by_email(credentials.username)
-            except exceptions.UserNotExists:
-                return None
-            return user
-
-    yield StubUserManager(user_db)
+async def test_sut_create_subscription_when_register_user(test_user):
+    # then
+    assert test_user.subscription is not None
+    assert test_user.subscription.is_active is True
+    assert test_user.subscription.name == "ticket"
+    assert test_user.subscription.ticket_count == 3
 
 
 async def test_sut_create_auth_session_when_login(
-    app: FastAPI, client: AsyncClient, auth_redis: Redis, dummy_users
+    client: AsyncClient, auth_redis: Redis, test_user
 ) -> None:
-    # given
-    from app.core.auth.backend import get_user_manager
-
-    app.dependency_overrides[get_user_manager] = stub_user_manager
 
     # when
     response = await client.post(
@@ -130,7 +122,7 @@ async def test_sut_create_auth_session_when_login(
             "accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded",
         },
-        data={"username": "user1@test.com", "password": "password"},
+        data={"username": "test@test.com", "password": "password"},
     )
 
     # then
@@ -138,7 +130,7 @@ async def test_sut_create_auth_session_when_login(
 
     token = response.json().get("access_token")
     session = await auth_redis.get(f"auth-session-id:{token}")
-    assert orjson.loads(session).get("email") == "user1@test.com"
+    assert orjson.loads(session).get("email") == "test@test.com"
 
 
 async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
@@ -163,5 +155,5 @@ async def test_sut_get_me(authorized_client: AsyncClient) -> None:
     # then
     assert response.status_code == 200
     content = response.json()
-    assert content.get("nickname") == "test"
+    assert content.get("email") == "test@test.com"
     assert content.get("is_superuser") is False

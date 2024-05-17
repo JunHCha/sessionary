@@ -4,16 +4,10 @@ import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient, Headers
 from redis.asyncio import Redis
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
-
-
-@pytest.fixture
-async def app() -> FastAPI:
-    from app.main import get_application
-
-    return get_application()
+from app.subscription.models import Subscription
 
 
 @pytest.fixture
@@ -27,20 +21,18 @@ async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest.fixture
-async def test_user(test_session: AsyncSession):
-    from app.db.tables import User
+async def test_user(user_manager_stub: UserManager):
+    from fastapi_users.schemas import BaseUserCreate
 
-    user = User(
+    user_create = BaseUserCreate(
         email="test@test.com",
-        nickname="test",
-        hashed_password="password",
+        password="password",
         is_artist=False,
         is_superuser=False,
         is_active=True,
     )
-    async with test_session.begin():
-        test_session.add(user)
-    await test_session.commit()
+    user = await user_manager_stub.create(user_create)
+
     return user
 
 
@@ -50,7 +42,18 @@ async def authorized_client(
 ) -> AsyncGenerator[AsyncClient, None]:
     await auth_redis.set(
         "auth-session-id:SESSIONTOKEN",
-        AuthSessionSchema.model_validate(test_user).model_dump_json(),
+        AuthSessionSchema(
+            id=test_user.id,
+            email=test_user.email,
+            nickname=test_user.nickname,
+            subscription=Subscription.model_validate(test_user.subscription),
+            time_created=test_user.time_created,
+            time_updated=test_user.time_updated,
+            is_artist=test_user.is_artist,
+            is_active=test_user.is_active,
+            is_superuser=test_user.is_superuser,
+            is_verified=test_user.is_verified,
+        ).model_dump_json(),
     )
     client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN"})
     yield client
