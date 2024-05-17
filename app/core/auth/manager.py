@@ -51,6 +51,8 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         await self.on_after_register(created_user, request)
 
         # query again to get the full user with subscriptions
+        # TODO: This is a workaround to get the full user with subscriptions.
+        #       This should be fixed in the future.
         async for sess in get_session():
             user = await sess.get(User, created_user.id)
 
@@ -129,6 +131,8 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
                 await self.on_after_register(user, request)
 
             # query again to get the full user with subscriptions
+            # TODO: This is a workaround to get the full user with subscriptions.
+            #       This should be fixed in the future.
             async for sess in get_session():
                 user = await sess.get(User, user.id)
         else:
