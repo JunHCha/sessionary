@@ -105,7 +105,11 @@ class Lecture(Base):
         "User", secondary="artist_x_lecture", back_populates="lectures"
     )
     lessons: Mapped[List["Lesson"]] = relationship(
-        "Lesson", secondary="lecture_x_lesson", back_populates="lectures"
+        "Lesson",
+        secondary="lecture_x_lesson",
+        back_populates="lectures",
+        uselist=True,
+        order_by="lecture_x_lesson.ordering",
     )
 
     __tablename__ = "lecture"
@@ -141,6 +145,7 @@ class Lesson(Base):
     artist_id: Mapped[uuid.UUID] = mapped_column(
         UUID, ForeignKey("user.id"), nullable=False
     )
+    lecture_id: Mapped[int] = mapped_column(Integer, ForeignKey("lecture.id"))
     sheetmusic_url: Mapped[str] = mapped_column(String)
     video_url: Mapped[str] = mapped_column(String)
     text: Mapped[str] = mapped_column(String)
@@ -152,9 +157,7 @@ class Lesson(Base):
     )
 
     # for orm
-    lectures: Mapped[List[Lecture]] = relationship(
-        "Lecture", secondary="lecture_x_lesson", back_populates="lessons"
-    )
+    lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
     playlists: Mapped[List[Playlist]] = relationship(
         "Playlist", secondary="playlist_x_lesson", back_populates="lessons"
     )
@@ -185,6 +188,7 @@ class LectureXLesson(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     lecture_id: Mapped[int] = mapped_column(Integer, ForeignKey("lecture.id"))
     lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey("lesson.id"))
+    ordering: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     __tablename__ = "lecture_x_lesson"
 
