@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.core.auth.backend import auth_backend
 from app.depends.service import get_user_service
-from app.user.api.schemas import GetArtistsResponse
+from app.user.schemas import GetArtistsResponse
 from app.user.service import BaseUserService
 
 app_router = APIRouter()
