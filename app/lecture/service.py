@@ -4,7 +4,7 @@ import uuid
 from fastapi import Depends
 
 from app.lecture.repository import BaseLectureRepository, get_lecture_repository
-from app.models import Lecture
+from app.models import Lecture, Lesson
 
 
 class BaseLectureService(abc.ABC):
@@ -18,7 +18,7 @@ class BaseLectureService(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def get_lessons(self, artist_id: uuid.UUID | None = None) -> list[any]:
+    async def get_lessons(self, lecture_id: int) -> list[any]:
         raise NotImplementedError
 
 
@@ -27,6 +27,9 @@ class LectureService(BaseLectureService):
         self, artist_id: uuid.UUID | None = None
     ) -> list[Lecture]:
         return []
+
+    async def get_lessons(self, lecture_id: int) -> list[Lesson]:
+        raise []
 
 
 def get_lecture_service(
