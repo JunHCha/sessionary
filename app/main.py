@@ -6,12 +6,12 @@ from starlette.middleware.cors import CORSMiddleware
 from app.core.errors.http_error import http_error_handler
 from app.core.errors.validation_error import http400_error_handler
 from app.core.settings import get_app_settings
+from app.lecture import api as lecture_api
+from app.ping import api as ping_api
 from app.user import api as user_api
 
 
 def get_application() -> FastAPI:
-    from app.lecture import api as lecture_api
-    from app.ping import api as ping_api
 
     settings = get_app_settings()
     settings.configure_logging()
