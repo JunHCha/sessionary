@@ -107,9 +107,10 @@ class Lecture(Base):
     lessons: Mapped[List["Lesson"]] = relationship(
         "Lesson",
         secondary="lecture_x_lesson",
-        back_populates="lectures",
+        back_populates="lecture",
         uselist=True,
-        order_by="lecture_x_lesson.ordering",
+        order_by="lecture_x_lesson.c.ordering",
+        lazy="selectin",
     )
 
     __tablename__ = "lecture"
@@ -159,7 +160,10 @@ class Lesson(Base):
     # for orm
     lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
     playlists: Mapped[List[Playlist]] = relationship(
-        "Playlist", secondary="playlist_x_lesson", back_populates="lessons"
+        "Playlist",
+        secondary="playlist_x_lesson",
+        back_populates="lessons",
+        lazy="selectin",
     )
     artist: Mapped[User] = relationship("User", back_populates="lessons")
 
