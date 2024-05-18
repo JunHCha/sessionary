@@ -2,8 +2,9 @@ import uuid
 
 from fastapi import APIRouter, Depends, Query
 
+from app.depends.service import get_lecture_service
 from app.lecture.api.schemas import GetRecommendedLecuturesSchema
-from app.lecture.service import BaseLectureService, get_lecture_service
+from app.lecture.service import BaseLectureService
 
 app_router = APIRouter()
 

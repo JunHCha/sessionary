@@ -6,8 +6,8 @@ from fastapi import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin, exceptions, models, schemas
 from sqlalchemy import insert
 
-from app.db.dependency import get_session
 from app.db.tables import Subscription, User, UserXSubscription
+from app.depends.db import get_session
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):

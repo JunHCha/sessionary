@@ -1,9 +1,7 @@
 import abc
 import uuid
 
-from fastapi import Depends
-
-from app.lecture.repository import BaseLectureRepository, get_lecture_repository
+from app.lecture.repository import BaseLectureRepository
 from app.models import Lecture, Lesson
 
 
@@ -30,9 +28,3 @@ class LectureService(BaseLectureService):
 
     async def get_lessons(self, lecture_id: int) -> list[Lesson]:
         raise []
-
-
-def get_lecture_service(
-    repository: BaseLectureRepository = Depends(get_lecture_repository),
-) -> BaseLectureService:
-    return LectureService(repository)

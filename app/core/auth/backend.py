@@ -7,11 +7,11 @@ from fastapi_users.authentication import AuthenticationBackend, BearerTransport
 from fastapi_users.authentication.strategy import RedisStrategy
 from httpx_oauth.clients.google import GoogleOAuth2
 
-from app.core.auth.dependancy import get_user_manager
 from app.core.auth.strategy import CustomRedisStrategy
-from app.core.settings import get_app_settings
 from app.core.settings.base import AppSettings
 from app.db.tables import User
+from app.depends.auth import get_user_manager
+from app.depends.settings import get_app_settings
 from app.models import UserRead, UserUpdate
 
 
