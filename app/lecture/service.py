@@ -3,8 +3,8 @@ import uuid
 
 from fastapi import Depends
 
-from app.lecture.models import Lecture
 from app.lecture.repository import BaseLectureRepository, get_lecture_repository
+from app.models import Lecture
 
 
 class BaseLectureService(abc.ABC):

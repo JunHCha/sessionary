@@ -7,7 +7,7 @@ from redis.asyncio import Redis
 
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
-from app.subscription.models import Subscription
+from app.models import Subscription
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ from typing import List
 
 from fastapi import Depends
 
-from app.user.models import UserArtistInfo
+from app.models import UserArtistInfo
 from app.user.repository import BaseUserRepository, get_user_repository
 
 

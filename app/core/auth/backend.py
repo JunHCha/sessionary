@@ -12,7 +12,7 @@ from app.core.auth.strategy import CustomRedisStrategy
 from app.core.settings import get_app_settings
 from app.core.settings.base import AppSettings
 from app.db.tables import User
-from app.user.api.schemas import UserRead, UserUpdate
+from app.models import UserRead, UserUpdate
 
 
 class AuthBackend:

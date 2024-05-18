@@ -3,7 +3,7 @@ import uuid
 from fastapi_users import schemas
 from pydantic import BaseModel, ConfigDict
 
-from app.user.models import UserArtistInfo
+from app.models import UserArtistInfo
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):

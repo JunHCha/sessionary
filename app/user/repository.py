@@ -5,9 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, lazyload
 
+from app import models
 from app.db import tables as tb
 from app.db.dependency import get_session
-from app.user import models
 
 
 class BaseUserRepository(abc.ABC):
