@@ -17,6 +17,10 @@ class BaseLectureService(abc.ABC):
     ) -> list[Lecture]:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    async def get_lessons(self, artist_id: uuid.UUID | None = None) -> list[any]:
+        raise NotImplementedError
+
 
 class LectureService(BaseLectureService):
     async def get_recommended(
