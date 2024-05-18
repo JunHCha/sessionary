@@ -73,6 +73,7 @@ class Lecture(Base):
     id: int
     title: str
     artists: list[UserArtistInfo]
+    lessons: list["Lesson"]
     description: str
     length_sec: int
     lecture_count: int
