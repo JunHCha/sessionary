@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class Base(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, frozen=True)
 
 
 class PaginationMeta(Base):
@@ -79,8 +79,8 @@ class Subscription(Base):
 class Lecture(Base):
     id: int
     title: str
-    artists: list[UserArtistInfo]
-    lessons: list["Lesson"]
+    artists: list[UserReadPublic]
+    lessons: list["LessonInLecture"]
     description: str
     length_sec: int
     time_created: datetime.datetime
@@ -101,17 +101,16 @@ class Playlist(Base):
     id: int
     title: str
     owner: UserRead
-    lessons: list["Lesson"]
+    lessons: list["LessonInLecture"]
     time_created: datetime.datetime
     time_updated: datetime.datetime
 
 
-class Lesson(Base):
+class LessonInLecture(Base):
     id: int
     title: str
-    artist_id: uuid.UUID
-    lecture: Lecture
-    artist: UserArtistInfo
+    lecture: LectureInFetch
+    artist: UserReadPublic
     sheetmusic_url: str
     video_url: str
     text: str

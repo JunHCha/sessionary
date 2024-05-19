@@ -2,9 +2,16 @@ import abc
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.db import tables as tb
-from app.models import LectureInFetch, PaginationMeta
+from app.models import (
+    Lecture,
+    LectureInFetch,
+    LessonInLecture,
+    PaginationMeta,
+    UserReadPublic,
+)
 
 
 class BaseLectureRepository(abc.ABC):
@@ -15,6 +22,10 @@ class BaseLectureRepository(abc.ABC):
     async def fetch_lectures(
         self, page: int, per_page: int
     ) -> tuple[list[LectureInFetch], PaginationMeta]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def get_lecture(self, lecture_id: int) -> Lecture:
         raise NotImplementedError
 
 
@@ -45,4 +56,54 @@ class LectureRepository(BaseLectureRepository):
                 curr_page=page,
                 per_page=per_page,
             ),
+        )
+
+    async def get_lecture(self, lecture_id: int) -> Lecture:
+        result = (
+            (
+                await self.session.execute(
+                    select(tb.Lecture)
+                    .options(
+                        joinedload(tb.Lecture.lessons).joinedload(tb.Lesson.artist)
+                    )
+                    .filter(tb.Lecture.id == lecture_id)
+                )
+            )
+            .unique()
+            .scalar_one()
+        )
+        lessons = [
+            LessonInLecture(
+                id=item.id,
+                title=item.title,
+                lecture=item.lecture,
+                artist=UserReadPublic.model_validate(item.artist),
+                sheetmusic_url=item.sheetmusic_url,
+                video_url=item.video_url,
+                text=item.text,
+                time_created=item.time_created,
+                time_updated=item.time_updated,
+            )
+            for item in result.lessons
+        ]
+        artists = list(
+            set(
+                sorted(
+                    [
+                        UserReadPublic.model_validate(lesson.artist)
+                        for lesson in lessons
+                    ],
+                    key=lambda x: x.nickname,
+                )
+            )
+        )
+        return Lecture(
+            id=result.id,
+            title=result.title,
+            lessons=lessons,
+            artists=artists,
+            description=result.description,
+            length_sec=result.length_sec,
+            time_created=result.time_created,
+            time_updated=result.time_updated,
         )

@@ -29,4 +29,5 @@ class LectureService(BaseLectureService):
         return (lectures, pagination_meta)
 
     async def get_lecture_detail(self, lecture_id: int) -> Lecture:
-        return []
+        lecture = await self.lecture_repository.get_lecture(lecture_id)
+        return lecture
