@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 
-from app.models import Lecture
+from app.models import LectureInFetch, PaginationMeta
 
 
 class GetRecommendedLecuturesSchema(BaseModel):
-    data: list[Lecture]
+    data: list[LectureInFetch]
+    meta: PaginationMeta

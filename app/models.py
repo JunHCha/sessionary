@@ -10,6 +10,13 @@ class Base(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PaginationMeta(Base):
+    total_items: int
+    total_pages: int
+    curr_page: int
+    per_page: int
+
+
 class UserRead(schemas.BaseUser[uuid.UUID]):
     nickname: str
     email: str
@@ -74,6 +81,15 @@ class Lecture(Base):
     title: str
     artists: list[UserArtistInfo]
     lessons: list["Lesson"]
+    description: str
+    length_sec: int
+    time_created: datetime.datetime
+    time_updated: datetime.datetime
+
+
+class LectureInFetch(Base):
+    id: int
+    title: str
     description: str
     length_sec: int
     lecture_count: int

@@ -11,11 +11,12 @@ app_router = APIRouter()
 
 @app_router.get("", response_model=GetRecommendedLecuturesSchema)
 async def get_lectures(
-    artist_id: uuid.UUID | None = Query(None),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=10),
     lecture_svc: BaseLectureService = Depends(get_lecture_service),
 ):
-    results = await lecture_svc.get_recommended(artist_id=artist_id)
-    return GetRecommendedLecuturesSchema(data=results)
+    lectures, meta = await lecture_svc.get_recommended(page, per_page)
+    return GetRecommendedLecuturesSchema(data=lectures, meta=meta)
 
 
 @app_router.get("/{id}")
