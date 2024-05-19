@@ -5,7 +5,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.tables import Lecture, Lesson, User
+from app.db.tables import Lecture, LectureXLesson, Lesson, User
 
 
 @pytest.fixture
@@ -41,8 +41,8 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
             title=f"lecture{num - 9}",
             description=f"description{num - 9}",
             length_sec=0,
-            time_created=now,
-            time_updated=now,
+            time_created=now + datetime.timedelta(hours=num - 10),
+            time_updated=now + datetime.timedelta(hours=num - 10),
         )
         for num in range(10, 110)
     ]
@@ -55,6 +55,8 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
             sheetmusic_url=f"file://tab.lecture1-{num - 9}",
             video_url=f"https://video.lecture1-{num - 9}",
             text=f"leeson1-{num - 9} description",
+            time_created=now,
+            time_updated=now,
         )
         for num in range(10, 15)
     ] + [
@@ -66,18 +68,57 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
             sheetmusic_url=f"file://tab.lecture2-{num - 9}",
             video_url=f"https://video.lecture2-{num - 9}",
             text=f"leeson2-{num - 9} description",
+            time_created=now + datetime.timedelta(hours=1),
+            time_updated=now + datetime.timedelta(hours=1),
         )
+        for num in range(15, 20)
+    ]
+    lessons_ordering = [
+        LectureXLesson(lecture_id=10, lesson_id=num, ordering=num - 9)
+        for num in range(10, 15)
+    ] + [
+        LectureXLesson(lecture_id=11, lesson_id=num, ordering=num - 9)
         for num in range(15, 20)
     ]
 
     async with test_session.begin():
-        test_session.add_all([artist_1, artist_2] + lectures + lessons)
+        test_session.add_all(
+            [artist_1, artist_2] + lectures + lessons + lessons_ordering
+        )
     await test_session.commit()
 
 
 async def test_sut_fetch_recommended_lectures(client: AsyncClient, dummy_lectures):
-    assert True
+    # when
+    response = await client.get("/lectures")
+
+    # then
+    assert response.status_code == 200
+
+    content = response.json()
+    assert len(content["data"]) == 10
+    assert all(
+        content["data"][index].time_updated > content["data"][index + 1].time_updated
+        for index in range(9)
+    )
+    assert content["meta"] == {
+        "total_items": 100,
+        "total_pages": 5,
+        "curr_page": 1,
+        "per_page": 20,
+    }
 
 
-async def test_sut_fetch_lessons_in_lecture(client: AsyncClient, dummy_lectures):
-    assert True
+async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
+    # when
+    response = await client.get("/lectures/10")
+
+    # then
+    assert response.status_code == 200
+    content = response.json()
+    assert content["id"] == 10
+    assert content["title"] == "lecture1"
+    assert content["description"] == "description1"
+    assert [lesson.title for lesson in content["lessons"]] == [
+        f"lesson1-{num - 9}" for num in range(10, 15)
+    ]
