@@ -27,4 +27,4 @@ class LectureService(BaseLectureService):
         return []
 
     async def get_lecture_detail(self, lecture_id: int) -> Lecture:
-        raise []
+        return []
