@@ -5,7 +5,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.tables import Lecture, LectureXLesson, Lesson, User
+from app.db.tables import ArtistXLecture, Lecture, LectureXLesson, Lesson, User
 
 
 @pytest.fixture
@@ -80,11 +80,15 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
         LectureXLesson(lecture_id=11, lesson_id=num, ordering=num - 9)
         for num in range(15, 20)
     ]
+    artists_in_lectures = [
+        ArtistXLecture(artist_id=artist_1.id, lecture_id=10),
+        ArtistXLecture(artist_id=artist_2.id, lecture_id=11),
+    ]
 
     async with test_session.begin():
         test_session.add_all([artist_1, artist_2] + lectures)
         await test_session.flush()
-        test_session.add_all(lessons)
+        test_session.add_all(lessons + artists_in_lectures)
         await test_session.flush()
         test_session.add_all(lessons_ordering)
     await test_session.commit()

@@ -60,7 +60,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         lazy="subquery",
     )
     lectures: Mapped[List["Lecture"]] = relationship(
-        "Lecture", secondary="artist_x_lecture"
+        "Lecture", secondary="artist_x_lecture", back_populates="artists"
     )
     playlists: Mapped[List["Playlist"]] = relationship(
         "Playlist", back_populates="owner"
@@ -101,6 +101,13 @@ class Lecture(Base):
     )
 
     # for orm
+    artists: Mapped[List[User]] = relationship(
+        "User",
+        secondary="artist_x_lecture",
+        back_populates="lectures",
+        order_by="user.c.nickname",
+        lazy="joined",
+    )
     lessons: Mapped[List["Lesson"]] = relationship(
         "Lesson",
         secondary="lecture_x_lesson",

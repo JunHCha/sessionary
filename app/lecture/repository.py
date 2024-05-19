@@ -45,6 +45,7 @@ class LectureRepository(BaseLectureRepository):
                     .order_by(tb.Lecture.time_updated.desc())
                 )
             )
+            .unique()
             .scalars()
             .all()
         )
@@ -86,22 +87,11 @@ class LectureRepository(BaseLectureRepository):
             )
             for item in result.lessons
         ]
-        artists = list(
-            set(
-                sorted(
-                    [
-                        UserReadPublic.model_validate(lesson.artist)
-                        for lesson in lessons
-                    ],
-                    key=lambda x: x.nickname,
-                )
-            )
-        )
         return Lecture(
             id=result.id,
             title=result.title,
             lessons=lessons,
-            artists=artists,
+            artists=result.artists,
             description=result.description,
             length_sec=result.length_sec,
             time_created=result.time_created,
