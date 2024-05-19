@@ -82,23 +82,26 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
     ]
 
     async with test_session.begin():
-        test_session.add_all(
-            [artist_1, artist_2] + lectures + lessons + lessons_ordering
-        )
+        test_session.add_all([artist_1, artist_2] + lectures)
+        await test_session.flush()
+        test_session.add_all(lessons)
+        await test_session.flush()
+        test_session.add_all(lessons_ordering)
     await test_session.commit()
 
 
 async def test_sut_fetch_recommended_lectures(client: AsyncClient, dummy_lectures):
     # when
-    response = await client.get("/lectures")
+    response = await client.get("/lecture?page=1&per_page=20")
 
     # then
     assert response.status_code == 200
 
     content = response.json()
-    assert len(content["data"]) == 10
+    assert len(content["data"]) == 20
     assert all(
-        content["data"][index].time_updated > content["data"][index + 1].time_updated
+        content["data"][index]["time_updated"]
+        > content["data"][index + 1]["time_updated"]
         for index in range(9)
     )
     assert content["meta"] == {
@@ -111,7 +114,7 @@ async def test_sut_fetch_recommended_lectures(client: AsyncClient, dummy_lecture
 
 async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
     # when
-    response = await client.get("/lectures/10")
+    response = await client.get("/lecture/10")
 
     # then
     assert response.status_code == 200
