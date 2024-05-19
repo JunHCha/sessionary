@@ -119,9 +119,9 @@ async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
     # then
     assert response.status_code == 200
     content = response.json()
-    assert content["id"] == 10
-    assert content["title"] == "lecture1"
-    assert content["description"] == "description1"
-    assert [lesson.title for lesson in content["lessons"]] == [
+    assert content["data"]["id"] == 10
+    assert content["data"]["title"] == "lecture1"
+    assert content["data"]["description"] == "description1"
+    assert [lesson["title"] for lesson in content["data"]["lessons"]] == [
         f"lesson1-{num - 9}" for num in range(10, 15)
     ]
