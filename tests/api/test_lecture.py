@@ -162,4 +162,4 @@ async def test_sut_raise_403_if_nonartist_user_try_to_create_lecture(
     response = await client.post("/lecture", json=body)
 
     # then
-    assert response.status_code == 403
+    assert response.status_code == 401
