@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 
+from app.core.auth.access import artist_user
 from app.depends.service import get_lecture_service
 from app.lecture.schemas import (
     CreateLectureBody,
@@ -34,6 +35,7 @@ async def get_lecture(
 async def create_lecture(
     body: CreateLectureBody,
     lecture_svc: BaseLectureService = Depends(get_lecture_service),
+    user=Depends(artist_user),
 ):
     lecture = await lecture_svc.create_lecture(body.title, body.description)
     return GetLectureSchema(data=lecture)
