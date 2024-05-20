@@ -147,3 +147,19 @@ async def test_sut_create_lecture(authorized_client_artist: AsyncClient):
     assert content["data"]["title"] == "new lecture"
     assert content["data"]["description"] == "new lecture description"
     assert content["data"]["lessons"] == []
+
+
+async def test_sut_raise_403_if_nonartist_user_try_to_create_lecture(
+    client: AsyncClient, dummy_lectures
+):
+    # given
+    body = {
+        "title": "new lecture",
+        "description": "new lecture description",
+    }
+
+    # when
+    response = await client.post("/lecture", json=body)
+
+    # then
+    assert response.status_code == 403
