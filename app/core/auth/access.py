@@ -24,7 +24,7 @@ def subscribed_user(current_user: User = Depends(current_user)):
 
 
 def artist_user(current_user: User = Depends(current_user)):
-    if not current_user.is_artist:
+    if not (current_user.is_artist or current_user.is_superuser):
         raise HTTPException(status_code=403, detail="Forbidden")
     return current_user
 
