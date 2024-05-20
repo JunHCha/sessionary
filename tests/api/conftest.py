@@ -4,6 +4,7 @@ import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient, Headers
 from redis.asyncio import Redis
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
@@ -37,17 +38,18 @@ async def test_user(user_manager_stub: UserManager):
 
 
 @pytest.fixture
-async def test_artist(user_manager_stub: UserManager):
+async def test_artist(user_manager_stub: UserManager, test_session: AsyncSession):
     from fastapi_users.schemas import BaseUserCreate
 
     user_create = BaseUserCreate(
         email="artist@test.com",
         password="password",
-        is_artist=True,
         is_superuser=False,
         is_active=True,
     )
     user = await user_manager_stub.create(user_create)
+    user.is_artist = True
+    await test_session.flush()
 
     return user
 
