@@ -129,3 +129,23 @@ async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
     assert [lesson["title"] for lesson in content["data"]["lessons"]] == [
         f"lesson1-{num - 9}" for num in range(10, 15)
     ]
+
+
+async def test_sut_create_lecture(client: AsyncClient, dummy_lectures):
+    # given
+    body = {
+        "title": "new lecture",
+        "description": "new lecture description",
+        "length_sec": 1000,
+    }
+
+    # when
+    response = await client.post("/lecture", json=body)
+
+    # then
+    assert response.status_code == 201
+    content = response.json()
+    assert content["data"]["title"] == "new lecture"
+    assert content["data"]["description"] == "new lecture description"
+    assert content["data"]["length_sec"] == 1000
+    assert content["data"]["lecture_count"] == 0
