@@ -131,7 +131,7 @@ async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
     ]
 
 
-async def test_sut_create_lecture(client: AsyncClient, dummy_lectures):
+async def test_sut_create_lecture(authorized_client_artist: AsyncClient):
     # given
     body = {
         "title": "new lecture",
@@ -139,7 +139,7 @@ async def test_sut_create_lecture(client: AsyncClient, dummy_lectures):
     }
 
     # when
-    response = await client.post("/lecture", json=body)
+    response = await authorized_client_artist.post("/lecture", json=body)
 
     # then
     assert response.status_code == 201
