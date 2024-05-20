@@ -136,7 +136,6 @@ async def test_sut_create_lecture(client: AsyncClient, dummy_lectures):
     body = {
         "title": "new lecture",
         "description": "new lecture description",
-        "length_sec": 1000,
     }
 
     # when
@@ -147,5 +146,4 @@ async def test_sut_create_lecture(client: AsyncClient, dummy_lectures):
     content = response.json()
     assert content["data"]["title"] == "new lecture"
     assert content["data"]["description"] == "new lecture description"
-    assert content["data"]["length_sec"] == 1000
-    assert content["data"]["lecture_count"] == 0
+    assert content["data"]["lessons"] == []
