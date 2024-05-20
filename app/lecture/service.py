@@ -18,6 +18,10 @@ class BaseLectureService(abc.ABC):
     async def get_lecture_detail(self, lecture_id: int) -> Lecture:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    async def create_lecture(self, title: str, description: str) -> Lecture:
+        raise NotImplementedError
+
 
 class LectureService(BaseLectureService):
     async def get_recommended(
@@ -30,4 +34,8 @@ class LectureService(BaseLectureService):
 
     async def get_lecture_detail(self, lecture_id: int) -> Lecture:
         lecture = await self.lecture_repository.get_lecture(lecture_id)
+        return lecture
+
+    async def create_lecture(self, title: str, description: str) -> Lecture:
+        lecture = await self.lecture_repository.create_lecture(title, description)
         return lecture

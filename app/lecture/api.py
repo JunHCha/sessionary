@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, Query
 
 from app.depends.service import get_lecture_service
-from app.lecture.schemas import FetchRecommendedLecuturesSchema, GetLectureSchema
+from app.lecture.schemas import (
+    CreateLectureBody,
+    CreateLectureResponseSchema,
+    FetchRecommendedLecuturesSchema,
+    GetLectureSchema,
+)
 from app.lecture.service import BaseLectureService
 
 app_router = APIRouter()
@@ -22,4 +27,13 @@ async def get_lecture(
     lecture_id: int, lecture_svc: BaseLectureService = Depends(get_lecture_service)
 ):
     lecture = await lecture_svc.get_lecture_detail(lecture_id)
+    return GetLectureSchema(data=lecture)
+
+
+@app_router.post("", response_model=CreateLectureResponseSchema, status_code=201)
+async def create_lecture(
+    body: CreateLectureBody,
+    lecture_svc: BaseLectureService = Depends(get_lecture_service),
+):
+    lecture = await lecture_svc.create_lecture(body.title, body.description)
     return GetLectureSchema(data=lecture)

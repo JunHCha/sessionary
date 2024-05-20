@@ -28,6 +28,10 @@ class BaseLectureRepository(abc.ABC):
     async def get_lecture(self, lecture_id: int) -> Lecture:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    async def create_lecture(self, title: str, description: str) -> Lecture:
+        raise NotImplementedError
+
 
 class LectureRepository(BaseLectureRepository):
     async def fetch_lectures(
@@ -96,4 +100,19 @@ class LectureRepository(BaseLectureRepository):
             length_sec=result.length_sec,
             time_created=result.time_created,
             time_updated=result.time_updated,
+        )
+
+    async def create_lecture(self, title: str, description: str) -> Lecture:
+        new_lecture = tb.Lecture(title=title, description=description)
+        self.session.add(new_lecture)
+        await self.session.flush()
+        return Lecture(
+            id=new_lecture.id,
+            title=new_lecture.title,
+            lessons=[],
+            artists=[],
+            description=new_lecture.description,
+            length_sec=new_lecture.length_sec,
+            time_created=new_lecture.time_created,
+            time_updated=new_lecture.time_updated,
         )

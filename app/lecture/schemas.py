@@ -10,3 +10,12 @@ class FetchRecommendedLecuturesSchema(BaseModel):
 
 class GetLectureSchema(BaseModel):
     data: Lecture
+
+
+class CreateLectureBody(BaseModel):
+    title: str
+    description: str = "새로운 강의"
+
+
+class CreateLectureResponseSchema(GetLectureSchema):
+    pass
