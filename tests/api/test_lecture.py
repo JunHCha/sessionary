@@ -123,7 +123,27 @@ async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
     ]
 
 
-async def test_sut_create_lecture(authorized_client_artist: AsyncClient):
+async def test_sut_create_lecture(authorized_client_admin: AsyncClient):
+    # given
+    body = {
+        "title": "new lecture",
+        "description": "new lecture description",
+    }
+
+    # when
+    response = await authorized_client_admin.post("/lecture", json=body)
+
+    # then
+    assert response.status_code == 201
+    content = response.json()
+    assert content["data"]["title"] == "new lecture"
+    assert content["data"]["description"] == "new lecture description"
+    assert content["data"]["lessons"] == []
+
+
+async def test_sut_can_create_lecture_by_only_superuser(
+    authorized_client_artist: AsyncClient,
+):
     # given
     body = {
         "title": "new lecture",
@@ -134,24 +154,4 @@ async def test_sut_create_lecture(authorized_client_artist: AsyncClient):
     response = await authorized_client_artist.post("/lecture", json=body)
 
     # then
-    assert response.status_code == 201
-    content = response.json()
-    assert content["data"]["title"] == "new lecture"
-    assert content["data"]["description"] == "new lecture description"
-    assert content["data"]["lessons"] == []
-
-
-async def test_sut_raise_403_if_nonartist_user_try_to_create_lecture(
-    client: AsyncClient, dummy_lectures
-):
-    # given
-    body = {
-        "title": "new lecture",
-        "description": "new lecture description",
-    }
-
-    # when
-    response = await client.post("/lecture", json=body)
-
-    # then
-    assert response.status_code == 401
+    assert response.status_code == 403
