@@ -5,7 +5,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.tables import ArtistXLecture, Lecture, LectureXLesson, Lesson, User
+from app.db.tables import Lecture, Lesson, User
 
 
 @pytest.fixture
@@ -38,6 +38,7 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
     lectures = [
         Lecture(
             id=num,
+            artist_id=artist_1.id if num == 10 else artist_2.id,
             title=f"lecture{num - 9}",
             description=f"description{num - 9}",
             length_sec=0,
@@ -54,7 +55,9 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
             lecture_id=10,
             sheetmusic_url=f"file://tab.lecture1-{num - 9}",
             video_url=f"https://video.lecture1-{num - 9}",
+            length_sec=60,
             text=f"leeson1-{num - 9} description",
+            lecture_ordering=num - 10,
             time_created=now,
             time_updated=now,
         )
@@ -67,30 +70,19 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
             lecture_id=11,
             sheetmusic_url=f"file://tab.lecture2-{num - 9}",
             video_url=f"https://video.lecture2-{num - 9}",
+            length_sec=60,
             text=f"leeson2-{num - 9} description",
+            lecture_ordering=num - 15,
             time_created=now + datetime.timedelta(hours=1),
             time_updated=now + datetime.timedelta(hours=1),
         )
         for num in range(15, 20)
     ]
-    lessons_ordering = [
-        LectureXLesson(lecture_id=10, lesson_id=num, ordering=num - 9)
-        for num in range(10, 15)
-    ] + [
-        LectureXLesson(lecture_id=11, lesson_id=num, ordering=num - 9)
-        for num in range(15, 20)
-    ]
-    artists_in_lectures = [
-        ArtistXLecture(artist_id=artist_1.id, lecture_id=10),
-        ArtistXLecture(artist_id=artist_2.id, lecture_id=11),
-    ]
 
     async with test_session.begin():
         test_session.add_all([artist_1, artist_2] + lectures)
         await test_session.flush()
-        test_session.add_all(lessons + artists_in_lectures)
-        await test_session.flush()
-        test_session.add_all(lessons_ordering)
+        test_session.add_all(lessons)
     await test_session.commit()
 
 

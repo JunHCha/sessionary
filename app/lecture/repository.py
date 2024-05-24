@@ -5,13 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.db import tables as tb
-from app.models import (
-    Lecture,
-    LectureInFetch,
-    LessonInLecture,
-    PaginationMeta,
-    UserReadPublic,
-)
+from app.models import Lecture, LectureInFetch, LessonInLecture, PaginationMeta
 
 
 class BaseLectureRepository(abc.ABC):
@@ -69,7 +63,7 @@ class LectureRepository(BaseLectureRepository):
                 await self.session.execute(
                     select(tb.Lecture)
                     .options(
-                        joinedload(tb.Lecture.lessons).joinedload(tb.Lesson.artist)
+                        joinedload(tb.Lecture.artist), joinedload(tb.Lecture.lessons)
                     )
                     .filter(tb.Lecture.id == lecture_id)
                 )
@@ -81,11 +75,8 @@ class LectureRepository(BaseLectureRepository):
             LessonInLecture(
                 id=item.id,
                 title=item.title,
-                lecture=item.lecture,
-                artist=UserReadPublic.model_validate(item.artist),
-                sheetmusic_url=item.sheetmusic_url,
-                video_url=item.video_url,
-                text=item.text,
+                length_sec=item.length_sec,
+                lecture_ordering=item.lecture_ordering,
                 time_created=item.time_created,
                 time_updated=item.time_updated,
             )
@@ -95,7 +86,7 @@ class LectureRepository(BaseLectureRepository):
             id=result.id,
             title=result.title,
             lessons=lessons,
-            artists=result.artists,
+            artist=result.artist,
             description=result.description,
             length_sec=result.length_sec,
             time_created=result.time_created,
@@ -109,8 +100,8 @@ class LectureRepository(BaseLectureRepository):
         return Lecture(
             id=new_lecture.id,
             title=new_lecture.title,
+            artist=None,
             lessons=[],
-            artists=[],
             description=new_lecture.description,
             length_sec=new_lecture.length_sec,
             time_created=new_lecture.time_created,

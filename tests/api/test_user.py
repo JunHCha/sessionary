@@ -7,7 +7,7 @@ from httpx import AsyncClient
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.tables import ArtistXLecture, Lecture, Subscription, User, UserXSubscription
+from app.db.tables import Lecture, Subscription, User, UserXSubscription
 
 pytestmark = pytest.mark.asyncio
 
@@ -30,6 +30,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
     )
     lecture_1_1 = Lecture(
         id=11,
+        artist_id=artist_1.id,
         title="lecture1-1",
         description="description1",
         length_sec=0,
@@ -38,16 +39,13 @@ async def dummy_users(test_session: AsyncSession) -> None:
     )
     lecture_1_2 = Lecture(
         id=12,
+        artist_id=artist_1.id,
         title="lecture1-2",
         description="description1",
         length_sec=0,
         time_created=datetime.datetime.now(),
         time_updated=datetime.datetime.now(),
     )
-    artist_lecture_associations = [
-        ArtistXLecture(artist_id=artist_1.id, lecture_id=lecture_1_1.id),
-        ArtistXLecture(artist_id=artist_1.id, lecture_id=lecture_1_2.id),
-    ]
     artist_2 = User(
         id=uuid.uuid4(),
         subscription_id=None,
@@ -97,9 +95,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
         )
     await test_session.commit()
     async with test_session.begin():
-        test_session.add_all(
-            artist_lecture_associations + [subscription_1, user_x_subscription_1]
-        )
+        test_session.add_all([subscription_1, user_x_subscription_1])
     await test_session.commit()
 
 

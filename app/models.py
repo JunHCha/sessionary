@@ -79,7 +79,7 @@ class Subscription(Base):
 class Lecture(Base):
     id: int
     title: str
-    artists: list[UserReadPublic]
+    artist: UserReadPublic | None
     lessons: list["LessonInLecture"]
     description: str
     length_sec: int
@@ -109,10 +109,7 @@ class Playlist(Base):
 class LessonInLecture(Base):
     id: int
     title: str
-    lecture: LectureInFetch
-    artist: UserReadPublic
-    sheetmusic_url: str
-    video_url: str
-    text: str
+    length_sec: int
+    lecture_ordering: int
     time_created: datetime.datetime
     time_updated: datetime.datetime
