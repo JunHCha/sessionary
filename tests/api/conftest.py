@@ -28,7 +28,6 @@ async def test_user(user_manager_stub: UserManager):
     user_create = BaseUserCreate(
         email="test@test.com",
         password="password",
-        is_artist=False,
         is_superuser=False,
         is_active=True,
     )
@@ -61,7 +60,6 @@ async def test_admin(user_manager_stub: UserManager):
     user_create = BaseUserCreate(
         email="admin@test.com",
         password="password",
-        is_artist=False,
         is_superuser=True,
         is_active=True,
     )
