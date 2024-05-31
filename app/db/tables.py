@@ -49,7 +49,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 
     # for orm
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
-        "OAuthAccount", lazy="joined"
+        "OAuthAccount", lazy="subquery"
     )
     subscription: Mapped["Subscription"] = relationship(
         "Subscription",
@@ -59,9 +59,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         back_populates="subscribers",
         lazy="subquery",
     )
-    lectures: Mapped[List["Lecture"]] = relationship(
-        "Lecture", secondary="artist_x_lecture", back_populates="artists"
-    )
+    lectures: Mapped[List["Lecture"]] = relationship("Lecture", back_populates="artist")
     playlists: Mapped[List["Playlist"]] = relationship(
         "Playlist", back_populates="owner"
     )
@@ -91,6 +89,9 @@ class Subscription(Base):
 
 class Lecture(Base):
     id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    artist_id: Mapped[uuid.UUID] = Column(
+        UUID, ForeignKey("user.id", name="lecture_user_fkey"), nullable=True
+    )
     title: Mapped[str] = Column(String, nullable=False)
     description: Mapped[str] = Column(String, nullable=False)
     length_sec: Mapped[int] = Column(Integer, default=0, nullable=False)
@@ -101,11 +102,13 @@ class Lecture(Base):
     )
 
     # for orm
-    artists: Mapped[List[User]] = relationship(
-        "User", secondary="artist_x_lecture", back_populates="lectures"
-    )
+    artist: Mapped[User] = relationship("User", back_populates="lectures")
     lessons: Mapped[List["Lesson"]] = relationship(
-        "Lesson", secondary="lecture_x_lesson", back_populates="lectures"
+        "Lesson",
+        back_populates="lecture",
+        uselist=True,
+        order_by="lesson.c.lecture_ordering",
+        lazy="selectin",
     )
 
     __tablename__ = "lecture"
@@ -141,9 +144,14 @@ class Lesson(Base):
     artist_id: Mapped[uuid.UUID] = mapped_column(
         UUID, ForeignKey("user.id"), nullable=False
     )
+    lecture_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("lecture.id", name="lesson_lecture_fkey")
+    )
+    length_sec: Mapped[int] = mapped_column(Integer, nullable=False)
     sheetmusic_url: Mapped[str] = mapped_column(String)
     video_url: Mapped[str] = mapped_column(String)
     text: Mapped[str] = mapped_column(String)
+    lecture_ordering: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     time_created: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now()
     )
@@ -152,11 +160,12 @@ class Lesson(Base):
     )
 
     # for orm
-    lectures: Mapped[List[Lecture]] = relationship(
-        "Lecture", secondary="lecture_x_lesson", back_populates="lessons"
-    )
+    lecture: Mapped[Lecture] = relationship("Lecture", back_populates="lessons")
     playlists: Mapped[List[Playlist]] = relationship(
-        "Playlist", secondary="playlist_x_lesson", back_populates="lessons"
+        "Playlist",
+        secondary="playlist_x_lesson",
+        back_populates="lessons",
+        lazy="selectin",
     )
     artist: Mapped[User] = relationship("User", back_populates="lessons")
 
@@ -171,22 +180,6 @@ class UserXSubscription(Base):
     )
 
     __tablename__ = "user_x_subscription"
-
-
-class ArtistXLecture(Base):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    artist_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
-    lecture_id: Mapped[int] = mapped_column(Integer, ForeignKey("lecture.id"))
-
-    __tablename__ = "artist_x_lecture"
-
-
-class LectureXLesson(Base):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    lecture_id: Mapped[int] = mapped_column(Integer, ForeignKey("lecture.id"))
-    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey("lesson.id"))
-
-    __tablename__ = "lecture_x_lesson"
 
 
 class PlaylistXLesson(Base):

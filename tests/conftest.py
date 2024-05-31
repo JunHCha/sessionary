@@ -10,8 +10,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
-from app.core.settings import get_app_settings
 from app.db.session import SessionManager
+from app.depends.settings import get_app_settings
 
 
 @pytest.fixture(scope="session")
@@ -85,7 +85,7 @@ async def auth_redis() -> AsyncGenerator[Redis, None]:
 
 @pytest.fixture
 async def app(test_session) -> FastAPI:
-    from app.db.dependency import get_user_db
+    from app.depends.auth import get_user_db
     from app.main import get_application
 
     app = get_application()
@@ -99,10 +99,9 @@ async def user_manager_stub(app, test_session: AsyncSession):
     from fastapi_users import exceptions
     from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
-    from app.core.auth.dependancy import get_user_manager
     from app.core.auth.manager import UserManager
-    from app.db.dependency import get_user_db
     from app.db.tables import User
+    from app.depends.auth import get_user_db, get_user_manager
 
     class StubUserManager(UserManager):
         async def authenticate(

@@ -1,10 +1,8 @@
 import abc
 from typing import List
 
-from fastapi import Depends
-
-from app.user.models import UserArtistInfo
-from app.user.repository import BaseUserRepository, get_user_repository
+from app.models import UserArtistInfo
+from app.user.repository import BaseUserRepository
 
 
 class BaseUserService(abc.ABC):
@@ -20,7 +18,3 @@ class UserService(BaseUserService):
     async def get_artists(self) -> list[UserArtistInfo]:
         results = await self.user_repository.get_artists()
         return results
-
-
-def get_user_service(repository=Depends(get_user_repository)):
-    return UserService(repository=repository)

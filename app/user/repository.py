@@ -1,13 +1,11 @@
 import abc
 
-from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, lazyload
 
+from app import models
 from app.db import tables as tb
-from app.db.dependency import get_session
-from app.user import models
 
 
 class BaseUserRepository(abc.ABC):
@@ -45,7 +43,3 @@ class UserRepository(BaseUserRepository):
             )
             for row in results
         ]
-
-
-def get_user_repository(session=Depends(get_session)) -> BaseUserRepository:
-    return UserRepository(session=session)
