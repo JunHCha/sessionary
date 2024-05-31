@@ -97,6 +97,7 @@ class LectureRepository(BaseLectureRepository):
         new_lecture = tb.Lecture(title=title, description=description)
         self.session.add(new_lecture)
         await self.session.flush()
+        await self.session.commit()
         return Lecture(
             id=new_lecture.id,
             title=new_lecture.title,
