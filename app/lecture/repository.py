@@ -38,7 +38,7 @@ class LectureRepository(BaseLectureRepository):
             (
                 await self.session.execute(
                     select(tb.Lecture)
-                    .offset(page * per_page)
+                    .offset((page - 1) * per_page)
                     .limit(per_page)
                     .order_by(tb.Lecture.time_updated.desc())
                 )
