@@ -123,7 +123,9 @@ async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
     ]
 
 
-async def test_sut_create_lecture(authorized_client_admin: AsyncClient):
+async def test_sut_create_lecture(
+    authorized_client_admin: AsyncClient, client: AsyncClient
+):
     # given
     body = {
         "title": "new lecture",
@@ -139,6 +141,16 @@ async def test_sut_create_lecture(authorized_client_admin: AsyncClient):
     assert content["data"]["title"] == "new lecture"
     assert content["data"]["description"] == "new lecture description"
     assert content["data"]["lessons"] == []
+
+    fetch_response = await client.get("/lecture?page=1&per_page=20")
+    fetch_content = fetch_response.json()
+    assert len(fetch_content["data"]) == 1
+    assert fetch_content["meta"] == {
+        "total_items": 1,
+        "total_pages": 1,
+        "curr_page": 1,
+        "per_page": 20,
+    }
 
 
 async def test_sut_can_create_lecture_by_only_superuser(
