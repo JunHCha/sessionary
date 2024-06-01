@@ -1,0 +1,10 @@
+# python
+.python-version
+.pytest_cache
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache
+
+.env
+.env.dev

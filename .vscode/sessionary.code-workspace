@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "✨ root",
+			"path": ".."
+		},
+		{
+			"name": "🚋 sessionary-backend",
+			"path": "../backend",
+		},
+		{
+			"name": "🚀 sessionary-frontend",
+			"path": "../frontend"
+		}
+	],
+	"settings": {}
+}
