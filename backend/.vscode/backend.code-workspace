@@ -2,7 +2,7 @@
     "folders": [
         {
             "name": "🚋 sessionary-backend",
-            "path": "../backend",
+            "path": "..",
         },
     ],
     "settings": {
