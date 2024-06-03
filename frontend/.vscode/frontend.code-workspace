@@ -1,0 +1,11 @@
+{
+    "folders": [
+        {
+            "name": "🚀 sessionary-frontend",
+            "path": ".."
+        },
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+    }
+}
