@@ -15,7 +15,7 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: echo $(pwd) && npm ci
       - name: Install Playwright Browsers
         working-directory: ./frontend
         run: npx playwright install --with-deps
