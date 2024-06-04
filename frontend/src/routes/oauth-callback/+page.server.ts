@@ -1,7 +1,6 @@
 import type { Load } from '@sveltejs/kit';
 
 export const load: Load = async ({ url }) => {
-	console.log('curr url:', url);
 	const code = url.searchParams.get('code');
 	const state = url.searchParams.get('state');
 	const error = url.searchParams.get('error');

@@ -29,7 +29,6 @@
 
 		try {
 			const response = await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({ code, state });
-			console.log('Callback response:', response);
 			const { access_token } = response;
 
 			if (typeof window !== 'undefined') {
