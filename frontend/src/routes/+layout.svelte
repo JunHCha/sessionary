@@ -1,59 +1,76 @@
 <script>
-  import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { writable } from 'svelte/store';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
-  let isAuthenticated = writable(false);
+	let isAuthenticated = false;
 
-  onMount(() => {
-    // 초기 로그인 상태 확인
-    isAuthenticated.set(localStorage.getItem('authenticated') === 'true');
+	function checkAuthentication() {
+		const token = localStorage.getItem('satk');
+		const user = localStorage.getItem('me');
+		if (token && user) {
+			try {
+				const parsedUser = JSON.parse(user);
+				if (parsedUser && parsedUser.id) {
+					isAuthenticated = true;
+				} else {
+					handleLogout();
+				}
+			} catch (error) {
+				console.error('Token validation error:', error);
+				handleLogout();
+			}
+		} else {
+			handleLogout();
+		}
+	}
 
-    // 페이지 로딩 후 클라이언트에서 네비게이션 처리
-    if (window.location.pathname !== '/login' && !localStorage.getItem('authenticated')) {
-      goto('/login');
-    }
-  });
+	function handleLogout() {
+		localStorage.removeItem('satk');
+		localStorage.removeItem('me');
+		isAuthenticated = false;
+		goto('/login');
+	}
 
-  function handleLogout() {
-    localStorage.removeItem('authenticated');
-    isAuthenticated.set(false);
-    goto('/login');
-  }
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			checkAuthentication();
+		}
+	});
 </script>
 
 <main>
-  <nav>
-    <button on:click={() => goto('/home')}>로고</button>
-    <button on:click={() => goto('/menu01')}>메뉴01</button>
-    <button on:click={() => goto('/menu02')}>메뉴02</button>
-    <button on:click={() => goto('/menu03')}>메뉴03</button>
-    {#if $isAuthenticated}
-      <button on:click={handleLogout}>로그아웃</button>
-    {:else}
-      <button on:click={() => goto('/login')}>로그인 / 회원가입</button>
-    {/if}
-  </nav>
-  <slot />
+	<nav>
+		<button on:click={() => goto('/home')}>로고</button>
+		<button on:click={() => goto('/menu01')}>메뉴01</button>
+		<button on:click={() => goto('/menu02')}>메뉴02</button>
+		<button on:click={() => goto('/menu03')}>메뉴03</button>
+		{#if isAuthenticated}
+			<button on:click={handleLogout}>로그아웃</button>
+		{:else}
+			<button on:click={() => goto('/login')}>로그인 / 회원가입</button>
+		{/if}
+	</nav>
+	<slot />
 </main>
 
 <style>
-  nav {
-    display: flex;
-    gap: 1rem;
-    background-color: #f0f0f0;
-    padding: 1rem;
-  }
+	nav {
+		display: flex;
+		gap: 1rem;
+		background-color: #f0f0f0;
+		padding: 1rem;
+	}
 
-  button {
-    background-color: #e0e0e0;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
+	button {
+		background-color: #e0e0e0;
+		border: none;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+	}
 
-  main {
-    background-color: lavender;
-    min-height: 100vh;
-  }
+	main {
+		background-color: lavender;
+		min-height: 100vh;
+	}
 </style>
