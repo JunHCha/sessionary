@@ -24,7 +24,7 @@
 
 <main>
   <nav>
-    <button on:click={() => goto('/')}>로고</button>
+    <button on:click={() => goto('/home')}>로고</button>
     <button on:click={() => goto('/menu01')}>메뉴01</button>
     <button on:click={() => goto('/menu02')}>메뉴02</button>
     <button on:click={() => goto('/menu03')}>메뉴03</button>
