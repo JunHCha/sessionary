@@ -12,7 +12,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"generate-client": "openapi-ts --input http://localhost:8000/openapi.json --output ./src/lib/client --client axios"
 	},
 	"devDependencies": {
 		"@hey-api/openapi-ts": "^0.46.3",
