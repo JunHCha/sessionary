@@ -46,6 +46,7 @@ class AuthBackend:
         return self.components.get_oauth_router(
             auth_backend.google_oauth_client,
             auth_backend.auth_backend,
+            redirect_url="http://localhost:5173/oauth-callback",
             state_secret="SECRET",  # TODO: 정확한 사용법을 확인 후 수정
             associate_by_email=True,
         )
