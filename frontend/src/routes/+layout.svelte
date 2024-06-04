@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
   import { writable } from 'svelte/store';
 
   let isAuthenticated = writable(false);
@@ -11,7 +10,7 @@
     isAuthenticated.set(localStorage.getItem('authenticated') === 'true');
 
     // 페이지 로딩 후 클라이언트에서 네비게이션 처리
-    $: if ($page.url.pathname !== '/login' && !$isAuthenticated) {
+    if (window.location.pathname !== '/login' && !localStorage.getItem('authenticated')) {
       goto('/login');
     }
   });
