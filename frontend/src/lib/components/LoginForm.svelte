@@ -1,9 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet } from '$lib/client/services.gen';
-	import { OpenAPI } from '$lib/client';
-
-	OpenAPI.BASE = 'http://localhost:8000';
 
 	const dispatch = createEventDispatcher();
 
