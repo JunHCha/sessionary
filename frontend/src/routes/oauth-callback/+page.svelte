@@ -1,26 +1,20 @@
 <script lang="ts">
-	import { OpenAPI } from '$lib/client';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { isAuthenticated } from '$lib/stores/auth';
 	import {
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
 		usersCurrentUserUserMeGet
 	} from '$lib/client/services.gen';
 
-	OpenAPI.BASE = 'http://localhost:8000';
-	OpenAPI.interceptors.request.use((request) => {
-		request.headers['Authorization'] = `Bearer ${localStorage.getItem('satk')}`;
-		// TODO: fix type
-
-		return request;
-	});
-
-	export let data: any;
-	let code = data.props.code;
-	let state = data.props.state;
-	let error = data.props.error;
+	export let data: {
+		props: { code: string | undefined; state: string | undefined; error: string | undefined };
+	}; // data의 타입을 명시
 
 	onMount(async () => {
+		let code = data.props.code;
+		let state = data.props.state;
+		let error = data.props.error;
 		if (error) {
 			console.error('OAuth2 error:', error);
 			goto('/login');
@@ -28,15 +22,18 @@
 		}
 
 		try {
-			const response = await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({ code, state });
-			const { access_token } = response;
+			const response = (await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({
+				code,
+				state
+			})) as { access_token: string; token_type: string };
+			const access_token = response.access_token;
 
 			if (typeof window !== 'undefined') {
 				localStorage.setItem('satk', access_token);
 
-				// 토큰 유효성 검증 및 사용자 정보 가져오기
 				const userResponse = await usersCurrentUserUserMeGet();
 				localStorage.setItem('me', JSON.stringify(userResponse));
+				isAuthenticated.set(true); // 인증 상태 업데이트
 
 				goto('/home');
 			}

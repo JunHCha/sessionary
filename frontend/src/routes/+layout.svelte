@@ -1,9 +1,22 @@
+<script context="module">
+	import { isAuthenticated } from '$lib/stores/auth';
+</script>
+
 <script>
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { OpenAPI } from '$lib/client';
 
-	let isAuthenticated = false;
+	OpenAPI.BASE = 'http://localhost:8000';
+	OpenAPI.interceptors.request.use((request) => {
+		let token = localStorage.getItem('satk');
+		if (token) {
+			request.headers = request.headers ?? {};
+			request.headers['Authorization'] = `Bearer ${token}`;
+		}
+
+		return request;
+	});
 
 	function checkAuthentication() {
 		const token = localStorage.getItem('satk');
@@ -12,7 +25,7 @@
 			try {
 				const parsedUser = JSON.parse(user);
 				if (parsedUser && parsedUser.id) {
-					isAuthenticated = true;
+					isAuthenticated.set(true); // 로그인 상태로 설정
 				} else {
 					handleLogout();
 				}
@@ -28,7 +41,7 @@
 	function handleLogout() {
 		localStorage.removeItem('satk');
 		localStorage.removeItem('me');
-		isAuthenticated = false;
+		isAuthenticated.set(false); // 로그아웃 상태로 설정
 		goto('/login');
 	}
 
@@ -45,7 +58,8 @@
 		<button on:click={() => goto('/menu01')}>메뉴01</button>
 		<button on:click={() => goto('/menu02')}>메뉴02</button>
 		<button on:click={() => goto('/menu03')}>메뉴03</button>
-		{#if isAuthenticated}
+		{#if $isAuthenticated}
+			<!-- $ 표시를 통해 store를 읽어옴 -->
 			<button on:click={handleLogout}>로그아웃</button>
 		{:else}
 			<button on:click={() => goto('/login')}>로그인 / 회원가입</button>
