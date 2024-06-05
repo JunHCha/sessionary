@@ -8,8 +8,8 @@
 	} from '$lib/client/services.gen';
 
 	export let data: {
-		props: { code: string | undefined; state: string | undefined; error: string | undefined };
-	}; // data의 타입을 명시
+		props: { code?: string; state?: string; error?: string };
+	};
 
 	onMount(async () => {
 		let code = data.props.code;
