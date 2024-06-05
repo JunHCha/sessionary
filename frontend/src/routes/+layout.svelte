@@ -6,8 +6,9 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { OpenAPI } from '$lib/client';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
-	OpenAPI.BASE = 'http://localhost:8000';
+	OpenAPI.BASE = PUBLIC_API_BASE_URL;
 	OpenAPI.interceptors.request.use((request) => {
 		let token = localStorage.getItem('satk');
 		if (token) {
