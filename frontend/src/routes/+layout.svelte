@@ -30,7 +30,7 @@
 		localStorage.removeItem('satk');
 		localStorage.removeItem('me');
 		isAuthenticated.set(false); // 로그아웃 상태로 설정
-		goto('/home');
+		goto('/login');
 	}
 
 	onMount(() => {
