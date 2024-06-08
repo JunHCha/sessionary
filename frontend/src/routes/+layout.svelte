@@ -22,28 +22,15 @@
 	function checkAuthentication() {
 		const token = localStorage.getItem('satk');
 		const user = localStorage.getItem('me');
-		if (token && user) {
-			try {
-				const parsedUser = JSON.parse(user);
-				if (parsedUser && parsedUser.id) {
-					isAuthenticated.set(true); // 로그인 상태로 설정
-				} else {
-					handleLogout();
-				}
-			} catch (error) {
-				console.error('Token validation error:', error);
-				handleLogout();
-			}
-		} else {
-			handleLogout();
-		}
+		if (token && user) isAuthenticated.set(true);
+		else isAuthenticated.set(false);
 	}
 
 	function handleLogout() {
 		localStorage.removeItem('satk');
 		localStorage.removeItem('me');
 		isAuthenticated.set(false); // 로그아웃 상태로 설정
-		goto('/login');
+		goto('/home');
 	}
 
 	onMount(() => {
