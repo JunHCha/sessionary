@@ -32,6 +32,7 @@ class AuthBackend:
         self.google_oauth_client = GoogleOAuth2(
             self.google_client_id, self.google_client_secret
         )
+        self.google_oauth_redirect_url = settings.google_oauth_redirect_url
 
         self.components = FastAPIUsers[User, uuid.UUID](
             get_user_manager, [self.auth_backend]
