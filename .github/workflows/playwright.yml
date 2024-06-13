@@ -14,18 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 21.7.3
+
       - name: Install dependencies
         working-directory: ./frontend
-        run: yarn install --frozen-lockfile
+        run: npm i -g yarn &&  yarn install --frozen-lockfile
+
       - name: Install Playwright Browsers
         working-directory: ./frontend
-        run: yarn playwright install --with-deps
+        run: npx playwright install --with-deps
+
       - name: Run Playwright tests
+        env:
+          PUBLIC_API_BASE_URL: ""
         working-directory: ./frontend
-        run: npx playwright test
+        run: npx playwright test --trace on
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
