@@ -32,6 +32,7 @@ class AuthBackend:
         self.google_oauth_client = GoogleOAuth2(
             self.google_client_id, self.google_client_secret
         )
+        self.google_oauth_redirect_url = settings.google_oauth_redirect_url
 
         self.components = FastAPIUsers[User, uuid.UUID](
             get_user_manager, [self.auth_backend]
@@ -46,6 +47,7 @@ class AuthBackend:
         return self.components.get_oauth_router(
             auth_backend.google_oauth_client,
             auth_backend.auth_backend,
+            redirect_url="http://localhost:5173/oauth-callback",
             state_secret="SECRET",  # TODO: 정확한 사용법을 확인 후 수정
             associate_by_email=True,
         )

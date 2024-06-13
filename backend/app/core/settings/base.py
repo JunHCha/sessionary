@@ -61,6 +61,7 @@ class AppSettings(BaseAppSettings):
     # OAuth2
     google_client_id: str = "GOOGLE_CLIENT_ID"
     google_client_secret: str = "GOOGLE_CLIENT_SECRET"
+    google_oauth_redirect_url: str = ""
 
     # Logging
     logging_level: int = logging.INFO
