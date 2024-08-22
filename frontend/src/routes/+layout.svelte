@@ -1,14 +1,21 @@
-<script context="module">
-	import { isAuthenticated } from '$lib/stores/auth';
+<script context="module" lang="ts">
+	import { isAuthenticated } from '$lib/stores/auth'
+	export const load = async ({ data }: import('./$types').LayoutServerLoad) => {
+		return data
+	}
 </script>
 
-<script>
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { OpenAPI } from '$lib/client';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+<script lang="ts">
+	export let data: {
+		env: {
+			PUBLIC_API_BASE_URL: string
+		}
+	}
+	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
+	import { OpenAPI } from '$lib/client'
 
-	OpenAPI.BASE = PUBLIC_API_BASE_URL;
+	OpenAPI.BASE = data.env.PUBLIC_API_BASE_URL
 	OpenAPI.interceptors.request.use((request) => {
 		let token = localStorage.getItem('satk');
 		if (token) {
