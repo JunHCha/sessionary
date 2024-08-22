@@ -3,11 +3,13 @@ from typing import Dict
 
 from app.core.settings.base import AppEnv, AppSettings, BaseAppSettings
 from app.core.settings.development import DevAppSettings
+from app.core.settings.staging import StagingAppSettings
 from app.core.settings.test import TestAppSettings
 
 environments: Dict[AppEnv, AppSettings] = {
-    AppEnv.dev: DevAppSettings,
     AppEnv.test: TestAppSettings,
+    AppEnv.dev: DevAppSettings,
+    AppEnv.staging: StagingAppSettings,
     AppEnv.prod: AppSettings,
 }
 
