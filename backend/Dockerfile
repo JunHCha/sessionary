@@ -11,7 +11,6 @@ ENV PYTHONHASHSEED=random \
     POETRY_VIRTUALENVS_CREATE=false
 WORKDIR /workspace
 ENV PATH=$POETRY_HOME/bin:$PATH
-EXPOSE 8000
 
 FROM base as packages
 COPY ./pyproject.toml ./
@@ -26,9 +25,9 @@ COPY --from=packages /usr/local/bin /usr/local/bin
 COPY --from=packages /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 EXPOSE 80
 
-FROM base as prod
+FROM base as staging
 COPY --from=packages /usr/local/bin /usr/local/bin
 COPY --from=packages /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY . ./
-EXPOSE 80
-CMD uvicorn --host 0.0.0.0 app.main:app
+EXPOSE 10080
+ENTRYPOINT ./dev-scripts/run-staging.sh
