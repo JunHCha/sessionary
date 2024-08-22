@@ -32,7 +32,7 @@ class AuthBackend:
         self.google_oauth_client = GoogleOAuth2(
             self.google_client_id, self.google_client_secret
         )
-        self.google_oauth_redirect_url = settings.google_oauth_redirect_url
+        self.google_oauth_redirect_uri = settings.google_oauth_redirect_uri
 
         self.components = FastAPIUsers[User, uuid.UUID](
             get_user_manager, [self.auth_backend]
@@ -45,9 +45,9 @@ class AuthBackend:
     @property
     def oauth_router(self) -> APIRouter:
         return self.components.get_oauth_router(
-            auth_backend.google_oauth_client,
-            auth_backend.auth_backend,
-            redirect_url="http://localhost:5173/oauth-callback",
+            self.google_oauth_client,
+            self.auth_backend,
+            redirect_url=self.google_oauth_redirect_uri,
             state_secret="SECRET",  # TODO: 정확한 사용법을 확인 후 수정
             associate_by_email=True,
         )
@@ -64,7 +64,8 @@ class AuthBackend:
 
     def get_redis_strategy(self) -> RedisStrategy:
         redis_client = redis.asyncio.from_url(
-            self.auth_redis_url, decode_responses=True
+            self.auth_redis_url,
+            decode_responses=True,
         )
         return CustomRedisStrategy(
             redis=redis_client,
