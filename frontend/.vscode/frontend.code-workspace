@@ -8,8 +8,14 @@
     "settings": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true,
-        "[svelte]": {
-            "editor.defaultFormatter": "svelte.svelte-vscode"
-        },
+        "svelte.plugin.typescript.enable": true,
+        "svelte.plugin.svelte.enable": true,
+        "svelte.plugin.css.enable": true,
+        "svelte.plugin.html.enable": true,
+        "svelte.plugin.jsdoc.enable": true,
+        "svelte.plugin.json.enable": true,
+        "svelte.plugin.prettier.enable": true,
+        "svelte.plugin.svelte.format.enable": true,
+        "svelte.enable-ts-plugin": true
     }
 }
