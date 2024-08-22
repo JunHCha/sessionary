@@ -13,6 +13,7 @@ from app.core.logging import InterceptHandler
 class AppEnv(Enum):
     prod: str = "prod"
     dev: str = "dev"
+    staging: str = "staging"
     test: str = "test"
 
 
@@ -61,7 +62,7 @@ class AppSettings(BaseAppSettings):
     # OAuth2
     google_client_id: str = "GOOGLE_CLIENT_ID"
     google_client_secret: str = "GOOGLE_CLIENT_SECRET"
-    google_oauth_redirect_url: str = ""
+    google_oauth_redirect_uri: str = ""
 
     # Logging
     logging_level: int = logging.INFO
