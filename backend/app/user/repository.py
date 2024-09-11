@@ -26,6 +26,8 @@ class UserRepository(BaseUserRepository):
                     .options(
                         joinedload(tb.User.lectures),
                         lazyload(tb.User.oauth_accounts),
+                        lazyload(tb.User.subscription),
+                        lazyload(tb.User.lessons),
                     )
                     .filter(tb.User.is_artist.is_(True))
                 )
