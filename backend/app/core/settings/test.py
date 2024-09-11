@@ -10,7 +10,7 @@ class TestAppSettings(AppSettings):
     debug: bool = True
 
     # PostgreSQL DB
-    database_url: str = "sqlite+aiosqlite:///:memory:"
+    database_url: str = "sqlite+aiosqlite:///./test.db"
 
     max_connection_count: int = 2
     min_connection_count: int = 2
