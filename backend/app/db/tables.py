@@ -38,7 +38,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     is_artist: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     experienced: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     subscription_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID, ForeignKey("subscription.id"), nullable=True
+        UUID,
+        ForeignKey("subscription.id", name="user_subscription_fkey"),
+        nullable=True,
     )
     time_created: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now()
@@ -52,14 +54,11 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         "OAuthAccount", lazy="subquery"
     )
     subscription: Mapped["Subscription"] = relationship(
-        "Subscription",
-        secondary="user_x_subscription",
-        secondaryjoin="and_(user_x_subscription.c.subscription_id == subscription.c.id,"
-        "subscription.c.is_active == True)",
-        back_populates="subscribers",
-        lazy="subquery",
+        "Subscription", back_populates="subscribers", lazy="subquery"
     )
-    lectures: Mapped[List["Lecture"]] = relationship("Lecture", back_populates="artist")
+    lectures: Mapped[List["Lecture"]] = relationship(
+        "Lecture", uselist=True, back_populates="artist"
+    )
     playlists: Mapped[List["Playlist"]] = relationship(
         "Playlist", back_populates="owner"
     )
