@@ -5,7 +5,8 @@ from typing import AsyncGenerator
 import pytest
 from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
-from redis.asyncio import Redis
+from fastapi_users import exceptions
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_scoped_session,
@@ -13,9 +14,12 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from app.core.auth.manager import UserManager
 from app.core.settings.base import AppSettings
+from app.db import tables
 from app.db.session import SessionManager
-from app.db.tables import Base
+from app.depends.auth import get_user_db, get_user_manager
+from app.depends.db import get_session
 from app.depends.settings import get_app_settings
 
 pytestmark = pytest.mark.asyncio(scope="session")
@@ -54,23 +58,26 @@ def stub_sess_manager(setup_env) -> SessionManager:
 async def setup_test_database(stub_sess_manager):
     engine = stub_sess_manager.engine
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(tables.Base.metadata.create_all)
     yield
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(tables.Base.metadata.drop_all)
 
 
 @pytest.fixture(autouse=True)
 async def migrate_table_schemas(stub_sess_manager: SessionManager):
-    from app.db.tables import Base
 
     async with stub_sess_manager.engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(tables.Base.metadata.create_all)
+
+    async with stub_sess_manager.async_session() as session:
+        await session.execute(text("PRAGMA foreign_keys=ON"))
+        await session.commit()
 
     yield
 
     async with stub_sess_manager.engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(tables.Base.metadata.drop_all)
 
 
 @pytest.fixture
@@ -91,8 +98,6 @@ async def auth_redis() -> AsyncGenerator[Redis, None]:
 
 @pytest.fixture
 async def app(stub_sess_manager) -> FastAPI:
-    from app.depends.auth import get_user_db
-    from app.depends.db import get_session
     from app.main import get_application
 
     async def override_get_session():
@@ -100,7 +105,6 @@ async def app(stub_sess_manager) -> FastAPI:
             yield session
 
     app = get_application()
-    app.dependency_overrides[get_user_db] = override_get_session
     app.dependency_overrides[get_session] = override_get_session
     return app
 
@@ -108,17 +112,10 @@ async def app(stub_sess_manager) -> FastAPI:
 @pytest.fixture
 async def user_manager_stub(app, test_session: AsyncSession):
 
-    from fastapi_users import exceptions
-    from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
-
-    from app.core.auth.manager import UserManager
-    from app.db.tables import User
-    from app.depends.auth import get_user_db, get_user_manager
-
     class StubUserManager(UserManager):
         async def authenticate(
             self, credentials: OAuth2PasswordRequestForm
-        ) -> User | None:
+        ) -> tables.User | None:
             try:
                 user = await self.get_by_email(credentials.username)
             except exceptions.UserNotExists:
@@ -130,5 +127,5 @@ async def user_manager_stub(app, test_session: AsyncSession):
 
     app.dependency_overrides[get_user_manager] = get_test_user_manager
 
-    test_user_db = SQLAlchemyUserDatabase(test_session, User, None)
+    test_user_db = SQLAlchemyUserDatabase(test_session, tables.User, None)
     return StubUserManager(user_db=test_user_db)
