@@ -4,10 +4,10 @@ import uuid
 import orjson
 import pytest
 from httpx import AsyncClient
-from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.tables import Lecture, Subscription, User, UserXSubscription
+from tests.mock.redis_mock import RedisMock
 
 pytestmark = pytest.mark.asyncio
 
@@ -108,7 +108,7 @@ async def test_sut_create_subscription_when_register_user(test_user):
 
 
 async def test_sut_create_auth_session_when_login(
-    client: AsyncClient, auth_redis: Redis, test_user
+    client: AsyncClient, auth_redis: RedisMock, test_user
 ) -> None:
 
     # when

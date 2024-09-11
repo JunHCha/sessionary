@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import exceptions
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_scoped_session,
@@ -21,6 +22,7 @@ from app.db.session import SessionManager
 from app.depends.auth import get_user_db, get_user_manager
 from app.depends.db import get_session
 from app.depends.settings import get_app_settings
+from tests.mock.redis_mock import RedisMock
 
 pytestmark = pytest.mark.asyncio(scope="session")
 
@@ -87,13 +89,10 @@ async def test_session(stub_sess_manager) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest.fixture
-async def auth_redis() -> AsyncGenerator[Redis, None]:
-    settings = get_app_settings()
-    auth_redis = Redis.from_url(
-        settings.auth_redis_url, decode_responses=True, socket_timeout=1
-    )
-    yield auth_redis
-    await auth_redis.flushdb()
+async def auth_redis() -> AsyncGenerator[RedisMock, None]:
+    redis_mock = RedisMock()
+    yield redis_mock
+    await redis_mock.flushdb()
 
 
 @pytest.fixture

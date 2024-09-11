@@ -8,12 +8,13 @@ from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.manager import BaseUserManager
 
 from app.models import AuthSessionSchema, Subscription
+from tests.mock.redis_mock import RedisMock
 
 
 class CustomRedisStrategy(RedisStrategy):
     def __init__(
         self,
-        redis: redis.asyncio.Redis,
+        redis: redis.asyncio.Redis | RedisMock,
         lifetime_seconds: Optional[int] = None,
         *,
         key_prefix: str = "fastapi_users_token:",

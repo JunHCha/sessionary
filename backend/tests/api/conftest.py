@@ -3,12 +3,12 @@ from typing import AsyncGenerator
 import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient, Headers
-from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
 from app.models import Subscription
+from tests.mock.redis_mock import RedisMock
 
 
 @pytest.fixture
@@ -70,7 +70,7 @@ async def test_admin(user_manager_stub: UserManager):
 
 @pytest.fixture
 async def authorized_client(
-    client: AsyncClient, auth_redis: Redis, test_user
+    client: AsyncClient, auth_redis: RedisMock, test_user
 ) -> AsyncGenerator[AsyncClient, None]:
     await auth_redis.set(
         "auth-session-id:SESSIONTOKEN",
@@ -93,7 +93,7 @@ async def authorized_client(
 
 @pytest.fixture
 async def authorized_client_artist(
-    client: AsyncClient, auth_redis: Redis, test_artist
+    client: AsyncClient, auth_redis: RedisMock, test_artist
 ) -> AsyncGenerator[AsyncClient, None]:
     await auth_redis.set(
         "auth-session-id:SESSIONTOKEN_ARTIST",
@@ -116,7 +116,7 @@ async def authorized_client_artist(
 
 @pytest.fixture
 async def authorized_client_admin(
-    client: AsyncClient, auth_redis: Redis, test_admin
+    client: AsyncClient, auth_redis: RedisMock, test_admin
 ) -> AsyncGenerator[AsyncClient, None]:
     await auth_redis.set(
         "auth-session-id:SESSIONTOKEN_ADMIN",

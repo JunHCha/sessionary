@@ -8,15 +8,17 @@ from fastapi_users.authentication.strategy import RedisStrategy
 from httpx_oauth.clients.google import GoogleOAuth2
 
 from app.core.auth.strategy import CustomRedisStrategy
-from app.core.settings.base import AppSettings
+from app.core.settings.base import AppEnv, AppSettings
 from app.db.tables import User
 from app.depends.auth import get_user_manager
 from app.depends.settings import get_app_settings
 from app.models import UserRead, UserUpdate
+from tests.mock.redis_mock import RedisMock
 
 
 class AuthBackend:
     def __init__(self, settings: AppSettings) -> None:
+        self.app_env = settings.app_env
         self.bearer_transport = BearerTransport(tokenUrl="/user/auth/login")
         self.auth_session_age = settings.auth_session_expire_seconds
 
@@ -63,10 +65,13 @@ class AuthBackend:
         )
 
     def get_redis_strategy(self) -> RedisStrategy:
-        redis_client = redis.asyncio.from_url(
-            self.auth_redis_url,
-            decode_responses=True,
-        )
+        if self.app_env == AppEnv.test:
+            redis_client = RedisMock()
+        else:
+            redis_client = redis.asyncio.from_url(
+                self.auth_redis_url,
+                decode_responses=True,
+            )
         return CustomRedisStrategy(
             redis=redis_client,
             lifetime_seconds=self.auth_session_age,
