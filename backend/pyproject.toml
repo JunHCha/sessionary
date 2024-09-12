@@ -33,6 +33,7 @@ mypy = "^1.4.1"
 minversion = "7.0"
 testpaths = ["tests"]
 addopts = ['--asyncio-mode=auto']
+pythonpath = ["."]
 
 [build-system]
 requires = ["poetry-core"]
