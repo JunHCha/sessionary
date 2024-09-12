@@ -70,10 +70,6 @@ async def migrate_table_schemas(stub_sess_manager: SessionManager):
     async with stub_sess_manager.engine.begin() as conn:
         await conn.run_sync(tables.Base.metadata.create_all)
 
-    async with stub_sess_manager.async_session() as session:
-        await session.execute(text("PRAGMA foreign_keys=ON"))
-        await session.commit()
-
     yield
 
     async with stub_sess_manager.engine.begin() as conn:
