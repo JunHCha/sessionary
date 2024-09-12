@@ -1,9 +1,7 @@
 name: Frontend Tests
 on:
-  push:
-    paths:
-      - "frontend/**"
   pull_request:
+    types: [opened, reopened, synchronize]
     paths:
       - "frontend/**"
 jobs:

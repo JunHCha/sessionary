@@ -1,9 +1,7 @@
 name: Backend Test
 on:
-  push:
-    paths:
-      - "backend/**"
   pull_request:
+    types: [opened, reopened, synchronize]
     paths:
       - "backend/**"
 
@@ -39,4 +37,4 @@ jobs:
 
       - name: Run the tests
         working-directory: ./backend
-        run: poetry run pytest -v
+        run: poetry run pytest -v tests
