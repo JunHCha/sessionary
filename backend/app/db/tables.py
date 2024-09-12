@@ -32,6 +32,7 @@ def random_nickname():
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
+    id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4())
     nickname: Mapped[str] = mapped_column(
         String, default=random_nickname, unique=True, nullable=False
     )
