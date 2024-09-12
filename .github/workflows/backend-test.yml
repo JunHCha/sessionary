@@ -1,0 +1,34 @@
+name: Backend Test
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - "backend/**"
+
+jobs:
+  be-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: Setup a local virtual environment
+        working-directory: ./backend
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+
+      - name: Install the dependencies
+        working-directory: ./backend
+        run: poetry install
+
+      - name: Run the tests
+        working-directory: ./backend
+        run: poetry run pytest -v tests
