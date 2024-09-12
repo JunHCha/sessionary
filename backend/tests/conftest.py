@@ -24,8 +24,6 @@ from app.depends.db import get_session
 from app.depends.settings import get_app_settings
 from tests.mock.redis_mock import RedisMock
 
-pytestmark = pytest.mark.asyncio(scope="session")
-
 
 @pytest.fixture(scope="session")
 def setup_env():
