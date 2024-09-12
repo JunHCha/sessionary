@@ -1,15 +1,13 @@
-name: Playwright Tests
+name: Frontend Tests
 on:
   push:
-    branches: [main]
     paths:
       - "frontend/**"
   pull_request:
-    branches: [main]
     paths:
       - "frontend/**"
 jobs:
-  test:
+  fe-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
