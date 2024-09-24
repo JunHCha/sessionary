@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "sessionary-backend-server"
-package-mode = false
 description = ""
 authors = ["junhcha <quffl9612@naver.com>"]
 readme = "README.md"
+version = "0.0.1"
+include = ["app", "tests"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
