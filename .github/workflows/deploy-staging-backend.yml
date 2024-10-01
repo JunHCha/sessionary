@@ -1,0 +1,25 @@
+name: Deploy Staging Backend Server
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - "infra/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Fly.io
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        env:
+          api-token: ${{ secrets.FLY_API_TOKEN_BACKEND }}
+
+      - name: Deploy to Fly.io
+        run: ./infra/scripts/deploy-staging-backend.sh
