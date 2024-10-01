@@ -1,4 +1,4 @@
-name: Code Review
+name: Review codes of the PR
 
 permissions:
   contents: read
@@ -16,9 +16,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          # optional
           LANGUAGE: Korean
           OPENAI_API_ENDPOINT: https://api.openai.com/v1
-          MODEL: gpt-3.5-turbo
-          PROMPT: "내가 작성한 코드에서 버그 가능성이 있거나 개선할 점을 알려줘. 없으면 내 코드의 좋은 점을 써줘."
-          temperature: 0.8
+          MODEL: gpt-4o
+          temperature: 0.3

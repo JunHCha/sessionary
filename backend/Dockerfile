@@ -18,7 +18,7 @@ COPY ./poetry.lock ./
 RUN apt-get update -y && \ 
     apt-get install wget build-essential git vim -y
 RUN curl -sSL https://install.python-poetry.org | python3 -
-RUN poetry install --no-interaction --no-ansi --without dev
+RUN poetry install --no-root --no-interaction --no-ansi --without dev
 
 FROM base as dev
 COPY --from=packages /usr/local/bin /usr/local/bin

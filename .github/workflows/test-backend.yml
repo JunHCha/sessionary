@@ -1,4 +1,4 @@
-name: Backend Test
+name: Run Backend Tests
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -27,7 +27,7 @@ jobs:
 
       - name: Install the dependencies
         working-directory: ./backend
-        run: poetry install
+        run: poetry install --no-root --without dev
 
       - name: Run the tests
         working-directory: ./backend
