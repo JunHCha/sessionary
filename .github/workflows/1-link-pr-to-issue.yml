@@ -34,7 +34,7 @@ jobs:
                 issue_number: parseInt(issueNumber)
               });
 
-              const updatedBody = `${issue.data.body || ''}\n\n---\n\nLinked PR: #${prNumber}\nPR URL: ${prUrl}`;
+              const updatedBody = `${issue.data.body || ''}\n\n- [ ] #${prNumber}`;
 
               await github.rest.issues.update({
                 owner: context.repo.owner,
