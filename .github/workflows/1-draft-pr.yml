@@ -1,32 +1,54 @@
-name: Convert to Draft PR
+name: Create Draft PR from Issue
 
 on:
-  pull_request:
-    types: [opened, reopened]
+  create:
 
 jobs:
-  convert-to-draft:
+  create-draft-pr:
     runs-on: ubuntu-latest
+    if: github.event.ref_type == 'branch'
     permissions:
+      issues: read
       pull-requests: write
-      contents: read
+      contents: write
     steps:
-      - name: Enable debug logging
-        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - uses: actions/github-script@v6
+      - name: Create Draft PR
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log('Context:', JSON.stringify(context, null, 2));
+            const branchName = context.ref.replace('refs/heads/', '');
+            const issueNumber = branchName.split('-')[0];
+
+            console.log('Branch created:', branchName);
+            console.log('Associated issue number:', issueNumber);
+
             try {
-              const result = await github.rest.pulls.update({
+              const { data: issue } = await github.rest.issues.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: context.issue.number,
+                issue_number: issueNumber
+              });
+              
+              const prTitle = `Draft: ${issue.title}`;
+              const prBody = `Resolves #${issueNumber}\n\n${issue.body || ''}`;
+              
+              const { data: pr } = await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: prTitle,
+                body: prBody,
+                head: branchName,
+                base: 'main',
                 draft: true
               });
-              console.log('API Response:', JSON.stringify(result, null, 2));
+              
+              console.log('Draft PR created:', pr.html_url);
             } catch (error) {
               console.error('Error:', error);
               core.setFailed(error.message);
