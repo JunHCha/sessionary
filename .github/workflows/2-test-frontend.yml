@@ -1,13 +1,14 @@
 name: Run Frontend Tests
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [ready_for_review, synchronize]
     paths:
       - "frontend/**"
 jobs:
   fe-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v4
 
