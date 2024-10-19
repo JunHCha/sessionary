@@ -30,12 +30,15 @@ jobs:
             }
 
             try {
-              // Get project cards associated with the issue
-              const { data: cards } = await github.rest.issues.listProjectCards({
-                issue_number: issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo
+              // Get all project cards and filter for the current issue
+              const { data: allCards } = await github.rest.projects.listCards({
+                archive_state: 'not_archived'
               });
+              
+              const cards = allCards.filter(card => 
+                card.content_url && 
+                card.content_url.endsWith(`/issues/${issue.number}`)
+              );
               
               for (const card of cards) {
                 const { data: project } = await github.rest.projects.getColumn({
