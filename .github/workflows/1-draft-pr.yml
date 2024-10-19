@@ -7,6 +7,8 @@ on:
 jobs:
   convert-to-draft:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/github-script@v6
         with:
