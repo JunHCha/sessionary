@@ -17,9 +17,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create empty commit if branch is empty
+      - name: Create empty commit if no new commits
         run: |
-          if [ -z "$(git log -1 --pretty=%H)" ]; then
+          if [ $(git rev-list --count main..${{ github.ref_name }}) -eq 0 ]; then
             git config user.name "GitHub Actions"
             git config user.email "actions@github.com"
             git commit --allow-empty -m "Initial commit for draft PR"
