@@ -40,7 +40,7 @@ jobs:
                 return;
               }
 
-              const updatedBody = `${issue.data.body || ''}\n\n- [ ] #${prNumber}`;
+              const updatedBody = `${issue.data.body || ''}\n- [ ] #${prNumber}`;
 
               await github.rest.issues.update({
                 owner: context.repo.owner,
