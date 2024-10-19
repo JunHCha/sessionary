@@ -11,13 +11,23 @@ jobs:
       pull-requests: write
       contents: read
     steps:
+      - name: Enable debug logging
+        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+
       - uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              draft: true
-            })
+            console.log('Context:', JSON.stringify(context, null, 2));
+            try {
+              const result = await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                draft: true
+              });
+              console.log('API Response:', JSON.stringify(result, null, 2));
+            } catch (error) {
+              console.error('Error:', error);
+              core.setFailed(error.message);
+            }
