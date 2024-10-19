@@ -2,7 +2,7 @@ name: Link PR to Issue
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [ready_for_review]
 
 permissions:
   issues: write
@@ -33,6 +33,12 @@ jobs:
                 repo: context.repo.repo,
                 issue_number: parseInt(issueNumber)
               });
+
+              // Check if the PR is already mentioned in the issue body
+              if (issue.data.body && issue.data.body.includes(`#${prNumber}`)) {
+                console.log(`PR #${prNumber} is already linked to Issue #${issueNumber}`);
+                return;
+              }
 
               const updatedBody = `${issue.data.body || ''}\n\n- [ ] #${prNumber}`;
 

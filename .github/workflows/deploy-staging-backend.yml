@@ -7,7 +7,6 @@ on:
     paths:
       - "backend/**"
       - "infra/**"
-      - ".github/**"
 
 jobs:
   deploy:

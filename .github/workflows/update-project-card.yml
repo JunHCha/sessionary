@@ -21,21 +21,39 @@ jobs:
             const today = new Date().toISOString().split('T')[0];
 
             try {
-              // Get projects associated with the issue
-              const { data: projects } = await github.rest.issues.listProjectsForIssue({
+              // Get project items (cards) associated with the issue
+              const query = `query($owner:String!, $repo:String!, $number:Int!) {
+                repository(owner:$owner, name:$repo) {
+                  issue(number:$number) {
+                    projectItems(first:20) {
+                      nodes {
+                        id
+                        project {
+                          number
+                        }
+                      }
+                    }
+                  }
+                }
+              }`;
+
+              const variables = {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: issue.number
-              });
+                number: issue.number
+              };
 
-              for (const project of projects) {
-                // Update the start date and team for each project
+              const result = await github.graphql(query, variables);
+              const projectItems = result.repository.issue.projectItems.nodes;
+
+              for (const item of projectItems) {
+                // Update the start date and team for each project item
                 await github.rest.projects.updateCard({
-                  card_id: project.id,
+                  card_id: item.id,
                   archived: false,
                   note: `Start Date: ${today}\nTeam: ⚒️ Tech`
                 });
-                console.log(`Updated start date to ${today} and set team to Tech for project ${project.name}`);
+                console.log(`Updated start date to ${today} and set team to Tech for project ${item.project.number}`);
               }
             } catch (error) {
               console.error('Error updating project start date and team:', error);
@@ -58,17 +76,35 @@ jobs:
             const today = new Date().toISOString().split('T')[0];
 
             try {
-              // Get projects associated with the issue
-              const { data: projects } = await github.rest.issues.listProjectsForIssue({
+              // Get project items (cards) associated with the issue
+              const query = `query($owner:String!, $repo:String!, $number:Int!) {
+                repository(owner:$owner, name:$repo) {
+                  issue(number:$number) {
+                    projectItems(first:20) {
+                      nodes {
+                        id
+                        project {
+                          number
+                        }
+                      }
+                    }
+                  }
+                }
+              }`;
+
+              const variables = {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: issue.number
-              });
+                number: issue.number
+              };
 
-              for (const project of projects) {
+              const result = await github.graphql(query, variables);
+              const projectItems = result.repository.issue.projectItems.nodes;
+
+              for (const item of projectItems) {
                 // Get current card data
                 const { data: card } = await github.rest.projects.getCard({
-                  card_id: project.id
+                  card_id: item.id
                 });
 
                 // Parse existing note
@@ -94,11 +130,11 @@ jobs:
 
                 // Update the card with the new note
                 await github.rest.projects.updateCard({
-                  card_id: project.id,
+                  card_id: item.id,
                   archived: false,
                   note: updatedNote
                 });
-                console.log(`Updated end date to ${today} for project ${project.name}`);
+                console.log(`Updated end date to ${today} for project ${item.project.number}`);
               }
             } catch (error) {
               console.error('Error updating project end date:', error);

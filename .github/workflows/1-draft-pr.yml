@@ -17,6 +17,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create empty commit if branch is empty
+        run: |
+          if [ -z "$(git log -1 --pretty=%H)" ]; then
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git commit --allow-empty -m "Initial commit for draft PR"
+            git push origin ${{ github.ref }}
+          fi
+
       - name: Create Draft PR
         uses: actions/github-script@v7
         with:
@@ -35,8 +44,8 @@ jobs:
                 issue_number: issueNumber
               });
               
-              const prTitle = `Draft: ${issue.title}`;
-              const prBody = `Resolves #${issueNumber}\n\n${issue.body || ''}`;
+              const prTitle = `${issue.title}`;
+              const prBody = `이 PR은 #${issueNumber} 이슈를 해결하기 위한 작업입니다.`;
               
               const { data: pr } = await github.rest.pulls.create({
                 owner: context.repo.owner,
