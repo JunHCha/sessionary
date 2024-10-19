@@ -1,0 +1,106 @@
+name: Update Project Card
+
+on:
+  issues:
+    types: [opened, closed]
+
+jobs:
+  update-project-on-issue-open:
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      repository-projects: write
+    steps:
+      - name: Update Project Start Date and Team
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issue = context.payload.issue;
+            const today = new Date().toISOString().split('T')[0];
+
+            try {
+              // Get projects associated with the issue
+              const { data: projects } = await github.rest.issues.listProjectsForIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number
+              });
+
+              for (const project of projects) {
+                // Update the start date and team for each project
+                await github.rest.projects.updateCard({
+                  card_id: project.id,
+                  archived: false,
+                  note: `Start Date: ${today}\nTeam: ⚒️ Tech`
+                });
+                console.log(`Updated start date to ${today} and set team to Tech for project ${project.name}`);
+              }
+            } catch (error) {
+              console.error('Error updating project start date and team:', error);
+              core.setFailed(error.message);
+            }
+
+  update-project-on-issue-close:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      repository-projects: write
+    steps:
+      - name: Update Project End Date
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issue = context.payload.issue;
+            const today = new Date().toISOString().split('T')[0];
+
+            try {
+              // Get projects associated with the issue
+              const { data: projects } = await github.rest.issues.listProjectsForIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number
+              });
+
+              for (const project of projects) {
+                // Get current card data
+                const { data: card } = await github.rest.projects.getCard({
+                  card_id: project.id
+                });
+
+                // Parse existing note
+                const lines = card.note.split('\n');
+                let updatedLines = [];
+                let endDateUpdated = false;
+
+                for (const line of lines) {
+                  if (line.startsWith('End Date:')) {
+                    updatedLines.push(`End Date: ${today}`);
+                    endDateUpdated = true;
+                  } else {
+                    updatedLines.push(line);
+                  }
+                }
+
+                // If End Date wasn't in the existing note, add it
+                if (!endDateUpdated) {
+                  updatedLines.push(`End Date: ${today}`);
+                }
+
+                const updatedNote = updatedLines.join('\n');
+
+                // Update the card with the new note
+                await github.rest.projects.updateCard({
+                  card_id: project.id,
+                  archived: false,
+                  note: updatedNote
+                });
+                console.log(`Updated end date to ${today} for project ${project.name}`);
+              }
+            } catch (error) {
+              console.error('Error updating project end date:', error);
+              core.setFailed(error.message);
+            }

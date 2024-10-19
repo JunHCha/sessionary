@@ -6,11 +6,12 @@ permissions:
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [ready_for_review, synchronize]
 
 jobs:
   review:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
       - uses: anc95/ChatGPT-CodeReview@main
         env:

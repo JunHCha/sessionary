@@ -1,0 +1,49 @@
+name: Link PR to Issue
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  link-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Link PR to Issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const issueNumber = branchName.split('-')[0];
+
+            if (isNaN(issueNumber)) {
+              console.log('Could not extract issue number from branch name');
+              return;
+            }
+
+            const prNumber = context.payload.pull_request.number;
+            const prUrl = context.payload.pull_request.html_url;
+            try {
+              const issue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parseInt(issueNumber)
+              });
+
+              const updatedBody = `${issue.data.body || ''}\n\n- [ ] #${prNumber}`;
+
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parseInt(issueNumber),
+                body: updatedBody
+              });
+
+              console.log(`Successfully linked PR #${prNumber} to Issue #${issueNumber}`);
+            } catch (error) {
+              console.error('Error linking PR to Issue:', error);
+            }
