@@ -6,6 +6,8 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict
 
+from app.lesson.models import LessonInLecture
+
 
 class Base(BaseModel):
     model_config = ConfigDict(from_attributes=True, frozen=True)
@@ -14,7 +16,7 @@ class Base(BaseModel):
 class Lecture(Base):
     id: int
     title: str
-    artist: ArtistInfo | None
+    artist: ArtistInfoInLecture | None
     lessons: List[LessonInLecture]
     description: str
     length_sec: int
@@ -22,7 +24,7 @@ class Lecture(Base):
     time_updated: datetime.datetime
 
 
-class ArtistInfo(Base):
+class ArtistInfoInLecture(Base):
     id: uuid.UUID
     nickname: str
     is_artist: bool
@@ -34,15 +36,6 @@ class LectureInFetch(Base):
     description: str
     length_sec: int
     lecture_count: int
-    time_created: datetime.datetime
-    time_updated: datetime.datetime
-
-
-class LessonInLecture(Base):
-    id: int
-    title: str
-    length_sec: int
-    lecture_ordering: int
     time_created: datetime.datetime
     time_updated: datetime.datetime
 
@@ -60,7 +53,7 @@ class LectureForArtistView(Base):
 class Playlist(Base):
     id: int
     title: str
-    owner: ArtistInfo
+    owner: ArtistInfoInLecture
     lessons: list[LessonInLecture]
     time_created: datetime.datetime
     time_updated: datetime.datetime
