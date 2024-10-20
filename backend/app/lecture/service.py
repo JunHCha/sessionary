@@ -1,7 +1,7 @@
 import abc
 
+from app.lecture.models import Lecture, LectureInFetch, PaginationMeta
 from app.lecture.repository import BaseLectureRepository
-from app.models import Lecture, LectureInFetch, PaginationMeta
 
 
 class BaseLectureService(abc.ABC):

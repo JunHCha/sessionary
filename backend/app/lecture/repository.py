@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.db import tables as tb
-from app.models import Lecture, LectureInFetch, LessonInLecture, PaginationMeta
+from app.lecture.models import Lecture, LectureInFetch, LessonInLecture, PaginationMeta
 
 
 class BaseLectureRepository(abc.ABC):
