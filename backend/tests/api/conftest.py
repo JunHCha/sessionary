@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
-from app.models import Subscription
+from app.user.models import Subscription
 from tests.mock.redis_mock import RedisMock
 
 

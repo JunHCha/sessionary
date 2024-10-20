@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import datetime
+import uuid
+from typing import List
 
 from pydantic import BaseModel, ConfigDict
-
-from app.models import UserRead, UserReadPublic
 
 
 class Base(BaseModel):
@@ -12,12 +14,18 @@ class Base(BaseModel):
 class Lecture(Base):
     id: int
     title: str
-    artist: UserReadPublic | None
-    lessons: list["LessonInLecture"]
+    artist: ArtistInfo | None
+    lessons: List[LessonInLecture]
     description: str
     length_sec: int
     time_created: datetime.datetime
     time_updated: datetime.datetime
+
+
+class ArtistInfo(Base):
+    id: uuid.UUID
+    nickname: str
+    is_artist: bool
 
 
 class LectureInFetch(Base):
@@ -39,11 +47,21 @@ class LessonInLecture(Base):
     time_updated: datetime.datetime
 
 
+class LectureForArtistView(Base):
+    id: int
+    title: str
+    description: str
+    length_sec: int
+    lecture_count: int
+    time_created: datetime.datetime
+    time_updated: datetime.datetime
+
+
 class Playlist(Base):
     id: int
     title: str
-    owner: UserRead
-    lessons: list["LessonInLecture"]
+    owner: ArtistInfo
+    lessons: list[LessonInLecture]
     time_created: datetime.datetime
     time_updated: datetime.datetime
 
