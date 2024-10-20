@@ -27,17 +27,7 @@ class ArtistInfoInLecture(Base):
     is_artist: bool
 
 
-class LectureInFetch(Base):
-    id: int
-    title: str
-    description: str
-    length_sec: int
-    lecture_count: int
-    time_created: datetime.datetime
-    time_updated: datetime.datetime
-
-
-class LectureForArtistView(Base):
+class LectureList(Base):
     id: int
     title: str
     description: str
@@ -64,7 +54,7 @@ class PaginationMeta(Base):
 
 
 class FetchRecommendedLecuturesSchema(BaseModel):
-    data: list[LectureInFetch]
+    data: list[LectureList]
     meta: PaginationMeta
 
 
