@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 
 from app.core.auth.access import superuser
 from app.depends.service import get_lecture_service
-from app.lecture.schemas import (
+from app.lecture.models import (
     CreateLectureBody,
     CreateLectureResponseSchema,
     FetchRecommendedLecuturesSchema,
