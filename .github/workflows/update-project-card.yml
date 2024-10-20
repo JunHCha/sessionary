@@ -1,62 +1,81 @@
-name: Update Project Card
+name: Update Project Card Dates
 
 on:
   issues:
     types: [opened, closed]
 
 jobs:
-  update-project:
+  update-project-dates:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      contents: read
     steps:
-      - name: Update Project Fields
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const issue = context.payload.issue;
-            const today = new Date().toISOString().split('T')[0];
-            const isOpened = context.payload.action === 'opened';
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            async function updateProjectField(projectId, itemId, fieldId, value) {
-              await github.rest.projects.updateProjectCard({
-                project_id: projectId,
-                card_id: itemId,
-                archived: false,
-                note: JSON.stringify({ [fieldId]: value })
-              });
-            }
+      - name: Set Start or End Date
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          PROJECT_ID: ${{ secrets.SESSIONARY_PROJECT_ID }}
+          FIELD_ID_START: ${{ secrets.START_DATE_FIELD_ID }}
+          FIELD_ID_END: ${{ secrets.END_DATE_FIELD_ID }}
+        run: |
+          DATE_VALUE=$(date -u +"%Y-%m-%d")
+          ISSUE_ID=${{ github.event.issue.node_id }}
 
-            try {
-              // Get all project cards and filter for the current issue
-              const { data: allCards } = await github.rest.projects.listCards({
-                archive_state: 'not_archived'
-              });
-              
-              const cards = allCards.filter(card => 
-                card.content_url && 
-                card.content_url.endsWith(`/issues/${issue.number}`)
-              );
-              
-              for (const card of cards) {
-                const { data: project } = await github.rest.projects.getColumn({
-                  column_id: card.column_id
-                });
-                
-                if (isOpened) {
-                  await updateProjectField(project.project_id, card.id, 'Start Date', today);
-                  console.log(`Updated Start Date to ${today} for project ${project.project_id}`);
-                  
-                  await updateProjectField(project.project_id, card.id, 'Team', '⚒️ Tech');
-                  console.log(`Set Team to Tech for project ${project.project_id}`);
-                } else {
-                  await updateProjectField(project.project_id, card.id, 'End Date', today);
-                  console.log(`Updated End Date to ${today} for project ${project.project_id}`);
+          # Query to find the project card ID for the issue
+          QUERY=$(cat <<EOF
+          query {
+            node(id: "$PROJECT_ID") {
+              ... on ProjectV2 {
+                items(first: 100) {
+                  nodes {
+                    id
+                    content {
+                      ... on Issue {
+                        id
+                      }
+                    }
+                  }
                 }
               }
-            } catch (error) {
-              console.error('Error updating project fields:', error);
-              core.setFailed(error.message);
             }
+          }
+          EOF
+          )
+
+          # Escape the JSON string properly
+          JSON_QUERY=$(echo "$QUERY" | jq -Rs .)
+
+          RESPONSE=$(curl -s -X POST -H "Authorization: bearer $GITHUB_TOKEN" -H "Content-Type: application/json" \
+          -d "{\"query\": $JSON_QUERY}" https://api.github.com/graphql)
+
+          # Extract the project card ID for the issue
+          ITEM_ID=$(echo "$RESPONSE" | jq -r ".data.node.items.nodes[] | select(.content.id == \"$ISSUE_ID\") | .id")
+
+          if [ -z "$ITEM_ID" ]; then
+            echo "Project card ID not found for issue $ISSUE_ID"
+            exit 1
+          fi
+
+          if [ "${{ github.event.action }}" == "opened" ]; then
+            FIELD_ID=$FIELD_ID_START
+          elif [ "${{ github.event.action }}" == "closed" ]; then
+            FIELD_ID=$FIELD_ID_END
+          fi
+
+          # Mutation to update the project card date
+          MUTATION=$(cat <<EOF
+          mutation {
+            updateProjectV2ItemFieldValue(input: {projectId: "$PROJECT_ID", itemId: "$ITEM_ID", fieldId: "$FIELD_ID", value: {date: "$DATE_VALUE"}}) {
+              projectV2Item {
+                id
+              }
+            }
+          }
+          EOF
+          )
+
+          # Escape the JSON string properly
+          JSON_MUTATION=$(echo "$MUTATION" | jq -Rs .)
+
+          curl -X POST -H "Authorization: bearer $GITHUB_TOKEN" -H "Content-Type: application/json" \
+          -d "{\"query\": $JSON_MUTATION}" https://api.github.com/graphql
