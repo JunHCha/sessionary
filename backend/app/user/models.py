@@ -5,35 +5,24 @@ import uuid
 
 from fastapi_users import schemas
 
-from app.core.models import Base
+from app.core.models import BaseModel, BaseSchema
 from app.lecture.models import LectureList
 from app.subscription.models import Subscription
 
 
-class UserRead(schemas.BaseUser[uuid.UUID]):
-    nickname: str
-    email: str
-    is_artist: bool
-    is_superuser: bool
-
-
-class UserUpdate(schemas.BaseUserUpdate):
-    nickname: str
-
-
-class UserReadPublic(Base):
+class UserReadPublic(BaseModel):
     nickname: str
     is_artist: bool
 
 
-class UserArtistInfo(Base):
+class UserArtistInfo(BaseModel):
     id: uuid.UUID
     nickname: str
     time_created: datetime.datetime
     lectures: list[LectureList]
 
 
-class AuthSessionSchema(Base):
+class AuthSessionSchema(BaseModel):
     id: uuid.UUID
     email: str
     nickname: str
@@ -46,5 +35,16 @@ class AuthSessionSchema(Base):
     is_verified: bool
 
 
-class GetArtistsResponse(Base):
+class GetArtistsResponse(BaseSchema):
     data: list[UserArtistInfo]
+
+
+class UserRead(schemas.BaseUser[uuid.UUID]):
+    nickname: str
+    email: str
+    is_artist: bool
+    is_superuser: bool
+
+
+class UserUpdate(schemas.BaseUserUpdate):
+    nickname: str

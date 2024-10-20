@@ -1,9 +1,9 @@
 import datetime
 
-from app.core.models import Base
+from app.core.models import BaseModel
 
 
-class LessonInLecture(Base):
+class LessonInLecture(BaseModel):
     id: int
     title: str
     length_sec: int

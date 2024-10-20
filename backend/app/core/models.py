@@ -1,5 +1,10 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ConfigDict
 
 
-class Base(BaseModel):
+class BaseModel(PydanticBaseModel):
     model_config = ConfigDict(from_attributes=True, frozen=True)
+
+
+class BaseSchema(BaseModel):
+    pass

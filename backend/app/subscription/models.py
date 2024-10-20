@@ -4,10 +4,10 @@ import datetime
 import uuid
 from typing import Literal
 
-from app.core.models import Base
+from app.core.models import BaseModel
 
 
-class Subscription(Base):
+class Subscription(BaseModel):
     id: uuid.UUID
     name: Literal["ticket", "experimental", "personal", "group"]
     is_active: bool
