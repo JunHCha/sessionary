@@ -4,11 +4,7 @@ import datetime
 import uuid
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
-
-
-class Base(BaseModel):
-    model_config = ConfigDict(from_attributes=True, frozen=True)
+from app.core.models import Base
 
 
 class Subscription(Base):

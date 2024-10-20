@@ -4,13 +4,10 @@ import datetime
 import uuid
 from typing import List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
+from app.core.models import Base
 from app.lesson.models import LessonInLecture
-
-
-class Base(BaseModel):
-    model_config = ConfigDict(from_attributes=True, frozen=True)
 
 
 class Lecture(Base):

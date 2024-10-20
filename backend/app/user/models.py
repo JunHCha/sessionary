@@ -4,14 +4,10 @@ import datetime
 import uuid
 
 from fastapi_users import schemas
-from pydantic import BaseModel, ConfigDict
 
+from app.core.models import Base
 from app.lecture.models import LectureForArtistView
 from app.subscription.models import Subscription
-
-
-class Base(BaseModel):
-    model_config = ConfigDict(from_attributes=True, frozen=True)
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
@@ -50,5 +46,5 @@ class AuthSessionSchema(Base):
     is_verified: bool
 
 
-class GetArtistsResponse(BaseModel):
+class GetArtistsResponse(Base):
     data: list[UserArtistInfo]
