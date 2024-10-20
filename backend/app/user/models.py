@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import datetime
 import uuid
-from typing import Literal
 
 from fastapi_users import schemas
 from pydantic import BaseModel, ConfigDict
 
 from app.lecture.models import LectureForArtistView
+from app.subscription.models import Subscription
 
 
 class Base(BaseModel):
@@ -35,15 +35,6 @@ class UserArtistInfo(Base):
     nickname: str
     time_created: datetime.datetime
     lectures: list[LectureForArtistView]
-
-
-class Subscription(Base):
-    id: uuid.UUID
-    name: Literal["ticket", "experimental", "personal", "group"]
-    is_active: bool
-    ticket_count: int
-    expires_at: datetime.datetime
-    time_created: datetime.datetime
 
 
 class AuthSessionSchema(Base):
