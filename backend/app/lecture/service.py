@@ -1,6 +1,6 @@
 import abc
 
-from app.lecture.models import Lecture, LectureInFetch, PaginationMeta
+from app.lecture.models import LectureDetail, LectureInFetch, PaginationMeta
 from app.lecture.repository import BaseLectureRepository
 
 
@@ -15,11 +15,11 @@ class BaseLectureService(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def get_lecture_detail(self, lecture_id: int) -> Lecture:
+    async def get_lecture_detail(self, lecture_id: int) -> LectureDetail:
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def create_lecture(self, title: str, description: str) -> Lecture:
+    async def create_lecture(self, title: str, description: str) -> LectureDetail:
         raise NotImplementedError
 
 
@@ -32,10 +32,10 @@ class LectureService(BaseLectureService):
         )
         return (lectures, pagination_meta)
 
-    async def get_lecture_detail(self, lecture_id: int) -> Lecture:
+    async def get_lecture_detail(self, lecture_id: int) -> LectureDetail:
         lecture = await self.lecture_repository.get_lecture(lecture_id)
         return lecture
 
-    async def create_lecture(self, title: str, description: str) -> Lecture:
+    async def create_lecture(self, title: str, description: str) -> LectureDetail:
         lecture = await self.lecture_repository.create_lecture(title, description)
         return lecture

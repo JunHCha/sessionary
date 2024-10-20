@@ -10,7 +10,7 @@ from app.core.models import Base
 from app.lesson.models import LessonInLecture
 
 
-class Lecture(Base):
+class LectureDetail(Base):
     id: int
     title: str
     artist: ArtistInfoInLecture | None
@@ -69,7 +69,7 @@ class FetchRecommendedLecuturesSchema(BaseModel):
 
 
 class GetLectureSchema(BaseModel):
-    data: Lecture
+    data: LectureDetail
 
 
 class CreateLectureBody(BaseModel):
