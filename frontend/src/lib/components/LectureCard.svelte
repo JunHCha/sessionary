@@ -5,7 +5,7 @@
 </script>
 
 <div class="lecture-card">
-	<img src="{lecture.title}" alt="{lecture.title}" />
+	<img src="" alt="{lecture.title}" />
 	<h3>{lecture.description}</h3>
 	<p>{lecture.length_sec}초</p>
 </div>
