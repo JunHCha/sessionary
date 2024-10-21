@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RouteButton from './RouteButton/+page.svelte'
+	import RouteButton from './RouteButton.svelte'
 	import LoginButton from './LoginButton.svelte'
 	import SearchButton from './SearchButton.svelte'
 	import Logo from './Logo.svelte'
