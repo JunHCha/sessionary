@@ -16,6 +16,9 @@
         "svelte.plugin.json.enable": true,
         "svelte.plugin.prettier.enable": true,
         "svelte.plugin.svelte.format.enable": true,
-        "svelte.enable-ts-plugin": true
+        "svelte.enable-ts-plugin": true,
+        "[svelte]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
     }
 }
