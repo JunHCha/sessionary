@@ -1,24 +1,9 @@
-<script>
-	import { onMount } from 'svelte';
-
-	let authenticated = false;
-
-	function checkAuthentication() {
-		const user = localStorage.getItem('me');
-		if (user) {
-			authenticated = JSON.parse(user).id !== undefined;
-		}
-	}
-
-	onMount(() => {
-		if (typeof window !== 'undefined') {
-			checkAuthentication();
-		}
-	});
+<script lang="ts">
+	import { isAuthenticated } from '$lib/stores/auth'
 </script>
 
 <main>
-	{#if authenticated}
+	{#if $isAuthenticated}
 		<h1>환영합니다!</h1>
 		<p>이것은 인증된 사용자만 볼 수 있는 콘텐츠입니다.</p>
 	{:else}
