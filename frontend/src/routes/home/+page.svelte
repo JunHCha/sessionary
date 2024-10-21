@@ -9,7 +9,7 @@
 
 	onMount(async () => {
 		try {
-			// 추천 강의와 새로운 강의를 가져오는 API 호출
+			// TODO: 추천 강의와 새로운 강의를 가져오는 API 구분하여 호출
 			recommendedLectures = (await getLecturesLectureGet({})).data
 			newLectures = (await getLecturesLectureGet({})).data
 		} catch (error) {

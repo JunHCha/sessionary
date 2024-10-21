@@ -7,7 +7,7 @@
 
 	function handleSearch(event: Event) {
 		event.preventDefault()
-		// 여기에 검색 로직을 구현하세요
+		// TODO: 검색 로직 구현
 		console.log('Search submitted')
 		toggleSearchModal()
 	}
