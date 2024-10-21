@@ -1,7 +1,7 @@
 import abc
 from typing import List
 
-from app.models import UserArtistInfo
+from app.user.models import UserArtistInfo
 from app.user.repository import BaseUserRepository
 
 

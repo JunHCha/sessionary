@@ -7,7 +7,7 @@ from fastapi_users import models
 from fastapi_users.authentication.strategy import RedisStrategy
 from fastapi_users.manager import BaseUserManager
 
-from app.models import AuthSessionSchema, Subscription
+from app.user.models import AuthSessionSchema, Subscription
 from tests.mock.redis_mock import RedisMock
 
 

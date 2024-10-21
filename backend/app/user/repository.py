@@ -4,8 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, lazyload
 
-from app import models
 from app.db import tables as tb
+from app.user.models import UserArtistInfo
 
 
 class BaseUserRepository(abc.ABC):
@@ -13,12 +13,12 @@ class BaseUserRepository(abc.ABC):
         self.session = session
 
     @abc.abstractmethod
-    async def get_artists(self) -> list[models.UserArtistInfo]:
+    async def get_artists(self) -> list[UserArtistInfo]:
         raise NotImplementedError
 
 
 class UserRepository(BaseUserRepository):
-    async def get_artists(self) -> list[models.UserArtistInfo]:
+    async def get_artists(self) -> list[UserArtistInfo]:
         results = (
             (
                 await self.session.execute(
@@ -37,7 +37,7 @@ class UserRepository(BaseUserRepository):
             .all()
         )
         return [
-            models.UserArtistInfo(
+            UserArtistInfo(
                 id=row.id,
                 nickname=row.nickname,
                 time_created=row.time_created,

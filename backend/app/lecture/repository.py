@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.db import tables as tb
-from app.models import Lecture, LectureInFetch, LessonInLecture, PaginationMeta
+from app.lecture.models import LectureDetail, LectureList, PaginationMeta
+from app.lesson.models import LessonInLecture
 
 
 class BaseLectureRepository(abc.ABC):
@@ -15,22 +16,22 @@ class BaseLectureRepository(abc.ABC):
     @abc.abstractmethod
     async def fetch_lectures(
         self, page: int, per_page: int
-    ) -> tuple[list[LectureInFetch], PaginationMeta]:
+    ) -> tuple[list[LectureList], PaginationMeta]:
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def get_lecture(self, lecture_id: int) -> Lecture:
+    async def get_lecture(self, lecture_id: int) -> LectureDetail:
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def create_lecture(self, title: str, description: str) -> Lecture:
+    async def create_lecture(self, title: str, description: str) -> LectureDetail:
         raise NotImplementedError
 
 
 class LectureRepository(BaseLectureRepository):
     async def fetch_lectures(
         self, page: int, per_page: int
-    ) -> tuple[list[LectureInFetch], PaginationMeta]:
+    ) -> tuple[list[LectureList], PaginationMeta]:
         total_items = (
             await self.session.execute(func.count(tb.Lecture.id))
         ).scalar_one()
@@ -48,7 +49,7 @@ class LectureRepository(BaseLectureRepository):
             .all()
         )
         return (
-            [LectureInFetch.model_validate(row) for row in results],
+            [LectureList.model_validate(row) for row in results],
             PaginationMeta(
                 total_items=total_items,
                 total_pages=(total_items + per_page - 1) // per_page,
@@ -57,7 +58,7 @@ class LectureRepository(BaseLectureRepository):
             ),
         )
 
-    async def get_lecture(self, lecture_id: int) -> Lecture:
+    async def get_lecture(self, lecture_id: int) -> LectureDetail:
         result = (
             (
                 await self.session.execute(
@@ -82,7 +83,7 @@ class LectureRepository(BaseLectureRepository):
             )
             for item in result.lessons
         ]
-        return Lecture(
+        return LectureDetail(
             id=result.id,
             title=result.title,
             lessons=lessons,
@@ -93,12 +94,12 @@ class LectureRepository(BaseLectureRepository):
             time_updated=result.time_updated,
         )
 
-    async def create_lecture(self, title: str, description: str) -> Lecture:
+    async def create_lecture(self, title: str, description: str) -> LectureDetail:
         new_lecture = tb.Lecture(title=title, description=description)
         self.session.add(new_lecture)
         await self.session.flush()
         await self.session.commit()
-        return Lecture(
+        return LectureDetail(
             id=new_lecture.id,
             title=new_lecture.title,
             artist=None,

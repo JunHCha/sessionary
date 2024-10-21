@@ -12,7 +12,7 @@ from app.core.settings.base import AppEnv, AppSettings
 from app.db.tables import User
 from app.depends.auth import get_user_manager
 from app.depends.settings import get_app_settings
-from app.models import UserRead, UserUpdate
+from app.user.models import UserRead, UserUpdate
 from tests.mock.redis_mock import RedisMock
 
 

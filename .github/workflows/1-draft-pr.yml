@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          fetch-all: true # 모든 브랜치를 가져옵니다
 
       - name: Create empty commit if no new commits
         run: |
