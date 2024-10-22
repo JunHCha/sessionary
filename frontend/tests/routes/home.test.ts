@@ -1,34 +1,38 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('Home page navigation bar', () => {
+	test.beforeEach(async ({ page }) => {
+		await page.goto('/home')
+	})
+
 	test('should redirect to home when entering /', async ({ page }) => {
 		await page.goto('/')
 		await page.waitForURL('**/home')
 		expect(page.url()).toContain('/home')
 	})
+
 	test('should display the navigation bar', async ({ page }) => {
-		await page.goto('/home')
 		const navbar = page.locator('nav')
 		await expect(navbar).toBeVisible()
 	})
 
 	test('should display login button with text', async ({ page }) => {
-		await page.goto('/home')
 		const loginButton = page.locator('button:has-text("로그인/회원가입")')
 		await expect(loginButton).toBeVisible()
 	})
 })
 
 test.describe('Home page contents', () => {
-	test('should have a last seen section', async ({ page }) => {
+	test.beforeEach(async ({ page }) => {
 		await page.goto('/home')
+	})
+
+	test('should have a last seen section', async ({ page }) => {
 		const lastSeenSection = page.locator('section:has-text("마지막으로 본 세션")')
 		await expect(lastSeenSection).toBeVisible()
 	})
 
 	test('should have recommended and new lecture sections', async ({ page }) => {
-		await page.goto('/home')
-
 		const recommendedSection = page.locator('section:has-text("추천하는 렉쳐")')
 		await expect(recommendedSection).toBeVisible()
 
