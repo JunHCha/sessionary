@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { getLecturesLectureGet } from '$lib/client'
-	import LectureList from '$lib/components/LectureListSection.svelte'
+	import { Heading } from 'flowbite-svelte'
+	import LectureList from './LectureListSection.svelte'
 	import type { LectureList as LectureInList } from '$lib/client'
 
 	let recommendedLectures: LectureInList[] = []
@@ -19,8 +20,10 @@
 </script>
 
 <main>
-	<section class="last-session">
-		<h2>마지막으로 본 세션</h2>
+	<section class="mb-8">
+		<Heading tag="h2" customSize="text-2xl font-extrabold" class="mb-4"
+			>마지막으로 본 세션</Heading
+		>
 		<p class="placeholder">최근에 본 세션이 없습니다. 강의를 시작해보세요!</p>
 	</section>
 
@@ -33,22 +36,5 @@
 		display: flex;
 		flex-direction: column;
 		padding: 2rem;
-		background-color: lavender;
-	}
-
-	h2 {
-		margin-bottom: 1rem;
-	}
-
-	.last-session {
-		background: #fff;
-		border-radius: 8px;
-		padding: 1rem;
-		margin-bottom: 2rem;
-	}
-
-	.placeholder {
-		color: #666;
-		font-style: italic;
 	}
 </style>

@@ -31,6 +31,8 @@
 		"eslint": "^8.52.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
+		"flowbite-svelte": "^0.47.3",
+		"flowbite-svelte-icons": "^1.6.2",
 		"globals": "^15.0.0",
 		"prettier": "^3.1.0",
 		"prettier-plugin-svelte": "^3.1.2",
@@ -42,5 +44,10 @@
 		"vite": "^5.0.3",
 		"vitest": "^1.2.0"
 	},
-	"type": "module"
+	"type": "module",
+	"devDependencies": {
+		"autoprefixer": "^10.4.20",
+		"postcss": "^8.4.47",
+		"tailwindcss": "^3.4.14"
+	}
 }
