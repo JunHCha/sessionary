@@ -31,7 +31,7 @@
 {#if $isAuthenticated}
 	<Button on:click="{handleLogout}">로그아웃</Button>
 {:else}
-	<Button on:click="{() => (formModal = true)}">Sign In</Button>
+	<Button on:click="{() => (formModal = true)}">로그인/회원가입</Button>
 {/if}
 
 <Modal bind:open="{formModal}" size="xs" autoclose="{false}" class="w-full">
