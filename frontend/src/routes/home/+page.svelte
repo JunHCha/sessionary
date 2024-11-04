@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { getLecturesLectureGet } from '$lib/client'
-	import LectureList from '$lib/components/LectureListSection.svelte'
+	import LectureList from './LectureListSection.svelte'
 	import type { LectureList as LectureInList } from '$lib/client'
 
 	let recommendedLectures: LectureInList[] = []

@@ -13,7 +13,7 @@
 	}
 	import { onMount } from 'svelte'
 	import { OpenAPI } from '$lib/client'
-	import NavBar from '$lib/components/NavBar.svelte'
+	import NavBar from '../lib/components/NavBar.svelte'
 
 	OpenAPI.BASE = data.env.PUBLIC_API_BASE_URL
 	OpenAPI.interceptors.request.use((request) => {
