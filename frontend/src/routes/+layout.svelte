@@ -6,6 +6,8 @@
 </script>
 
 <script lang="ts">
+	import '../app.pcss'
+
 	export let data: {
 		env: {
 			PUBLIC_API_BASE_URL: string
@@ -54,5 +56,7 @@
 
 	main {
 		padding: 1rem;
+		position: relative;
+		top: 60px;
 	}
 </style>

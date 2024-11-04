@@ -1,14 +1,15 @@
 <script lang="ts">
 	import type { LectureList } from '$lib/client'
+	import { Heading } from 'flowbite-svelte'
 	import LectureCard from './LectureCard.svelte'
 
 	export let title: string
 	export let lectures: LectureList[]
 </script>
 
-<section>
-	<h2>{title}</h2>
-	<div class="lecture-list">
+<section class="mb-8">
+	<Heading tag="h2" customSize="text-2xl font-extrabold" class="mb-4">{title}</Heading>
+	<div class="flex overflow-x-auto gap-4 pb-2 hide-scrollbar">
 		{#each lectures as lecture}
 			<LectureCard {lecture} />
 		{/each}
@@ -16,17 +17,12 @@
 </section>
 
 <style>
-	section {
-		margin-bottom: 2rem;
+	/* 스크롤바 숨기기 */
+	.hide-scrollbar {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
 	}
-
-	h2 {
-		margin-bottom: 1rem;
-	}
-
-	.lecture-list {
-		display: flex;
-		overflow-x: auto;
-		padding-bottom: 1rem;
+	.hide-scrollbar::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, Opera */
 	}
 </style>

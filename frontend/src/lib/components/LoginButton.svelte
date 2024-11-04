@@ -1,14 +1,25 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { isAuthenticated } from '$lib/stores/auth'
-	import LoginForm from './LoginForm.svelte'
+	import { Button, Modal } from 'flowbite-svelte'
+	import { createEventDispatcher } from 'svelte'
+	import { oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet } from '$lib/client/services.gen'
 
-	let showLoginModal = false
+	let formModal = false
 
-	function toggleLoginModal() {
-		showLoginModal = !showLoginModal
+	const dispatch = createEventDispatcher()
+
+	async function handleLogin() {
+		try {
+			const response = await oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet({
+				scopes: []
+			})
+			const { authorization_url } = response
+			window.location.href = authorization_url
+		} catch (error) {
+			console.error('Login error:', error)
+		}
 	}
-
 	function handleLogout() {
 		localStorage.removeItem('satk')
 		localStorage.removeItem('me')
@@ -18,34 +29,25 @@
 </script>
 
 {#if $isAuthenticated}
-	<button on:click="{handleLogout}">로그아웃</button>
+	<Button on:click="{handleLogout}">로그아웃</Button>
 {:else}
-	<button on:click="{toggleLoginModal}"> 로그인/회원가입 </button>
+	<Button on:click="{() => (formModal = true)}">Sign In</Button>
 {/if}
 
-{#if showLoginModal}
-	<div class="modal">
-		<LoginForm on:close="{toggleLoginModal}" />
-	</div>
-{/if}
+<Modal bind:open="{formModal}" size="xs" autoclose="{false}" class="w-full">
+	<form class="flex flex-col space-y-6" action="#">
+		<h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+			Sign in to our platform
+		</h3>
 
-<style>
-	button {
-		background-color: #4caf50;
-		color: white;
-		border: none;
-		padding: 0.5rem 1rem;
-		cursor: pointer;
-	}
-
-	.modal {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background-color: white;
-		padding: 2rem;
-		border-radius: 5px;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-	}
-</style>
+		<Button type="submit" class="w-full1" on:click="{handleLogin}">Signup with Google</Button>
+		<div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+			Not registered? <a
+				href="/"
+				class="text-primary-700 hover:underline dark:text-primary-500"
+			>
+				Create account
+			</a>
+		</div>
+	</form>
+</Modal>
