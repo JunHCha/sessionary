@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import { isAuthenticated } from '$lib/stores/auth'
-	export const load = async ({ data }: import('./$types').LayoutServerLoad) => {
-		return data
+	export const load = async ({ data }: { data: { env: { PUBLIC_API_BASE_URL: string } } }) => {
+		return { data }
 	}
 </script>
 
