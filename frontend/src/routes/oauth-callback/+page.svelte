@@ -34,7 +34,7 @@
 
 				const userResponse = await usersCurrentUserUserMeGet()
 				localStorage.setItem('me', JSON.stringify(userResponse))
-				isAuthenticated.set(true) // 인증 상태 업데이트
+				isAuthenticated.set(true)
 
 				goto('/home')
 			}
