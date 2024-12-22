@@ -6,6 +6,7 @@
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
 		usersCurrentUserUserMeGet
 	} from '$lib/client/services.gen'
+	import { Spinner } from 'flowbite-svelte'
 
 	export let data: {
 		props: { code?: string; state?: string; error?: string }
@@ -17,7 +18,7 @@
 		let error = data.props.error
 		if (error) {
 			console.error('OAuth2 error:', error)
-			goto('/login')
+			goto('/not-found')
 			return
 		}
 
@@ -39,21 +40,12 @@
 			}
 		} catch (error) {
 			console.error('Callback error:', error)
-			goto('/login')
+			goto('/not-found')
 		}
 	})
 </script>
 
-<main>
-	<h1>로그인 중...</h1>
+<main class="flex flex-col items-center justify-center h-screen">
+	<h1 class="text-2xl font-bold m-8">로그인 중...</h1>
+	<Spinner />
 </main>
-
-<style>
-	main {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100vh;
-		background-color: lavender;
-	}
-</style>
