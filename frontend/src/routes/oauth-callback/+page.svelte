@@ -16,9 +16,10 @@
 		let code = data.props.code
 		let state = data.props.state
 		let error = data.props.error
-		if (error) {
-			console.error('OAuth2 error:', error)
-			goto('/not-found')
+		if (error || !code || !state) {
+			console.error('OAuth2 error:', { error, code, state })
+			alert('로그인 중 오류가 발생했습니다. 다시 시도해 주세요.')
+			goto('/home')
 			return
 		}
 
