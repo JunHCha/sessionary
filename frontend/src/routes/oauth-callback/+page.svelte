@@ -6,6 +6,7 @@
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
 		usersCurrentUserUserMeGet
 	} from '$lib/client/services.gen'
+	import { Spinner } from 'flowbite-svelte'
 
 	export let data: {
 		props: { code?: string; state?: string; error?: string }
@@ -15,9 +16,10 @@
 		let code = data.props.code
 		let state = data.props.state
 		let error = data.props.error
-		if (error) {
-			console.error('OAuth2 error:', error)
-			goto('/login')
+		if (error || !code || !state) {
+			console.error('OAuth2 error:', { error, code, state })
+			alert('로그인 중 오류가 발생했습니다. 다시 시도해 주세요.')
+			goto('/home')
 			return
 		}
 
@@ -33,27 +35,18 @@
 
 				const userResponse = await usersCurrentUserUserMeGet()
 				localStorage.setItem('me', JSON.stringify(userResponse))
-				isAuthenticated.set(true) // 인증 상태 업데이트
+				isAuthenticated.set(true)
 
 				goto('/home')
 			}
 		} catch (error) {
 			console.error('Callback error:', error)
-			goto('/login')
+			goto('/not-found')
 		}
 	})
 </script>
 
-<main>
-	<h1>로그인 중...</h1>
+<main class="flex flex-col items-center justify-center h-screen">
+	<h1 class="text-2xl font-bold m-8">로그인 중...</h1>
+	<Spinner />
 </main>
-
-<style>
-	main {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100vh;
-		background-color: lavender;
-	}
-</style>
