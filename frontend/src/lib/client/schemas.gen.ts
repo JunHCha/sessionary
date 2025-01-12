@@ -21,22 +21,6 @@ export const $ArtistInfoInLecture = {
     title: 'ArtistInfoInLecture'
 } as const;
 
-export const $BearerResponse = {
-    properties: {
-        access_token: {
-            type: 'string',
-            title: 'Access Token'
-        },
-        token_type: {
-            type: 'string',
-            title: 'Token Type'
-        }
-    },
-    type: 'object',
-    required: ['access_token', 'token_type'],
-    title: 'BearerResponse'
-} as const;
-
 export const $Body_auth_redis_login_user_auth_login_post = {
     properties: {
         grant_type: {

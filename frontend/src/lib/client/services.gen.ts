@@ -19,7 +19,8 @@ export const getArtistsUserArtistsGet = (): CancelablePromise<GetArtistsUserArti
  * Auth:Redis.Login
  * @param data The data for the request.
  * @param data.formData
- * @returns BearerResponse Successful Response
+ * @returns unknown Successful Response
+ * @returns void No Content
  * @throws ApiError
  */
 export const authRedisLoginUserAuthLoginPost = (data: AuthRedisLoginUserAuthLoginPostData): CancelablePromise<AuthRedisLoginUserAuthLoginPostResponse> => { return __request(OpenAPI, {
@@ -36,6 +37,7 @@ export const authRedisLoginUserAuthLoginPost = (data: AuthRedisLoginUserAuthLogi
 /**
  * Auth:Redis.Logout
  * @returns unknown Successful Response
+ * @returns void No Content
  * @throws ApiError
  */
 export const authRedisLogoutUserAuthLogoutPost = (): CancelablePromise<AuthRedisLogoutUserAuthLogoutPostResponse> => { return __request(OpenAPI, {

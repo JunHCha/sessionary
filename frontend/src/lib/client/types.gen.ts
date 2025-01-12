@@ -6,11 +6,6 @@ export type ArtistInfoInLecture = {
     is_artist: boolean;
 };
 
-export type BearerResponse = {
-    access_token: string;
-    token_type: string;
-};
-
 export type Body_auth_redis_login_user_auth_login_post = {
     grant_type?: string | null;
     username: string;
@@ -140,9 +135,9 @@ export type AuthRedisLoginUserAuthLoginPostData = {
     formData: Body_auth_redis_login_user_auth_login_post;
 };
 
-export type AuthRedisLoginUserAuthLoginPostResponse = BearerResponse;
+export type AuthRedisLoginUserAuthLoginPostResponse = unknown | void;
 
-export type AuthRedisLogoutUserAuthLogoutPostResponse = unknown;
+export type AuthRedisLogoutUserAuthLogoutPostResponse = unknown | void;
 
 export type ResetForgotPasswordUserAuthForgotPasswordPostData = {
     requestBody: Body_reset_forgot_password_user_auth_forgot_password_post;
@@ -239,7 +234,11 @@ export type $OpenApiTs = {
                 /**
                  * Successful Response
                  */
-                200: BearerResponse;
+                200: unknown;
+                /**
+                 * No Content
+                 */
+                204: void;
                 /**
                  * Bad Request
                  */
@@ -258,6 +257,10 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: unknown;
+                /**
+                 * No Content
+                 */
+                204: void;
                 /**
                  * Missing token or inactive user.
                  */
