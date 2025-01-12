@@ -16,22 +16,26 @@
 	import { onMount } from 'svelte'
 	import { OpenAPI } from '$lib/client'
 	import NavBar from '../lib/components/NavBar.svelte'
+	import { usersCurrentUserUserMeGet } from '$lib/client'
 
 	OpenAPI.BASE = data.env.PUBLIC_API_BASE_URL
+	OpenAPI.WITH_CREDENTIALS = true
 	OpenAPI.interceptors.request.use((request) => {
-		let token = localStorage.getItem('satk')
-		if (token) {
-			request.headers = request.headers ?? {}
-			request.headers['Authorization'] = `Bearer ${token}`
-		}
+		request.withCredentials = true
 		return request
 	})
 
-	function checkAuthentication() {
-		const token = localStorage.getItem('satk')
-		const user = localStorage.getItem('me')
-		if (token && user) isAuthenticated.set(true)
-		else isAuthenticated.set(false)
+	async function checkAuthentication() {
+		try {
+			const userResponse = await usersCurrentUserUserMeGet()
+			if (userResponse) {
+				localStorage.setItem('me', JSON.stringify(userResponse))
+				isAuthenticated.set(true)
+			}
+		} catch (error) {
+			localStorage.removeItem('me')
+			isAuthenticated.set(false)
+		}
 	}
 
 	onMount(() => {
