@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import uuid
 
@@ -6,6 +7,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.settings.base import AppSettings
 from app.db.tables import Lecture, Subscription, User, UserXSubscription
 from tests.mock.redis_mock import RedisMock
 
@@ -153,3 +155,28 @@ async def test_sut_get_me(authorized_client: AsyncClient) -> None:
     content = response.json()
     assert content.get("email") == "test@test.com"
     assert content.get("is_superuser") is False
+
+
+async def test_sut_refresh_session_token_after_refresh_interval(
+    authorized_client: AsyncClient,
+    auth_redis: RedisMock,
+    test_settings: AppSettings,
+):
+    # given
+    original_auth_token = authorized_client.cookies.get("satk")
+    original_session_value = await auth_redis.get(original_auth_token)
+
+    # when
+    await asyncio.sleep(test_settings.auth_session_refresh_interval + 1)
+    response = await authorized_client.get("/user/me")
+
+    # then
+    assert response.status_code == 200
+    new_auth_token = response.cookies.get("satk")
+    assert new_auth_token is not None
+    assert new_auth_token != original_auth_token
+
+    old_session_value = await auth_redis.get(original_auth_token)
+    assert old_session_value is None
+    new_session_value = await auth_redis.get(new_auth_token)
+    assert new_session_value == original_session_value

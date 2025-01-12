@@ -21,8 +21,9 @@ class TestAppSettings(AppSettings):
 
     # Authentication
     cookie_name: str = "satk"
-    auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
-    auth_redis_url: str = "redis://localhost:6379/4"
+    auth_session_expire_seconds: int = 60
+    auth_session_refresh_interval: int = 2
+    auth_redis_url: str = ""
 
     # Logging
     logging_level: int = logging.DEBUG
