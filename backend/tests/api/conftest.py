@@ -2,7 +2,7 @@ from typing import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
-from httpx import ASGITransport, AsyncClient, Headers
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
@@ -87,7 +87,8 @@ async def authorized_client(
             is_verified=test_user.is_verified,
         ).model_dump_json(),
     )
-    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN"})
+    client.cookies.set("satk", "SESSIONTOKEN")
+
     yield client
 
 
@@ -110,7 +111,7 @@ async def authorized_client_artist(
             is_verified=test_artist.is_verified,
         ).model_dump_json(),
     )
-    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN_ARTIST"})
+    client.cookies.set("satk", "SESSIONTOKEN_ARTIST")
     yield client
 
 
@@ -133,5 +134,5 @@ async def authorized_client_admin(
             is_verified=test_admin.is_verified,
         ).model_dump_json(),
     )
-    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN_ADMIN"})
+    client.cookies.set("satk", "SESSIONTOKEN_ADMIN")
     yield client

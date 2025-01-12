@@ -122,9 +122,9 @@ async def test_sut_create_auth_session_when_login(
     )
 
     # then
-    assert response.status_code == 200
+    assert response.status_code == 204
 
-    token = response.json().get("access_token")
+    token = response.cookies.get("satk")
     session = await auth_redis.get(f"auth-session-id:{token}")
     assert orjson.loads(session).get("email") == "test@test.com"
 
