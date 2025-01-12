@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
+from app.core.settings.base import AppSettings
 from app.user.models import Subscription
 from tests.mock.redis_mock import RedisMock
 
@@ -70,10 +71,11 @@ async def test_admin(user_manager_stub: UserManager):
 
 @pytest.fixture
 async def authorized_client(
-    client: AsyncClient, auth_redis: RedisMock, test_user
+    client: AsyncClient, auth_redis: RedisMock, test_user, test_settings: AppSettings
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.set(
+    await auth_redis.setex(
         "auth-session-id:SESSIONTOKEN",
+        test_settings.auth_session_expire_seconds,
         AuthSessionSchema(
             id=test_user.id,
             email=test_user.email,
@@ -94,10 +96,11 @@ async def authorized_client(
 
 @pytest.fixture
 async def authorized_client_artist(
-    client: AsyncClient, auth_redis: RedisMock, test_artist
+    client: AsyncClient, auth_redis: RedisMock, test_artist, test_settings: AppSettings
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.set(
+    await auth_redis.setex(
         "auth-session-id:SESSIONTOKEN_ARTIST",
+        test_settings.auth_session_expire_seconds,
         AuthSessionSchema(
             id=test_artist.id,
             email=test_artist.email,
@@ -117,10 +120,11 @@ async def authorized_client_artist(
 
 @pytest.fixture
 async def authorized_client_admin(
-    client: AsyncClient, auth_redis: RedisMock, test_admin
+    client: AsyncClient, auth_redis: RedisMock, test_admin, test_settings: AppSettings
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.set(
+    await auth_redis.setex(
         "auth-session-id:SESSIONTOKEN_ADMIN",
+        test_settings.auth_session_expire_seconds,
         AuthSessionSchema(
             id=test_admin.id,
             email=test_admin.email,
