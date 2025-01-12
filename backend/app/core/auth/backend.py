@@ -3,7 +3,7 @@ import uuid
 import redis
 from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
-from fastapi_users.authentication import AuthenticationBackend, BearerTransport
+from fastapi_users.authentication import AuthenticationBackend, CookieTransport
 from fastapi_users.authentication.strategy import RedisStrategy
 from httpx_oauth.clients.google import GoogleOAuth2
 
@@ -19,13 +19,20 @@ from tests.mock.redis_mock import RedisMock
 class AuthBackend:
     def __init__(self, settings: AppSettings) -> None:
         self.app_env = settings.app_env
-        self.bearer_transport = BearerTransport(tokenUrl="/user/auth/login")
+        self.cookie_transport = CookieTransport(
+            cookie_name=settings.cookie_name,
+            cookie_max_age=settings.auth_session_expire_seconds,
+            cookie_domain=None,
+            cookie_secure=False,
+            cookie_httponly=True,
+            cookie_samesite="lax",
+        )
         self.auth_session_age = settings.auth_session_expire_seconds
 
         self.auth_redis_url = settings.auth_redis_url
         self.auth_backend = AuthenticationBackend(
             name="redis",
-            transport=self.bearer_transport,
+            transport=self.cookie_transport,
             get_strategy=self.get_redis_strategy,
         )
 
