@@ -32,9 +32,12 @@ def setup_env():
 
 
 @pytest.fixture(scope="session")
-def stub_sess_manager(setup_env) -> SessionManager:
-    settings = get_app_settings()
+def test_settings() -> AppSettings:
+    return get_app_settings()
 
+
+@pytest.fixture(scope="session")
+def stub_sess_manager(setup_env, test_settings: AppSettings) -> SessionManager:
     class TestSessionManager(SessionManager):
         def __init__(self, settings: AppSettings):
             self._engine = create_async_engine(
@@ -50,7 +53,7 @@ def stub_sess_manager(setup_env) -> SessionManager:
                 scopefunc=asyncio.current_task,
             )
 
-    return TestSessionManager(settings)
+    return TestSessionManager(test_settings)
 
 
 @pytest.fixture(scope="session", autouse=True)

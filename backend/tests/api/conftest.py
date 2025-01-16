@@ -2,11 +2,12 @@ from typing import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
-from httpx import ASGITransport, AsyncClient, Headers
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
+from app.core.settings.base import AppSettings
 from app.user.models import Subscription
 from tests.mock.redis_mock import RedisMock
 
@@ -70,10 +71,11 @@ async def test_admin(user_manager_stub: UserManager):
 
 @pytest.fixture
 async def authorized_client(
-    client: AsyncClient, auth_redis: RedisMock, test_user
+    client: AsyncClient, auth_redis: RedisMock, test_user, test_settings: AppSettings
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.set(
+    await auth_redis.setex(
         "auth-session-id:SESSIONTOKEN",
+        test_settings.auth_session_expire_seconds,
         AuthSessionSchema(
             id=test_user.id,
             email=test_user.email,
@@ -87,16 +89,18 @@ async def authorized_client(
             is_verified=test_user.is_verified,
         ).model_dump_json(),
     )
-    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN"})
+    client.cookies.set("satk", "SESSIONTOKEN")
+
     yield client
 
 
 @pytest.fixture
 async def authorized_client_artist(
-    client: AsyncClient, auth_redis: RedisMock, test_artist
+    client: AsyncClient, auth_redis: RedisMock, test_artist, test_settings: AppSettings
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.set(
+    await auth_redis.setex(
         "auth-session-id:SESSIONTOKEN_ARTIST",
+        test_settings.auth_session_expire_seconds,
         AuthSessionSchema(
             id=test_artist.id,
             email=test_artist.email,
@@ -110,16 +114,17 @@ async def authorized_client_artist(
             is_verified=test_artist.is_verified,
         ).model_dump_json(),
     )
-    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN_ARTIST"})
+    client.cookies.set("satk", "SESSIONTOKEN_ARTIST")
     yield client
 
 
 @pytest.fixture
 async def authorized_client_admin(
-    client: AsyncClient, auth_redis: RedisMock, test_admin
+    client: AsyncClient, auth_redis: RedisMock, test_admin, test_settings: AppSettings
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.set(
+    await auth_redis.setex(
         "auth-session-id:SESSIONTOKEN_ADMIN",
+        test_settings.auth_session_expire_seconds,
         AuthSessionSchema(
             id=test_admin.id,
             email=test_admin.email,
@@ -133,5 +138,5 @@ async def authorized_client_admin(
             is_verified=test_admin.is_verified,
         ).model_dump_json(),
     )
-    client.headers = Headers({b"authorization": b"bearer SESSIONTOKEN_ADMIN"})
+    client.cookies.set("satk", "SESSIONTOKEN_ADMIN")
     yield client

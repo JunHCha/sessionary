@@ -3,7 +3,10 @@
 	import { isAuthenticated } from '$lib/stores/auth'
 	import { Button, Modal } from 'flowbite-svelte'
 	import { createEventDispatcher } from 'svelte'
-	import { oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet } from '$lib/client/services.gen'
+	import {
+		oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet,
+		authRedisLogoutUserAuthLogoutPost
+	} from '$lib/client/services.gen'
 
 	let formModal = false
 
@@ -20,11 +23,16 @@
 			console.error('Login error:', error)
 		}
 	}
-	function handleLogout() {
-		localStorage.removeItem('satk')
-		localStorage.removeItem('me')
-		isAuthenticated.set(false)
-		goto('/home')
+
+	async function handleLogout() {
+		try {
+			await authRedisLogoutUserAuthLogoutPost()
+			localStorage.removeItem('me')
+			isAuthenticated.set(false)
+			goto('/home')
+		} catch (error) {
+			console.error('Logout error:', error)
+		}
 	}
 </script>
 

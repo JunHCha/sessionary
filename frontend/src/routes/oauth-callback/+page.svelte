@@ -24,15 +24,12 @@
 		}
 
 		try {
-			const response = (await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({
+			await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({
 				code,
 				state
-			})) as { access_token: string; token_type: string }
-			const access_token = response.access_token
+			})
 
 			if (typeof window !== 'undefined') {
-				localStorage.setItem('satk', access_token)
-
 				const userResponse = await usersCurrentUserUserMeGet()
 				localStorage.setItem('me', JSON.stringify(userResponse))
 				isAuthenticated.set(true)

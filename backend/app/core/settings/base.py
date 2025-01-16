@@ -57,6 +57,7 @@ class AppSettings(BaseAppSettings):
     # Authentication
     cookie_name: str
     auth_session_expire_seconds: int = 3600 * 24 * 7 * 4  # 4 weeks
+    auth_session_refresh_interval: int = 3600 * 24  # 1 day
     auth_redis_url: str
 
     # OAuth2
