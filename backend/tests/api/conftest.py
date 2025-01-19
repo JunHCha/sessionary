@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.manager import UserManager
 from app.core.auth.strategy import AuthSessionSchema
 from app.core.settings.base import AppSettings
+from app.db.tables import User
 from app.user.models import Subscription
 from tests.mock.redis_mock import RedisMock
 
@@ -70,73 +71,57 @@ async def test_admin(user_manager_stub: UserManager):
 
 
 @pytest.fixture
-async def authorized_client(
-    client: AsyncClient, auth_redis: RedisMock, test_user, test_settings: AppSettings
-) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.setex(
-        "auth-session-id:SESSIONTOKEN",
-        test_settings.auth_session_expire_seconds,
-        AuthSessionSchema(
-            id=test_user.id,
-            email=test_user.email,
-            nickname=test_user.nickname,
-            subscription=Subscription.model_validate(test_user.subscription),
-            time_created=test_user.time_created,
-            time_updated=test_user.time_updated,
-            is_artist=test_user.is_artist,
-            is_active=test_user.is_active,
-            is_superuser=test_user.is_superuser,
-            is_verified=test_user.is_verified,
-        ).model_dump_json(),
-    )
-    client.cookies.set("satk", "SESSIONTOKEN")
+def make_authorized_client(
+    client: AsyncClient, auth_redis: RedisMock, test_settings: AppSettings
+):
+    async def _make_client(user: User, session: AsyncSession, token: str):
+        async with session:
+            user = await session.merge(user)
+            await auth_redis.setex(
+                f"auth-session-id:{token}",
+                test_settings.auth_session_expire_seconds,
+                AuthSessionSchema(
+                    id=user.id,
+                    email=user.email,
+                    nickname=user.nickname,
+                    subscription=Subscription.model_validate(user.subscription),
+                    time_created=user.time_created,
+                    time_updated=user.time_updated,
+                    is_artist=user.is_artist,
+                    is_active=user.is_active,
+                    is_superuser=user.is_superuser,
+                    is_verified=user.is_verified,
+                ).model_dump_json(),
+            )
+            client.cookies.set("satk", token)
+        return client
 
+    return _make_client
+
+
+@pytest.fixture
+async def authorized_client(
+    make_authorized_client, test_user, test_session: AsyncSession
+) -> AsyncGenerator[AsyncClient, None]:
+    client = await make_authorized_client(test_user, test_session, token="SESSIONTOKEN")
     yield client
 
 
 @pytest.fixture
 async def authorized_client_artist(
-    client: AsyncClient, auth_redis: RedisMock, test_artist, test_settings: AppSettings
+    make_authorized_client, test_artist, test_session: AsyncSession
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.setex(
-        "auth-session-id:SESSIONTOKEN_ARTIST",
-        test_settings.auth_session_expire_seconds,
-        AuthSessionSchema(
-            id=test_artist.id,
-            email=test_artist.email,
-            nickname=test_artist.nickname,
-            subscription=Subscription.model_validate(test_artist.subscription),
-            time_created=test_artist.time_created,
-            time_updated=test_artist.time_updated,
-            is_artist=test_artist.is_artist,
-            is_active=test_artist.is_active,
-            is_superuser=test_artist.is_superuser,
-            is_verified=test_artist.is_verified,
-        ).model_dump_json(),
+    client = await make_authorized_client(
+        test_artist, test_session, token="SESSIONTOKEN_ARTIST"
     )
-    client.cookies.set("satk", "SESSIONTOKEN_ARTIST")
     yield client
 
 
 @pytest.fixture
 async def authorized_client_admin(
-    client: AsyncClient, auth_redis: RedisMock, test_admin, test_settings: AppSettings
+    make_authorized_client, test_admin, test_session: AsyncSession
 ) -> AsyncGenerator[AsyncClient, None]:
-    await auth_redis.setex(
-        "auth-session-id:SESSIONTOKEN_ADMIN",
-        test_settings.auth_session_expire_seconds,
-        AuthSessionSchema(
-            id=test_admin.id,
-            email=test_admin.email,
-            nickname=test_admin.nickname,
-            subscription=Subscription.model_validate(test_admin.subscription),
-            time_created=test_admin.time_created,
-            time_updated=test_admin.time_updated,
-            is_artist=test_admin.is_artist,
-            is_active=test_admin.is_active,
-            is_superuser=test_admin.is_superuser,
-            is_verified=test_admin.is_verified,
-        ).model_dump_json(),
+    client = await make_authorized_client(
+        test_admin, test_session, token="SESSIONTOKEN_ADMIN"
     )
-    client.cookies.set("satk", "SESSIONTOKEN_ADMIN")
     yield client
