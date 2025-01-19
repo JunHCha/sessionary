@@ -8,7 +8,7 @@ include = ["app", "tests"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = { extras = ["all"], version = "^0.109.1" }
+fastapi = { extras = ["all"], version = "^0.115.1" }
 SQLAlchemy = { extras = ["mypy"], version = "^2.0.29" }
 alembic = "^1.11.1"
 pytest = "^7.4.0"
