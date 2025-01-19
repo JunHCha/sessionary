@@ -21,6 +21,7 @@ class TestAppSettings(AppSettings):
 
     # Authentication
     cookie_name: str = "satk"
+    cookie_domain: str = "testserver"
     auth_session_expire_seconds: int = 60
     auth_session_refresh_interval: int = 2
     auth_redis_url: str = ""

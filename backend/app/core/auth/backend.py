@@ -22,8 +22,8 @@ class AuthBackend:
         self.cookie_transport = CookieTransport(
             cookie_name=settings.cookie_name,
             cookie_max_age=settings.auth_session_expire_seconds,
-            cookie_domain=None,
-            cookie_secure=False,
+            cookie_domain=settings.cookie_domain,
+            cookie_secure=True,
             cookie_httponly=True,
             cookie_samesite="lax",
         )
