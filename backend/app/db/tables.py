@@ -43,11 +43,21 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         ForeignKey("subscription.id", name="user_subscription_fkey"),
         nullable=True,
     )
+    ticket_count: Mapped[int] = mapped_column(Integer, default=3)
+    expires_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime,
+        nullable=True,
+    )
     time_created: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now()
     )
     time_updated: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now(), onupdate=func.now()
+    )
+    group_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("group.id"),
+        nullable=True,
     )
 
     # for orm
@@ -55,7 +65,10 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         "OAuthAccount", lazy="subquery"
     )
     subscription: Mapped["Subscription"] = relationship(
-        "Subscription", back_populates="subscribers", lazy="subquery"
+        "Subscription", back_populates="subscription_info", lazy="subquery"
+    )
+    group: Mapped["Group"] = relationship(
+        "Group", back_populates="group_list", lazy="subquery"
     )
     lectures: Mapped[List["Lecture"]] = relationship(
         "Lecture", uselist=True, back_populates="artist"
@@ -65,26 +78,52 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     )
     lessons: Mapped[List["Lesson"]] = relationship("Lesson", back_populates="artist")
 
+    __tablename__ = "user"
+
 
 class Subscription(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4())
     name: Mapped[str] = mapped_column(String, nullable=False, default="ticket")
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    ticket_count: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
-    expires_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False)
     time_created: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now()
     )
 
     # for orm
-    subscribers: Mapped[List[User]] = relationship(
-        "User",
-        secondary="user_x_subscription",
-        back_populates="subscription",
-        uselist=True,
+    subscription_info: Mapped[List[User]] = relationship(
+        "User", back_populates="subscription", lazy="subquery"
     )
 
     __tablename__ = "subscription"
+
+
+class Group(Base):
+    id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4())
+    name: Mapped[str] = mapped_column(String, nullable=False, default="ticket")
+    main_user_id: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    time_created: Mapped[datetime.datetime] = mapped_column(
+        DateTime, default=func.now()
+    )
+    time_updated: Mapped[datetime.datetime] = Column(
+        DateTime, default=func.now(), onupdate=func.now()
+    )
+
+    group_list: Mapped["User"] = relationship(
+        "User", back_populates="group", lazy="subquery"
+    )
+
+    __tablename__ = "group"
+
+
+class UserSubscriptionHistory(Base):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
+    subscription_id: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("subscription.id")
+    )
+    group_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("group.id"))
+
+    __tablename__ = "user_subscription_history"
 
 
 class Lecture(Base):
@@ -170,16 +209,6 @@ class Lesson(Base):
     artist: Mapped[User] = relationship("User", back_populates="lessons")
 
     __tablename__ = "lesson"
-
-
-class UserXSubscription(Base):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("user.id"))
-    subscription_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("subscription.id")
-    )
-
-    __tablename__ = "user_x_subscription"
 
 
 class PlaylistXLesson(Base):

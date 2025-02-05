@@ -8,7 +8,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.settings.base import AppSettings
-from app.db.tables import Lecture, Subscription, User, UserXSubscription
+from app.db.tables import Lecture, Subscription, User
 from tests.mock.redis_mock import RedisMock
 
 pytestmark = pytest.mark.asyncio
@@ -72,12 +72,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
         is_superuser=False,
         is_active=True,
     )
-    subscription_1 = Subscription(
-        id=uuid.uuid4(), expires_at=datetime.datetime.now() + datetime.timedelta(days=1)
-    )
-    user_x_subscription_1 = UserXSubscription(
-        user_id=user_1.id, subscription_id=subscription_1.id
-    )
+    subscription_1 = Subscription(id=uuid.uuid4())
 
     admin_1 = User(
         id=uuid.uuid4(),
@@ -97,7 +92,7 @@ async def dummy_users(test_session: AsyncSession) -> None:
         )
     await test_session.commit()
     async with test_session.begin():
-        test_session.add_all([subscription_1, user_x_subscription_1])
+        test_session.add_all([subscription_1])
     await test_session.commit()
 
 
@@ -106,7 +101,6 @@ async def test_sut_create_subscription_when_register_user(test_user):
     assert test_user.subscription is not None
     assert test_user.subscription.is_active is True
     assert test_user.subscription.name == "ticket"
-    assert test_user.subscription.ticket_count == 3
 
 
 async def test_sut_create_auth_session_when_login(
