@@ -6,7 +6,7 @@ from fastapi import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from sqlalchemy import insert, update
 
-from app.db.tables import Subscription, User, UserXSubscription
+from app.db.tables import Subscription, User
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
@@ -23,17 +23,10 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
                 .values(
                     name="ticket",
                     is_active=True,
-                    ticket_count=3,
-                    expires_at=datetime.datetime.now().replace(year=9999),
                 )
                 .returning(Subscription)
             )
             subscription = (await sess.execute(insert_subscription_stmt)).scalar_one()
-
-            insert_association_stmt = insert(UserXSubscription).values(
-                user_id=user.id, subscription_id=subscription.id
-            )
-            await sess.execute(insert_association_stmt)
 
             update_user_subscription_stmt = (
                 update(User)
