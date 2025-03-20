@@ -1,6 +1,6 @@
 import abc
 
-from app.lecture.models import LectureDetail, LectureList, PaginationMeta
+from app.lecture.models import LectureDetail, LectureInList, PaginationMeta
 from app.lecture.repository import BaseLectureRepository
 
 
@@ -11,7 +11,7 @@ class BaseLectureService(abc.ABC):
     @abc.abstractmethod
     async def get_recommended(
         self, page: int = 1, per_page: int = 20
-    ) -> tuple[list[LectureList], PaginationMeta]:
+    ) -> tuple[list[LectureInList], PaginationMeta]:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -26,7 +26,7 @@ class BaseLectureService(abc.ABC):
 class LectureService(BaseLectureService):
     async def get_recommended(
         self, page: int = 1, per_page: int = 20
-    ) -> tuple[list[LectureList], PaginationMeta]:
+    ) -> tuple[list[LectureInList], PaginationMeta]:
         lectures, pagination_meta = await self.lecture_repository.fetch_lectures(
             page, per_page
         )

@@ -6,7 +6,7 @@ import uuid
 from fastapi_users import schemas
 
 from app.core.models import BaseModel, BaseSchema
-from app.lecture.models import LectureList
+from app.lecture.models import LectureInList
 from app.subscription.models import Subscription
 
 
@@ -19,7 +19,7 @@ class UserArtistInfo(BaseModel):
     id: uuid.UUID
     nickname: str
     time_created: datetime.datetime
-    lectures: list[LectureList]
+    lectures: list[LectureInList]
 
 
 class AuthSessionSchema(BaseModel):

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import datetime
+import json
 import uuid
-from typing import List
+from typing import List, Literal
+
+from pydantic import field_validator
 
 from app.core.models import BaseModel, BaseSchema
 from app.lesson.models import LessonInLecture
@@ -25,14 +28,32 @@ class ArtistInfoInLecture(BaseModel):
     is_artist: bool
 
 
-class LectureList(BaseModel):
+LectureType = Literal["원곡카피", "해석버전", "기본기"]
+DifficultyLevel = Literal["Easy", "Intermediate", "Advanced"]
+TagsTuple = tuple[LectureType, DifficultyLevel]
+
+
+class LectureInList(BaseModel):
     id: int
+    thumbnail: str | None
     title: str
+    artist: str
     description: str
+    tags: tuple[LectureType, DifficultyLevel] | None
     length_sec: int
     lecture_count: int
     time_created: datetime.datetime
     time_updated: datetime.datetime
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def validate_tags(cls, value):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            print(f"{json.loads(value)=}")
+            return tuple(json.loads(value))
+        return value
 
 
 class Playlist(BaseModel):
@@ -52,7 +73,7 @@ class PaginationMeta(BaseModel):
 
 
 class FetchRecommendedLecuturesSchema(BaseSchema):
-    data: list[LectureList]
+    data: list[LectureInList]
     meta: PaginationMeta
 
 
