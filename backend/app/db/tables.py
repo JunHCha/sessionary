@@ -62,13 +62,13 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 
     # for orm
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
-        "OAuthAccount", lazy="subquery"
+        "OAuthAccount"
     )
     subscription: Mapped["Subscription"] = relationship(
-        "Subscription", back_populates="subscription_info", lazy="subquery"
+        "Subscription", back_populates="users"
     )
     group: Mapped["Group"] = relationship(
-        "Group", back_populates="group_list", lazy="subquery"
+        "Group", back_populates="users"
     )
     lectures: Mapped[List["Lecture"]] = relationship(
         "Lecture", uselist=True, back_populates="artist"
@@ -90,8 +90,8 @@ class Subscription(Base):
     )
 
     # for orm
-    subscription_info: Mapped[List[User]] = relationship(
-        "User", back_populates="subscription", lazy="subquery"
+    users: Mapped[List[User]] = relationship(
+        "User", back_populates="subscription"
     )
 
     __tablename__ = "subscription"
@@ -108,8 +108,8 @@ class Group(Base):
         DateTime, default=func.now(), onupdate=func.now()
     )
 
-    group_list: Mapped["User"] = relationship(
-        "User", back_populates="group", lazy="subquery"
+    users: Mapped[List["User"]] = relationship(
+        "User", back_populates="group"
     )
 
     __tablename__ = "group"
