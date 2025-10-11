@@ -13,11 +13,16 @@ RUN uv sync --frozen --no-dev
 
 FROM base AS dev
 COPY --from=packages /workspace/.venv /workspace/.venv
+COPY . ./
 EXPOSE 80
 
 FROM base AS staging
 COPY --from=packages /workspace/.venv /workspace/.venv
 COPY --from=packages /usr/local /usr/local
-COPY . ./
+COPY ./app ./app
+COPY ./dev-scripts ./dev-scripts
+COPY ./pyproject.toml ./pyproject.toml
+COPY ./uv.lock ./uv.lock
+COPY ./README.md ./README.md
 EXPOSE 10080
 ENTRYPOINT ./dev-scripts/run-staging.sh
