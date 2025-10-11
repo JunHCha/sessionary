@@ -14,7 +14,8 @@ RUN uv sync --frozen --no-dev
 FROM base AS dev
 COPY --from=packages /workspace/.venv /workspace/.venv
 COPY . ./
-EXPOSE 80
+EXPOSE 8000
+ENTRYPOINT ./dev-scripts/run-dev.sh
 
 FROM base AS staging
 COPY --from=packages /workspace/.venv /workspace/.venv
