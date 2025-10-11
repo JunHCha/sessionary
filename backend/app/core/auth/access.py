@@ -15,10 +15,7 @@ def authenticated_user(current_user: User = Depends(current_user)):
 
 
 def subscribed_user(current_user: User = Depends(current_user)):
-    if (
-        not current_user.subscription.expires_at > datetime.datetime.now()
-        or not current_user.is_superuser
-    ):
+    if not current_user.is_superuser:
         raise HTTPException(status_code=403, detail="Forbidden")
     return current_user
 
