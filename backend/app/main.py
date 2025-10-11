@@ -14,7 +14,6 @@ from app.user import api as user_api
 
 
 def get_application() -> FastAPI:
-
     settings = get_app_settings()
     settings.configure_logging()
 
