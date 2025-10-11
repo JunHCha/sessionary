@@ -2,6 +2,7 @@ from typing import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
+from fastapi_users.schemas import BaseUserCreate
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,7 +26,6 @@ async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
 
 @pytest.fixture
 async def test_user(user_manager_stub: UserManager):
-    from fastapi_users.schemas import BaseUserCreate
 
     user_create = BaseUserCreate(
         email="test@test.com",
@@ -40,7 +40,6 @@ async def test_user(user_manager_stub: UserManager):
 
 @pytest.fixture
 async def test_artist(user_manager_stub: UserManager, test_session: AsyncSession):
-    from fastapi_users.schemas import BaseUserCreate
 
     user_create = BaseUserCreate(
         email="artist@test.com",
@@ -57,7 +56,6 @@ async def test_artist(user_manager_stub: UserManager, test_session: AsyncSession
 
 @pytest.fixture
 async def test_admin(user_manager_stub: UserManager):
-    from fastapi_users.schemas import BaseUserCreate
 
     user_create = BaseUserCreate(
         email="admin@test.com",

@@ -93,6 +93,7 @@ async def auth_redis() -> AsyncGenerator[RedisMock, None]:
 
 @pytest.fixture
 async def app(stub_sess_manager) -> FastAPI:
+    # test env fixture를 먼저 받아야 get_application이 test_settings를 참조할 수 있음
     from app.main import get_application
 
     async def override_get_session():
