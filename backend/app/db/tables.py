@@ -65,7 +65,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         "OAuthAccount"
     )
     subscription: Mapped["Subscription"] = relationship(
-        "Subscription", back_populates="users"
+        "Subscription", back_populates="users", lazy="selectin"
     )
     group: Mapped["Group"] = relationship(
         "Group", back_populates="users"
