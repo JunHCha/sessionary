@@ -7,11 +7,6 @@
     ],
     "settings": {
         "python.languageServer": "None",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "charliermarsh.ruff",
         "python.testing.unittestEnabled": false,
         "python.testing.pytestEnabled": true,
         "python.testing.pytestArgs": [
@@ -19,12 +14,18 @@
             "-s"
         ],
         "python.testing.autoTestDiscoverOnSaveEnabled": true,
+        "[python]": {
+            "editor.formatOnSave": true,
+            "editor.defaultFormatter": "charliermarsh.ruff"
+        },
         "[shellscript]": {
             "editor.defaultFormatter": "foxundermoon.shell-format"
         },
         "files.exclude": {
             "**/__pycache__": true,
-            "**/.pytest_cache": true
+            "**/.pytest_cache": true,
+            "**/.ruff_cache": true,
+            ".venv": true,
         }
     }
 }
