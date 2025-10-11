@@ -21,6 +21,7 @@ from app.db.session import SessionManager
 from app.depends.auth import get_user_db, get_user_manager
 from app.depends.db import get_session
 from app.depends.settings import get_app_settings
+from app.main import get_application
 from tests.mock.redis_mock import RedisMock
 
 
@@ -93,7 +94,6 @@ async def auth_redis() -> AsyncGenerator[RedisMock, None]:
 
 @pytest.fixture
 async def app(stub_sess_manager) -> FastAPI:
-    from app.main import get_application
 
     async def override_get_session():
         async with stub_sess_manager.async_session() as session:
