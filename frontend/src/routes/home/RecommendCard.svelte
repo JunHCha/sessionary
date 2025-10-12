@@ -6,6 +6,12 @@
 
 	export let lectures: LectureInList[]
 
+	const DEFAULT_THUMBNAIL = '/thumbnails/gabriel-gurrola-L_36Dxf2FhM-unsplash.png'
+
+	function getThumbnailSrc(thumbnail: string | null): string {
+		return thumbnail || DEFAULT_THUMBNAIL
+	}
+
 	let currentIndex = 0
 	let visibleLectures = lectures.slice(0, 4) // 초기 4개 로드
 	let isHovered = false
@@ -54,7 +60,7 @@
 				style="filter: brightness({100 - idx * 15}%)"
 			>
 				<img
-					src="{lecture.thumbnail}"
+					src="{getThumbnailSrc(lecture.thumbnail)}"
 					alt="{lecture.title}"
 					class="w-full h-full object-cover transition-all duration-400"
 					style="filter: brightness({100 - idx * 15}%)"
@@ -79,7 +85,7 @@
 	>
 		<div class="w-full h-full bg-gray-800 flex items-center justify-center">
 			<img
-				src="{visibleLectures[0]?.thumbnail}"
+				src="{getThumbnailSrc(visibleLectures[0]?.thumbnail)}"
 				alt="{visibleLectures[0]?.title}"
 				class="w-full h-full object-cover"
 			/>
