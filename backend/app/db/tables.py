@@ -5,7 +5,7 @@ import string
 import uuid
 from typing import List, Literal
 
-from fastapi_users.db import (
+from fastapi_users_db_sqlalchemy import (
     SQLAlchemyBaseOAuthAccountTableUUID,
     SQLAlchemyBaseUserTableUUID,
 )
@@ -158,7 +158,9 @@ class Lecture(Base):
     )
 
     # for orm
-    artist: Mapped[User] = relationship("User", back_populates="lectures")
+    artist: Mapped[User] = relationship(
+        "User", back_populates="lectures", lazy="selectin"
+    )
     lessons: Mapped[List["Lesson"]] = relationship(
         "Lesson",
         back_populates="lecture",

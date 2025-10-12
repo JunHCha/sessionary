@@ -37,7 +37,7 @@ class LectureInList(BaseModel):
     id: int
     thumbnail: str | None
     title: str
-    artist: str
+    artist: str | None
     description: str
     tags: tuple[LectureType, DifficultyLevel] | None
     length_sec: int

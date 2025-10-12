@@ -49,7 +49,21 @@ class LectureRepository(BaseLectureRepository):
             .all()
         )
         return (
-            [LectureInList.model_validate(row) for row in results],
+            [
+                LectureInList(
+                    id=row.id,
+                    thumbnail=row.thumbnail,
+                    title=row.title,
+                    artist=row.artist.nickname if row.artist else None,
+                    description=row.description,
+                    tags=row.tags,
+                    length_sec=row.length_sec,
+                    lecture_count=row.lecture_count,
+                    time_created=row.time_created,
+                    time_updated=row.time_updated,
+                )
+                for row in results
+            ],
             PaginationMeta(
                 total_items=total_items,
                 total_pages=(total_items + per_page - 1) // per_page,

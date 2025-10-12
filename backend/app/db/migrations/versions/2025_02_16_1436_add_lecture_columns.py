@@ -13,7 +13,7 @@ from app.db.tables import TagsType
 
 # revision identifiers, used by Alembic.
 revision = "419db5652ed1"
-down_revision = "3cf5570a9c36"
+down_revision = "ae47ad4f4179"
 branch_labels = None
 depends_on = None
 
