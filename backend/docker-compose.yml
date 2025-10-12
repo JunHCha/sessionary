@@ -15,6 +15,7 @@ services:
       - db
     volumes:
       - .:/workspace
+      - /workspace/.venv
 
   db:
     container_name: sessionary-db
