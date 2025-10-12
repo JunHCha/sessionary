@@ -51,7 +51,6 @@ class LectureInList(BaseModel):
         if value is None:
             return None
         if isinstance(value, str):
-            print(f"{json.loads(value)=}")
             return tuple(json.loads(value))
         return value
 
