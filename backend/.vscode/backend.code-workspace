@@ -6,7 +6,7 @@
         },
     ],
     "settings": {
-        "python.languageServer": "None",
+        "python.languageServer": "Jedi",
         "python.testing.unittestEnabled": false,
         "python.testing.pytestEnabled": true,
         "python.testing.pytestArgs": [
