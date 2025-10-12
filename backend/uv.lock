@@ -475,6 +475,9 @@ wheels = [
 ]
 
 [package.optional-dependencies]
+oauth = [
+    { name = "httpx-oauth" },
+]
 redis = [
     { name = "redis" },
 ]
@@ -1422,7 +1425,7 @@ dependencies = [
     { name = "asgi-lifespan" },
     { name = "asyncpg" },
     { name = "fastapi", extra = ["all"] },
-    { name = "fastapi-users", extra = ["redis", "sqlalchemy"] },
+    { name = "fastapi-users", extra = ["oauth", "redis", "sqlalchemy"] },
     { name = "httpx-oauth" },
     { name = "idna" },
     { name = "loguru" },
@@ -1447,7 +1450,7 @@ requires-dist = [
     { name = "asgi-lifespan", specifier = ">=2.1.0" },
     { name = "asyncpg", specifier = ">=0.28.0" },
     { name = "fastapi", extras = ["all"], specifier = ">=0.115.1" },
-    { name = "fastapi-users", extras = ["redis", "sqlalchemy"], specifier = ">=13" },
+    { name = "fastapi-users", extras = ["oauth", "redis", "sqlalchemy"], specifier = ">=13" },
     { name = "httpx-oauth", specifier = ">=0.13.0" },
     { name = "idna", specifier = ">=3.7" },
     { name = "loguru", specifier = ">=0.7.0" },
