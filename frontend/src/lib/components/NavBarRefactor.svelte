@@ -27,6 +27,7 @@
 <div
 	class="w-full h-20 px-20 py-2 flex bg-black/60 items-center fixed z-50 transition-all duration-300"
 	class:minimal="{isScrolled}"
+	data-testid="navbar"
 >
 	<img
 		src="images/logo.png"

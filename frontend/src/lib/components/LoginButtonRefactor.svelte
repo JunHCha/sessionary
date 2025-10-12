@@ -43,7 +43,8 @@
 {:else}
 	<button
 		on:click="{() => (formModal = true)}"
-		class="text-lg font-pretendard text-white font-bold">로그인</button
+		class="text-lg font-pretendard text-white font-bold"
+		data-testid="login-button">로그인</button
 	>
 {/if}
 
