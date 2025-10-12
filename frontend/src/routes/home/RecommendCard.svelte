@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { tweened } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'
 
-	import type { LectureList } from '$lib/client'
+	import type { LectureInList } from '$lib/client'
 
-	export let lectures: LectureList[]
+	export let lectures: LectureInList[]
 
 	let currentIndex = 0
 	let visibleLectures = lectures.slice(0, 4) // 초기 4개 로드
@@ -54,7 +53,12 @@
 				class="w-full h-full bg-gray-800 flex items-center justify-center transition-all duration-400"
 				style="filter: brightness({100 - idx * 15}%)"
 			>
-				<span class="text-white text-lg">No Image</span>
+				<img
+					src="{lecture.thumbnail}"
+					alt="{lecture.title}"
+					class="w-full h-full object-cover transition-all duration-400"
+					style="filter: brightness({100 - idx * 15}%)"
+				/>
 			</div>
 		</div>
 	{/each}
@@ -74,7 +78,11 @@
 		"
 	>
 		<div class="w-full h-full bg-gray-800 flex items-center justify-center">
-			<span class="text-white text-lg">No Image</span>
+			<img
+				src="{visibleLectures[0]?.thumbnail}"
+				alt="{visibleLectures[0]?.title}"
+				class="w-full h-full object-cover"
+			/>
 		</div>
 
 		<!-- 우하단 말림 효과 -->

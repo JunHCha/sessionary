@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Heading } from 'flowbite-svelte'
 	import LectureCard from './LectureCard.svelte'
-	import type { LectureList } from '$lib/client'
+	import type { LectureInList } from '$lib/client'
 
 	export let title: string
-	export let lectures: LectureList[]
+	export let lectures: LectureInList[]
 </script>
 
 <section class="my-[8rem] mx-auto">

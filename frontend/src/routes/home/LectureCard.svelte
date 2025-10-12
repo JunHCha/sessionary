@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { LectureList } from '$lib/client'
+	import type { LectureInList } from '$lib/client'
 
-	export let lecture: LectureList
+	export let lecture: LectureInList
 
 	function formatDuration(seconds: number): string {
 		const minutes = Math.floor(seconds / 60)
@@ -17,7 +17,7 @@
 		<div
 			class="w-full h-[180px] bg-gray-800 flex items-center justify-center transition-all duration-300 group-hover:brightness-50"
 		>
-			<span class="text-white text-lg">No Image</span>
+			<span class="text-white text-lg">{lecture.thumbnail}</span>
 		</div>
 		<div
 			class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -29,9 +29,11 @@
 		<h5 class="mb-2 text-xl font-bold text-white">
 			{lecture.title}
 		</h5>
-		<p class="mb-3 text-[#848484]">Unknown Artist</p>
+		<p class="mb-3 text-[#848484]">{lecture.artist}</p>
 		<div class="flex flex-wrap gap-2">
-			<span class="px-3 py-1 text-sm bg-[#734e38] text-white rounded-md"> Lecture </span>
+			<span class="px-3 py-1 text-sm bg-[#734e38] text-white rounded-md">
+				{lecture.tags}
+			</span>
 		</div>
 	</div>
 </div>

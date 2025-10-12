@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { getLecturesLectureGet } from '$lib/client'
-	import { Heading } from 'flowbite-svelte'
 	import LectureListSection from './LectureListSection.svelte'
-	import type { LectureList } from '$lib/client'
+	import type { LectureInList } from '$lib/client'
 	import HomeMainSection from './HomeMainSection.svelte'
 	import RecommendationSection from './RecommendationSection.svelte'
 
-	let newLectures: LectureList[] = []
-	let recommendedLectures: LectureList[] = []
+	let newLectures: LectureInList[] = []
+	let recommendedLectures: LectureInList[] = []
 
 	onMount(async () => {
 		try {

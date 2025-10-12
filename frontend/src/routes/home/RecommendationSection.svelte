@@ -1,8 +1,8 @@
 <script lang="ts">
 	import RecommendCard from './RecommendCard.svelte'
-	import type { LectureList } from '$lib/client'
+	import type { LectureInList } from '$lib/client'
 
-	export let recommendedLectures: LectureList[]
+	export let recommendedLectures: LectureInList[]
 </script>
 
 <section class="flex flex-col items-center h-[90vh]">
