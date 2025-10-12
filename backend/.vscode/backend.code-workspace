@@ -6,50 +6,26 @@
         },
     ],
     "settings": {
-        "python.languageServer": "Pylance",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "ms-python.black-formatter",
-        "python.testing.pytestArgs": [
-            "-s",
-            "tests"
-        ],
-        "mypy-type-checker.args": [
-            "--config-file=pyproject.toml"
-        ],
+        "python.languageServer": "None",
         "python.testing.unittestEnabled": false,
         "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": [
+            "tests",
+            "-s"
+        ],
         "python.testing.autoTestDiscoverOnSaveEnabled": true,
-        "flake8.args": [
-            "--max-line-length=88",
-            "--ignore=E203,W503"
-        ],
-        "isort.args": [
-            "--profile=black"
-        ],
+        "[python]": {
+            "editor.formatOnSave": true,
+            "editor.defaultFormatter": "charliermarsh.ruff"
+        },
         "[shellscript]": {
             "editor.defaultFormatter": "foxundermoon.shell-format"
         },
         "files.exclude": {
             "**/__pycache__": true,
-            "**/.pytest_cache": true
+            "**/.pytest_cache": true,
+            "**/.ruff_cache": true,
+            ".venv": true,
         }
-    },
-    "recommendations": [
-        // python
-        "ms-python.python",
-        "ms-python.pylance",
-        "ms-python.flake8",
-        "ms-python.black-formatter",
-        "ms-python.mypy-type-checker",
-        "ms-python.isort",
-        // shell script
-        "foxundermoon.shell-format",
-        // docker
-        "microsoft.docker",
-        // yaml formatter
-        "redhat.yaml"
-    ]
+    }
 }
