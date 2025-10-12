@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, lazyload
 
 from app.db import tables as tb
+from app.lecture.models import LectureInList
 from app.user.models import UserArtistInfo
 
 
@@ -41,7 +42,21 @@ class UserRepository(BaseUserRepository):
                 id=row.id,
                 nickname=row.nickname,
                 time_created=row.time_created,
-                lectures=[lecture for lecture in row.lectures],
+                lectures=[
+                    LectureInList(
+                        id=lecture.id,
+                        thumbnail=lecture.thumbnail,
+                        title=lecture.title,
+                        artist=lecture.artist.nickname if lecture.artist else None,
+                        description=lecture.description,
+                        tags=lecture.tags,
+                        length_sec=lecture.length_sec,
+                        lecture_count=lecture.lecture_count,
+                        time_created=lecture.time_created,
+                        time_updated=lecture.time_updated,
+                    )
+                    for lecture in row.lectures
+                ],
             )
             for row in results
         ]
