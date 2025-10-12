@@ -40,7 +40,7 @@ export type ErrorModel = {
 };
 
 export type FetchRecommendedLecuturesSchema = {
-    data: Array<LectureList>;
+    data: Array<LectureInList>;
     meta: PaginationMeta;
 };
 
@@ -67,10 +67,13 @@ export type LectureDetail = {
     time_updated: string;
 };
 
-export type LectureList = {
+export type LectureInList = {
     id: number;
+    thumbnail: string | null;
     title: string;
+    artist: string | null;
     description: string;
+    tags: unknown[] | null;
     length_sec: number;
     lecture_count: number;
     time_created: string;
@@ -101,7 +104,7 @@ export type UserArtistInfo = {
     id: string;
     nickname: string;
     time_created: string;
-    lectures: Array<LectureList>;
+    lectures: Array<LectureInList>;
 };
 
 export type UserRead = {
