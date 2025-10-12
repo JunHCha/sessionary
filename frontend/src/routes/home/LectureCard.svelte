@@ -1,7 +1,7 @@
 <script lang="ts">
-	import NewLecture from './+page.svelte'
+	import type { LectureList } from '$lib/client'
 
-	export let lecture: NewLecture
+	export let lecture: LectureList
 
 	function formatDuration(seconds: number): string {
 		const minutes = Math.floor(seconds / 60)
@@ -14,11 +14,11 @@
 	class="group bg-black rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-100 w-[25rem] mx-[1rem] mb-[5rem]"
 >
 	<div class="relative">
-		<img
-			src="{lecture.thumbnail}"
-			alt="{lecture.title}"
-			class="w-full h-[180px] object-cover transition-all duration-300 group-hover:brightness-50"
-		/>
+		<div
+			class="w-full h-[180px] bg-gray-800 flex items-center justify-center transition-all duration-300 group-hover:brightness-50"
+		>
+			<span class="text-white text-lg">No Image</span>
+		</div>
 		<div
 			class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
 		>
@@ -29,13 +29,9 @@
 		<h5 class="mb-2 text-xl font-bold text-white">
 			{lecture.title}
 		</h5>
-		<p class="mb-3 text-[#848484]">세션맨 팝빙구</p>
+		<p class="mb-3 text-[#848484]">Unknown Artist</p>
 		<div class="flex flex-wrap gap-2">
-			{#each lecture.tags as tag}
-				<span class="px-3 py-1 text-sm bg-[#734e38] text-white rounded-md">
-					{tag}
-				</span>
-			{/each}
+			<span class="px-3 py-1 text-sm bg-[#734e38] text-white rounded-md"> Lecture </span>
 		</div>
 	</div>
 </div>

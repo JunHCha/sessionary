@@ -1,10 +1,10 @@
 <script lang="ts">
-	import NewLecture from './+page.svelte'
 	import { Heading } from 'flowbite-svelte'
 	import LectureCard from './LectureCard.svelte'
+	import type { LectureList } from '$lib/client'
 
 	export let title: string
-	export let lectures: NewLecture[]
+	export let lectures: LectureList[]
 </script>
 
 <section class="my-[8rem] mx-auto">
@@ -20,14 +20,3 @@
 		{/each}
 	</div>
 </section>
-
-<style>
-	/* 스크롤바 숨기기 */
-	.hide-scrollbar {
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
-	}
-	.hide-scrollbar::-webkit-scrollbar {
-		display: none; /* Chrome, Safari, Opera */
-	}
-</style>

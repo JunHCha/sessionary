@@ -3,7 +3,9 @@
 	import { tweened } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'
 
-	export let lectures: Array<{ thumbnail: string; title: string }>
+	import type { LectureList } from '$lib/client'
+
+	export let lectures: LectureList[]
 
 	let currentIndex = 0
 	let visibleLectures = lectures.slice(0, 4) // 초기 4개 로드
@@ -48,12 +50,12 @@
 				opacity: ${1 - idx * 0.2};
 			"
 		>
-			<img
-				src="{lecture.thumbnail}"
-				alt="{lecture.title}"
-				class="w-full h-full object-cover transition-all duration-400"
+			<div
+				class="w-full h-full bg-gray-800 flex items-center justify-center transition-all duration-400"
 				style="filter: brightness({100 - idx * 15}%)"
-			/>
+			>
+				<span class="text-white text-lg">No Image</span>
+			</div>
 		</div>
 	{/each}
 
@@ -71,11 +73,9 @@
 			opacity: ${1 - $cardPosition / 100};
 		"
 	>
-		<img
-			src="{visibleLectures[0]?.thumbnail}"
-			alt="{visibleLectures[0]?.title}"
-			class="w-full h-full object-cover"
-		/>
+		<div class="w-full h-full bg-gray-800 flex items-center justify-center">
+			<span class="text-white text-lg">No Image</span>
+		</div>
 
 		<!-- 우하단 말림 효과 -->
 		{#if isHovered}
@@ -87,19 +87,3 @@
 		{/if}
 	</button>
 </div>
-
-<style>
-	/* 카드 말림 효과를 위한 추가 스타일 */
-	.card-curl {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		width: 0;
-		height: 0;
-		border-style: solid;
-		border-width: 0 0 50px 50px;
-		border-color: transparent transparent rgba(255, 255, 255, 0.1) transparent;
-		transform-origin: bottom right;
-		transition: all 0.3s ease;
-	}
-</style>
