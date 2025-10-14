@@ -27,7 +27,7 @@ export const $Body_auth_redis_login_user_auth_login_post = {
             anyOf: [
                 {
                     type: 'string',
-                    pattern: 'password'
+                    pattern: '^password$'
                 },
                 {
                     type: 'null'
@@ -41,6 +41,7 @@ export const $Body_auth_redis_login_user_auth_login_post = {
         },
         password: {
             type: 'string',
+            format: 'password',
             title: 'Password'
         },
         scope: {
@@ -68,6 +69,7 @@ export const $Body_auth_redis_login_user_auth_login_post = {
                     type: 'null'
                 }
             ],
+            format: 'password',
             title: 'Client Secret'
         }
     },
@@ -159,7 +161,7 @@ export const $FetchRecommendedLecuturesSchema = {
     properties: {
         data: {
             items: {
-                '$ref': '#/components/schemas/LectureList'
+                '$ref': '#/components/schemas/LectureInList'
             },
             type: 'array',
             title: 'Data'
@@ -264,19 +266,64 @@ export const $LectureDetail = {
     title: 'LectureDetail'
 } as const;
 
-export const $LectureList = {
+export const $LectureInList = {
     properties: {
         id: {
             type: 'integer',
             title: 'Id'
         },
+        thumbnail: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Thumbnail'
+        },
         title: {
             type: 'string',
             title: 'Title'
         },
+        artist: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Artist'
+        },
         description: {
             type: 'string',
             title: 'Description'
+        },
+        tags: {
+            anyOf: [
+                {
+                    prefixItems: [
+                        {
+                            type: 'string',
+                            enum: ['원곡카피', '해석버전', '기본기']
+                        },
+                        {
+                            type: 'string',
+                            enum: ['Easy', 'Intermediate', 'Advanced']
+                        }
+                    ],
+                    type: 'array',
+                    maxItems: 2,
+                    minItems: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tags'
         },
         length_sec: {
             type: 'integer',
@@ -298,8 +345,8 @@ export const $LectureList = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'length_sec', 'lecture_count', 'time_created', 'time_updated'],
-    title: 'LectureList'
+    required: ['id', 'thumbnail', 'title', 'artist', 'description', 'tags', 'length_sec', 'lecture_count', 'time_created', 'time_updated'],
+    title: 'LectureInList'
 } as const;
 
 export const $LessonInLecture = {
@@ -390,7 +437,7 @@ export const $UserArtistInfo = {
         },
         lectures: {
             items: {
-                '$ref': '#/components/schemas/LectureList'
+                '$ref': '#/components/schemas/LectureInList'
             },
             type: 'array',
             title: 'Lectures'

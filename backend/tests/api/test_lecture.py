@@ -39,8 +39,10 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
         Lecture(
             id=num,
             artist_id=artist_1.id if num == 10 else artist_2.id,
+            thumbnail=f"thumbnails{id}.png",
             title=f"lecture{num - 9}",
             description=f"description{num - 9}",
+            tags=("원곡카피", "Easy"),
             length_sec=0,
             time_created=now + datetime.timedelta(hours=num - 10),
             time_updated=now + datetime.timedelta(hours=num - 10),

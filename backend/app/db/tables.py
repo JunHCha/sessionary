@@ -1,10 +1,11 @@
 import datetime
+import json
 import random
 import string
 import uuid
-from typing import List
+from typing import List, Literal
 
-from fastapi_users.db import (
+from fastapi_users_db_sqlalchemy import (
     SQLAlchemyBaseOAuthAccountTableUUID,
     SQLAlchemyBaseUserTableUUID,
 )
@@ -19,6 +20,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.types import TypeDecorator
 
 from app.db.base import Base
 
@@ -61,15 +63,11 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     )
 
     # for orm
-    oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
-        "OAuthAccount"
-    )
+    oauth_accounts: Mapped[List[OAuthAccount]] = relationship("OAuthAccount")
     subscription: Mapped["Subscription"] = relationship(
         "Subscription", back_populates="users", lazy="selectin"
     )
-    group: Mapped["Group"] = relationship(
-        "Group", back_populates="users"
-    )
+    group: Mapped["Group"] = relationship("Group", back_populates="users")
     lectures: Mapped[List["Lecture"]] = relationship(
         "Lecture", uselist=True, back_populates="artist"
     )
@@ -90,9 +88,7 @@ class Subscription(Base):
     )
 
     # for orm
-    users: Mapped[List[User]] = relationship(
-        "User", back_populates="subscription"
-    )
+    users: Mapped[List[User]] = relationship("User", back_populates="subscription")
 
     __tablename__ = "subscription"
 
@@ -108,9 +104,7 @@ class Group(Base):
         DateTime, default=func.now(), onupdate=func.now()
     )
 
-    users: Mapped[List["User"]] = relationship(
-        "User", back_populates="group"
-    )
+    users: Mapped[List["User"]] = relationship("User", back_populates="group")
 
     __tablename__ = "group"
 
@@ -126,13 +120,36 @@ class UserSubscriptionHistory(Base):
     __tablename__ = "user_subscription_history"
 
 
+# 태그 타입 정의
+LectureType = Literal["원곡카피", "해석버전", "기본기"]
+DifficultyLevel = Literal["Easy", "Intermediate", "Advanced"]
+TagsTuple = tuple[LectureType, DifficultyLevel]
+
+
+class TagsType(TypeDecorator):
+    impl = String
+    cache_ok = True
+
+    def process_bind_param(self, value: TagsTuple | None, dialect) -> str | None:
+        if value is None:
+            return None
+        return json.dumps(value)
+
+    def process_result_value(self, value: str | None, dialect) -> TagsTuple | None:
+        if value is None:
+            return None
+        return tuple(json.loads(value))  # type: ignore
+
+
 class Lecture(Base):
     id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     artist_id: Mapped[uuid.UUID] = Column(
         UUID, ForeignKey("user.id", name="lecture_user_fkey"), nullable=True
     )
+    thumbnail: Mapped[str] = Column(String, nullable=True)
     title: Mapped[str] = Column(String, nullable=False)
     description: Mapped[str] = Column(String, nullable=False)
+    tags: Mapped[TagsTuple | None] = Column(TagsType, nullable=True)
     length_sec: Mapped[int] = Column(Integer, default=0, nullable=False)
     lecture_count: Mapped[int] = Column(Integer, default=0, nullable=False)
     time_created: Mapped[datetime.datetime] = Column(DateTime, default=func.now())
@@ -141,7 +158,9 @@ class Lecture(Base):
     )
 
     # for orm
-    artist: Mapped[User] = relationship("User", back_populates="lectures")
+    artist: Mapped[User] = relationship(
+        "User", back_populates="lectures", lazy="selectin"
+    )
     lessons: Mapped[List["Lesson"]] = relationship(
         "Lesson",
         back_populates="lecture",

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { LectureList as LectureInList } from '$lib/client'
-	import { Card, ImagePlaceholder } from 'flowbite-svelte'
+	import type { LectureInList } from '$lib/client'
 
 	export let lecture: LectureInList
 
@@ -11,15 +10,30 @@
 	}
 </script>
 
-<Card class="space-y-5 w-64 hover:shadow-lg transition-shadow duration-100">
-	<ImagePlaceholder imgHeight="48" imgOnly />
-	<h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-		{lecture.title}
-	</h5>
-	<p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-		{lecture.description}
-	</p>
-	<p class="mb-1 italic dark:text-gray-200">
-		{formatDuration(lecture.length_sec)}
-	</p>
-</Card>
+<div
+	class="group bg-black rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-100 w-[25rem] mx-[1rem] mb-[5rem]"
+>
+	<div class="relative">
+		<div
+			class="w-full h-[180px] bg-gray-800 flex items-center justify-center transition-all duration-300 group-hover:brightness-50"
+		>
+			<span class="text-white text-lg">{lecture.thumbnail}</span>
+		</div>
+		<div
+			class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+		>
+			<img src="images/mynaui-play-solid.svg" alt="play" class="w-24 h-24" />
+		</div>
+	</div>
+	<div class="p-4">
+		<h5 class="mb-2 text-xl font-bold text-white">
+			{lecture.title}
+		</h5>
+		<p class="mb-3 text-[#848484]">{lecture.artist}</p>
+		<div class="flex flex-wrap gap-2">
+			<span class="px-3 py-1 text-sm bg-[#734e38] text-white rounded-md">
+				{lecture.tags}
+			</span>
+		</div>
+	</div>
+</div>
