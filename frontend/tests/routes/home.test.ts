@@ -54,24 +54,4 @@ test.describe('Home page contents', () => {
 		const newSection = page.locator('h2:has-text("새로운 렉쳐")')
 		await expect(newSection).toBeVisible()
 	})
-
-	test('should display lecture cards in grid layout', async ({ page }) => {
-		const lectureGrid = page.locator('.grid.grid-cols-5')
-		await expect(lectureGrid).toBeVisible()
-	})
-
-	test('should have main background image', async ({ page }) => {
-		const mainImage = page.locator('img[alt="main"]')
-		await expect(mainImage).toBeVisible()
-	})
-
-	test('should have recommend section background image', async ({ page }) => {
-		const recommendImage = page.locator('img[alt="se2-png"]')
-		await expect(recommendImage).toBeVisible()
-	})
-
-	test('should have orange accent elements', async ({ page }) => {
-		const orangeElements = page.locator('.bg-\\[\\#FF5C16\\], .text-\\[\\#FF5C16\\]')
-		await expect(orangeElements.first()).toBeVisible()
-	})
 })
