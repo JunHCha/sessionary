@@ -63,7 +63,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     )
 
     # for orm
-    oauth_accounts: Mapped[List[OAuthAccount]] = relationship("OAuthAccount")
+    oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
+        "OAuthAccount", lazy="selectin"
+    )
     subscription: Mapped["Subscription"] = relationship(
         "Subscription", back_populates="users", lazy="selectin"
     )
