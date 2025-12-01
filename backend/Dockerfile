@@ -25,5 +25,6 @@ COPY ./dev-scripts ./dev-scripts
 COPY ./pyproject.toml ./pyproject.toml
 COPY ./uv.lock ./uv.lock
 COPY ./README.md ./README.md
+COPY ./alembic.ini ./alembic.ini
 EXPOSE 10080
 ENTRYPOINT ./dev-scripts/run-staging.sh
