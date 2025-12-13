@@ -17,7 +17,7 @@ class TestAppSettings(AppSettings):
 
     # Security
     secret_key: SecretStr = SecretStr("test_secret")
-    allowed_hosts: list[str] = ["*"]
+    allowed_hosts_str: str = "*"
 
     # Authentication
     cookie_name: str = "satk"

@@ -1,3 +1,4 @@
+import json
 import logging
 import sys
 from enum import Enum
@@ -52,7 +53,21 @@ class AppSettings(BaseAppSettings):
 
     # Security
     secret_key: SecretStr
-    allowed_hosts: List[str] = ["*"]
+    allowed_hosts_str: str = "*"
+
+    @property
+    def allowed_hosts(self) -> List[str]:
+        """Parse allowed_hosts from JSON array or comma-separated string."""
+        v = self.allowed_hosts_str
+        # Try JSON first
+        try:
+            parsed = json.loads(v)
+            if isinstance(parsed, list):
+                return parsed
+        except json.JSONDecodeError:
+            pass
+        # Fall back to comma-separated
+        return [host.strip() for host in v.split(",") if host.strip()]
 
     # Authentication
     cookie_name: str

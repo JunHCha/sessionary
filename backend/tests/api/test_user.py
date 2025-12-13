@@ -7,9 +7,9 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.strategy import RedisMock
 from app.core.settings.base import AppSettings
 from app.db.tables import Lecture, Subscription, User
-from tests.mock.redis_mock import RedisMock
 
 pytestmark = pytest.mark.asyncio
 

@@ -7,11 +7,10 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.manager import UserManager
-from app.core.auth.strategy import AuthSessionSchema
+from app.core.auth.strategy import AuthSessionSchema, RedisMock
 from app.core.settings.base import AppSettings
 from app.db.tables import User
 from app.user.models import Subscription
-from tests.mock.redis_mock import RedisMock
 
 
 @pytest.fixture

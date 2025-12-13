@@ -15,13 +15,13 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from app.core.auth.manager import UserManager
+from app.core.auth.strategy import RedisMock
 from app.core.settings.base import AppSettings
 from app.db import tables
 from app.db.session import SessionManager
 from app.depends.auth import get_user_db, get_user_manager
 from app.depends.db import get_session
 from app.depends.settings import get_app_settings
-from tests.mock.redis_mock import RedisMock
 
 
 @pytest.fixture(scope="session")
