@@ -25,7 +25,8 @@ def setup_env():
 @pytest.fixture(scope="session")
 def test_container(setup_env) -> ApplicationContainer:
     container = ApplicationContainer()
-    container.database.override(TestDatabaseContainer())
+    container.settings.override(TestAppSettings())
+    container.database.override(TestDatabaseContainer(settings=container.settings))
     container.wire(
         modules=[
             "app.user.api",
@@ -38,7 +39,7 @@ def test_container(setup_env) -> ApplicationContainer:
 
 @pytest.fixture(scope="session")
 def test_settings(test_container: ApplicationContainer) -> TestAppSettings:
-    return test_container.database.settings()
+    return test_container.settings()
 
 
 @pytest.fixture(scope="session")

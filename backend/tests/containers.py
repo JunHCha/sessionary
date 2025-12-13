@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from app.containers.database import DatabaseContainer
 from app.containers.services import ServicesContainer
 from app.core.settings.test import TestAppSettings
 from app.db.session import SessionManager
@@ -40,7 +41,7 @@ async def get_test_session(
 class TestDatabaseContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration()
 
-    settings = providers.Singleton(TestAppSettings)
+    settings = providers.Dependency()
 
     session_manager = providers.Singleton(
         TestSessionManager,
@@ -50,20 +51,4 @@ class TestDatabaseContainer(containers.DeclarativeContainer):
     session = providers.Resource(
         get_test_session,
         session_manager=session_manager,
-    )
-
-
-class TestApplicationContainer(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-        modules=[
-            "app.user.api",
-            "app.lecture.api",
-        ]
-    )
-
-    database = providers.Container(TestDatabaseContainer)
-
-    services = providers.Container(
-        ServicesContainer,
-        database=database,
     )

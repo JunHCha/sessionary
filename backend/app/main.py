@@ -28,7 +28,7 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
     if container is None:
         container = create_container()
 
-    settings = container.database.settings()
+    settings = container.settings()
     settings.configure_logging()
 
     application = FastAPI(**settings.fastapi_kwargs)
