@@ -9,8 +9,6 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.containers.database import DatabaseContainer
-from app.containers.services import ServicesContainer
 from app.core.settings.test import TestAppSettings
 from app.db.session import SessionManager
 
