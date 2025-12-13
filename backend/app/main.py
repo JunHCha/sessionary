@@ -3,21 +3,36 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
+from app.containers.application import ApplicationContainer
 from app.core.auth.backend import auth_backend
 from app.core.errors.http_error import http_error_handler
 from app.core.errors.validation_error import http400_error_handler
 from app.core.middlewares import AuthSessionMiddleware
-from app.depends.settings import get_app_settings
 from app.lecture import api as lecture_api
 from app.ping import api as ping_api
 from app.user import api as user_api
 
 
-def get_application() -> FastAPI:
-    settings = get_app_settings()
+def create_container() -> ApplicationContainer:
+    container = ApplicationContainer()
+    container.wire(
+        modules=[
+            "app.user.api",
+            "app.lecture.api",
+        ]
+    )
+    return container
+
+
+def get_application(container: ApplicationContainer | None = None) -> FastAPI:
+    if container is None:
+        container = create_container()
+
+    settings = container.database.settings()
     settings.configure_logging()
 
     application = FastAPI(**settings.fastapi_kwargs)
+    application.container = container
 
     application.add_middleware(
         CORSMiddleware,
@@ -44,4 +59,15 @@ def get_application() -> FastAPI:
     return application
 
 
-app = get_application()
+def create_app() -> FastAPI:
+    return get_application()
+
+
+app: FastAPI | None = None
+
+
+def get_app() -> FastAPI:
+    global app
+    if app is None:
+        app = create_app()
+    return app
