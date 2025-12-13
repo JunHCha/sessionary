@@ -8,15 +8,15 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.strategy import RedisMock
-from app.core.settings.base import AppSettings
+from app.core.settings.test import TestAppSettings
 from app.db.tables import Lecture, Subscription, User
 
+pytest_plugins = ["tests.conftest", "tests.api.conftest"]
 pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
 async def dummy_users(test_session: AsyncSession) -> None:
-
     now = datetime.datetime.now()
     artist_1 = User(
         id=uuid.uuid4(),
@@ -97,7 +97,6 @@ async def dummy_users(test_session: AsyncSession) -> None:
 
 
 async def test_sut_create_subscription_when_register_user(test_user):
-    # then
     assert test_user.subscription is not None
     assert test_user.subscription.is_active is True
     assert test_user.subscription.name == "ticket"
@@ -106,8 +105,6 @@ async def test_sut_create_subscription_when_register_user(test_user):
 async def test_sut_create_auth_session_when_login(
     client: AsyncClient, auth_redis: RedisMock, test_user
 ) -> None:
-
-    # when
     response = await client.post(
         "/user/auth/login",
         headers={
@@ -117,7 +114,6 @@ async def test_sut_create_auth_session_when_login(
         data={"username": "test@test.com", "password": "password"},
     )
 
-    # then
     assert response.status_code == 204
 
     token = response.cookies.get("satk")
@@ -126,10 +122,8 @@ async def test_sut_create_auth_session_when_login(
 
 
 async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
-    # when
     response = await client.get("/user/artists")
 
-    # then
     assert response.status_code == 200
     content = response.json()
     assert len(content.get("data")) == 2
@@ -141,10 +135,8 @@ async def test_sut_fetch_artists(client: AsyncClient, dummy_users) -> None:
 
 
 async def test_sut_get_me(authorized_client: AsyncClient) -> None:
-    # when
     response = await authorized_client.get("/user/me")
 
-    # then
     assert response.status_code == 200
     content = response.json()
     assert content.get("email") == "test@test.com"
@@ -154,17 +146,14 @@ async def test_sut_get_me(authorized_client: AsyncClient) -> None:
 async def test_sut_refresh_session_token_after_refresh_interval(
     authorized_client: AsyncClient,
     auth_redis: RedisMock,
-    test_settings: AppSettings,
+    test_settings: TestAppSettings,
 ):
-    # given
     original_auth_token = authorized_client.cookies.get("satk")
     original_session_value = await auth_redis.get(original_auth_token)
 
-    # when
     await asyncio.sleep(test_settings.auth_session_refresh_interval + 1)
     response = await authorized_client.get("/user/me")
 
-    # then
     assert response.status_code == 200
     new_auth_token = response.cookies.get("satk")
     assert new_auth_token is not None

@@ -7,6 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.tables import Lecture, Lesson, User
 
+pytest_plugins = ["tests.conftest", "tests.api.conftest"]
+
 
 @pytest.fixture
 async def dummy_lectures(test_session: AsyncSession) -> None:
@@ -89,10 +91,8 @@ async def dummy_lectures(test_session: AsyncSession) -> None:
 
 
 async def test_sut_fetch_recommended_lectures(client: AsyncClient, dummy_lectures):
-    # when
     response = await client.get("/lecture?page=1&per_page=20")
 
-    # then
     assert response.status_code == 200
 
     content = response.json()
@@ -111,10 +111,8 @@ async def test_sut_fetch_recommended_lectures(client: AsyncClient, dummy_lecture
 
 
 async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
-    # when
     response = await client.get("/lecture/10")
 
-    # then
     assert response.status_code == 200
     content = response.json()
     assert content["data"]["id"] == 10
@@ -128,16 +126,13 @@ async def test_sut_fetch_lecture_datail(client: AsyncClient, dummy_lectures):
 async def test_sut_create_lecture(
     authorized_client_admin: AsyncClient, client: AsyncClient
 ):
-    # given
     body = {
         "title": "new lecture",
         "description": "new lecture description",
     }
 
-    # when
     response = await authorized_client_admin.post("/lecture", json=body)
 
-    # then
     assert response.status_code == 201
     content = response.json()
     assert content["data"]["title"] == "new lecture"
@@ -158,14 +153,11 @@ async def test_sut_create_lecture(
 async def test_sut_can_create_lecture_by_only_superuser(
     authorized_client_artist: AsyncClient,
 ):
-    # given
     body = {
         "title": "new lecture",
         "description": "new lecture description",
     }
 
-    # when
     response = await authorized_client_artist.post("/lecture", json=body)
 
-    # then
     assert response.status_code == 403
