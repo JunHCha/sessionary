@@ -1,20 +1,18 @@
 from typing import AsyncGenerator
 
 from dependency_injector import containers, providers
-from dependency_injector.wiring import Provide
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.backend import AuthBackend
 from app.auth.manager import UserManager
 from app.db.tables import OAuthAccount, User
 
 
-async def get_user_db(
-    session: AsyncSession = Depends(Provide["database.session"]),
-) -> AsyncGenerator[SQLAlchemyUserDatabase, None]:
-    yield SQLAlchemyUserDatabase(session, User, OAuthAccount)
+async def get_user_db(request: Request) -> AsyncGenerator[SQLAlchemyUserDatabase, None]:
+    session_manager = request.app.container.database.session_manager()
+    async with session_manager.async_session() as session:
+        yield SQLAlchemyUserDatabase(session, User, OAuthAccount)
 
 
 async def get_user_manager(
