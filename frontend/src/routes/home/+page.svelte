@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { getLecturesLectureGet } from '$lib/client'
-	import LectureListSection from './LectureListSection.svelte'
-	import type { LectureInList } from '$lib/client'
-	import HomeMainSection from './HomeMainSection.svelte'
-	import RecommendationSection from './RecommendationSection.svelte'
+	import { getLecturesLectureGet } from '$lib/api'
+	import type { LectureInList } from '$lib/api'
+	import { LectureList, RecommendSection } from '$lib/features/lecture'
+	import { HeroSection } from '$lib/components/layout'
 
 	let newLectures: LectureInList[] = []
 	let recommendedLectures: LectureInList[] = []
@@ -20,7 +19,7 @@
 </script>
 
 <main class="px-0 mx-0 flex flex-col">
-	<HomeMainSection />
-	<RecommendationSection {recommendedLectures} />
-	<LectureListSection title="새로운 렉쳐" lectures="{newLectures}" />
+	<HeroSection />
+	<RecommendSection {recommendedLectures} />
+	<LectureList title="새로운 렉쳐" lectures="{newLectures}" />
 </main>

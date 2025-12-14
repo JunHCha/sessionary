@@ -23,7 +23,6 @@
 		"cookie": "^0.7.0",
 		"esbuild": "^0.25.0",
 		"flowbite-svelte": "^0.47.3",
-		"flowbite-svelte-blocks": "^1.1.4",
 		"flowbite-svelte-icons": "^1.6.2",
 		"svelte": "^4.2.7",
 		"tslib": "^2.4.1"

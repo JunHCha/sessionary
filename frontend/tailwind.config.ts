@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import flowbitePlugin from 'flowbite/plugin'
+import { colors } from './src/lib/styles/tokens'
 
 export default {
 	content: [
@@ -10,7 +11,9 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				// flowbite-svelte
+				brand: colors.brand,
+				surface: colors.background,
+				content: colors.text,
 				primary: {
 					50: '#FFF5F2',
 					100: '#FFF1EE',

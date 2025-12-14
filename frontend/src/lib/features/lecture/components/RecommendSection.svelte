@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RecommendCard from './RecommendCard.svelte'
-	import type { LectureInList } from '$lib/client'
+	import type { LectureInList } from '$lib/api/client'
 
 	export let recommendedLectures: LectureInList[]
 </script>
@@ -15,7 +15,7 @@
 	/>
 	<span class="flex items-center gap-2 text-5xl font-pretendard font-bold mt-[20rem]">
 		🔥 요즘 많이 보는 렉처
-		<span class="text-[#FF5C16]">TOP 10</span>
+		<span class="text-brand-primary">TOP 10</span>
 	</span>
 	<div class="relative">
 		<RecommendCard lectures="{recommendedLectures}" />

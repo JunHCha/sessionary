@@ -1,13 +1,7 @@
 <script lang="ts">
-	import type { LectureInList } from '$lib/client'
+	import type { LectureInList } from '$lib/api/client'
 
 	export let lecture: LectureInList
-
-	function formatDuration(seconds: number): string {
-		const minutes = Math.floor(seconds / 60)
-		const remainingSeconds = seconds % 60
-		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-	}
 </script>
 
 <div
@@ -29,9 +23,9 @@
 		<h5 class="mb-2 text-xl font-bold text-white">
 			{lecture.title}
 		</h5>
-		<p class="mb-3 text-[#848484]">{lecture.artist}</p>
+		<p class="mb-3 text-content-secondary">{lecture.artist}</p>
 		<div class="flex flex-wrap gap-2">
-			<span class="px-3 py-1 text-sm bg-[#734e38] text-white rounded-md">
+			<span class="px-3 py-1 text-sm bg-brand-tag text-white rounded-md">
 				{lecture.tags}
 			</span>
 		</div>

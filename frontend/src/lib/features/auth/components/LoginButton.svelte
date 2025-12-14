@@ -1,16 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { isAuthenticated } from '$lib/stores/auth'
+	import { isAuthenticated } from '../stores/auth.svelte'
 	import { Button, Modal } from 'flowbite-svelte'
-	import { createEventDispatcher } from 'svelte'
 	import {
 		oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet,
 		authRedisLogoutUserAuthLogoutPost
-	} from '$lib/client/services.gen'
+	} from '$lib/api/client'
 
 	let formModal = false
-
-	const dispatch = createEventDispatcher()
 
 	async function handleLogin() {
 		try {
@@ -37,15 +34,17 @@
 </script>
 
 {#if $isAuthenticated}
-	<button on:click="{handleLogout}" class="text-lg font-pretendard text-white font-bold"
-		>로그아웃</button
-	>
+	<button on:click="{handleLogout}" class="text-lg font-pretendard text-white font-bold">
+		로그아웃
+	</button>
 {:else}
 	<button
 		on:click="{() => (formModal = true)}"
 		class="text-lg font-pretendard text-white font-bold"
-		data-testid="login-button">로그인</button
+		data-testid="login-button"
 	>
+		로그인
+	</button>
 {/if}
 
 <Modal bind:open="{formModal}" size="xs" autoclose="{false}" class="w-full">
@@ -56,12 +55,10 @@
 
 		<Button type="submit" class="w-full1" on:click="{handleLogin}">Signup with Google</Button>
 		<div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-			Not registered? <a
-				href="/"
-				class="text-primary-700 hover:underline dark:text-primary-500"
+			Not registered?
+			<a href="/" class="text-primary-700 hover:underline dark:text-primary-500"
+				>Create account</a
 			>
-				Create account
-			</a>
 		</div>
 	</form>
 </Modal>

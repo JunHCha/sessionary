@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import LoginButtonRefactor from './LoginButtonRefactor.svelte'
+	import { LoginButton } from '$lib/features/auth'
 
-	let scrollY: number
 	let isScrolled = false
 
 	onMount(() => {
 		const handleScroll = () => {
-			scrollY = window.scrollY
 			const heroSection = document.querySelector('.hero-section')
 			if (heroSection) {
 				const heroMiddle =
@@ -42,7 +40,7 @@
 	</div>
 	<div class="ml-auto flex gap-10">
 		<div class="transition-opacity duration-300" class:opacity-0="{isScrolled}">
-			<LoginButtonRefactor />
+			<LoginButton />
 		</div>
 		<button class="w-10 h-10">
 			<img src="images/iconamoon_search-bold.png" alt="search" />
