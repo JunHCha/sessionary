@@ -4,7 +4,6 @@ primary_region = "nrt"
 [build]
   dockerfile = "Dockerfile"
   ignorefile = '.dockerignore'
-  build-target = "staging"
 
 [http_service]
   internal_port = 3000

@@ -1,5 +1,4 @@
 set +ex
 
-env
 uv run alembic upgrade head
-uv run uvicorn --host 0.0.0.0 app.main:app --port 10080 --workers 3
+uv run uvicorn --host 0.0.0.0 app.main:get_app --port 10080 --factory --workers 1
