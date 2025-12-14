@@ -7,11 +7,9 @@
 	export let lectures: LectureInList[]
 </script>
 
-<section class="my-[8rem] mx-auto">
+<section class="my-[8rem] px-20">
 	<div class="inline-flex items-center gap-2">
-		<Heading tag="h2" customSize="text-4xl font-bold" class="mb-[2rem] text-white"
-			>{title}</Heading
-		>
+		<Heading tag="h2" class="!text-4xl font-bold mb-[2rem] text-white">{title}</Heading>
 		<div class="w-2 h-2 rounded-full bg-brand-primary mb-[2rem] -mt-4"></div>
 	</div>
 	<div class="grid grid-cols-5 gap-4">

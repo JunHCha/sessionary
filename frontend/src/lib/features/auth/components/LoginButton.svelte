@@ -53,7 +53,7 @@
 			Sign in to our platform
 		</h3>
 
-		<Button type="submit" class="w-full1" on:click="{handleLogin}">Signup with Google</Button>
+		<Button type="submit" class="w-full1" onclick="{handleLogin}">Signup with Google</Button>
 		<div class="text-sm font-medium text-gray-500 dark:text-gray-300">
 			Not registered?
 			<a href="/" class="text-primary-700 hover:underline dark:text-primary-500"
