@@ -2,9 +2,8 @@ import orjson
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
-from app.core.auth.backend import AuthBackend
+from app.auth.backend import AuthBackend
 from app.core.settings.base import AppSettings
-from app.depends.settings import get_app_settings
 from app.user.models import AuthSessionSchema
 
 
@@ -12,11 +11,11 @@ class AuthSessionMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app,
-        settings: AppSettings | None = None,
-        auth_backend: AuthBackend | None = None,
+        settings: AppSettings,
+        auth_backend: AuthBackend,
     ):
         super().__init__(app)
-        self.settings = settings or get_app_settings()
+        self.settings = settings
         self.redis_strategy = auth_backend.get_redis_strategy()
 
     async def dispatch(

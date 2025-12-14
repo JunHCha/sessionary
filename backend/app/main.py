@@ -3,22 +3,25 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
+from app.auth import view as auth_view
+from app.auth.access import current_user_placeholder
 from app.containers.application import ApplicationContainer
-from app.core.auth.backend import auth_backend
 from app.core.errors.http_error import http_error_handler
 from app.core.errors.validation_error import http400_error_handler
 from app.core.middlewares import AuthSessionMiddleware
-from app.lecture import api as lecture_api
-from app.ping import api as ping_api
-from app.user import api as user_api
+from app.lecture import view as lecture_view
+from app.ping import view as ping_view
+from app.user import view as user_view
 
 
 def create_container() -> ApplicationContainer:
     container = ApplicationContainer()
     container.wire(
         modules=[
-            "app.user.api",
-            "app.lecture.api",
+            "app.user.view",
+            "app.lecture.view",
+            "app.containers.auth",
+            "app.auth.access",
         ]
     )
     return container
@@ -31,8 +34,13 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
     settings = container.settings()
     settings.configure_logging()
 
+    auth_backend = container.auth.auth_backend()
+
     application = FastAPI(**settings.fastapi_kwargs)
     application.container = container
+    application.dependency_overrides[current_user_placeholder] = (
+        auth_backend.components.current_user()
+    )
 
     application.add_middleware(
         CORSMiddleware,
@@ -49,11 +57,14 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
     application.add_exception_handler(RequestValidationError, http400_error_handler)
 
     api_router = APIRouter()
-    api_router.include_router(user_api.app_router, prefix="/user", tags=["user"])
+    api_router.include_router(user_view.app_router, prefix="/user", tags=["user"])
     api_router.include_router(
-        lecture_api.app_router, prefix="/lecture", tags=["lecture"]
+        auth_view.create_auth_router(auth_backend), prefix="/user", tags=["auth"]
     )
-    api_router.include_router(ping_api.app_router, prefix="/ping", tags=["ping"])
+    api_router.include_router(
+        lecture_view.app_router, prefix="/lecture", tags=["lecture"]
+    )
+    api_router.include_router(ping_view.app_router, prefix="/ping", tags=["ping"])
     application.include_router(api_router)
 
     return application

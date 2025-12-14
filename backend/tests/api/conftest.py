@@ -6,11 +6,11 @@ from fastapi_users.schemas import BaseUserCreate
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth.manager import UserManager
-from app.core.auth.strategy import AuthSessionSchema, RedisMock
+from app.auth.manager import UserManager
+from app.auth.strategy import RedisMock
 from app.core.settings.test import TestAppSettings
 from app.db.tables import User
-from app.user.models import Subscription
+from app.user.models import AuthSessionSchema, Subscription
 
 
 @pytest.fixture
@@ -98,9 +98,7 @@ async def authorized_client(
     test_user,
     test_session: AsyncSession,
 ) -> AsyncGenerator[AsyncClient, None]:
-    client = await make_authorized_client(
-        test_user, test_session, token="SESSIONTOKEN"
-    )
+    client = await make_authorized_client(test_user, test_session, token="SESSIONTOKEN")
     yield client
 
 
@@ -126,4 +124,3 @@ async def authorized_client_admin(
         test_admin, test_session, token="SESSIONTOKEN_ADMIN"
     )
     yield client
-

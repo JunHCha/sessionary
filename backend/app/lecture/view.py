@@ -1,8 +1,8 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Query
 
+from app.auth.access import superuser
 from app.containers.application import ApplicationContainer
-from app.core.auth.access import superuser
 from app.lecture.models import (
     CreateLectureBody,
     CreateLectureResponseSchema,
@@ -50,4 +50,3 @@ async def create_lecture(
 ):
     lecture = await lecture_svc.create_lecture(body.title, body.description)
     return GetLectureSchema(data=lecture)
-

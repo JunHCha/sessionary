@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 
+from app.containers.auth import AuthContainer
 from app.containers.database import DatabaseContainer
 from app.containers.services import ServicesContainer
 from app.core.settings.base import AppEnv, AppSettings, BaseAppSettings
@@ -24,11 +25,17 @@ def get_settings_class() -> type[AppSettings]:
     return config
 
 
+def get_app_settings() -> AppSettings:
+    return get_settings_class()()
+
+
 class ApplicationContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "app.user.api",
-            "app.lecture.api",
+            "app.user.view",
+            "app.lecture.view",
+            "app.containers.auth",
+            "app.auth.access",
         ]
     )
 
@@ -41,5 +48,11 @@ class ApplicationContainer(containers.DeclarativeContainer):
 
     services = providers.Container(
         ServicesContainer,
+        database=database,
+    )
+
+    auth = providers.Container(
+        AuthContainer,
+        settings=settings,
         database=database,
     )

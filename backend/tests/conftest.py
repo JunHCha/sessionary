@@ -8,9 +8,9 @@ from fastapi_users import exceptions
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.manager import UserManager
+from app.auth.strategy import RedisMock
 from app.containers.application import ApplicationContainer
-from app.core.auth.manager import UserManager
-from app.core.auth.strategy import RedisMock
 from app.core.settings.test import TestAppSettings
 from app.db import tables
 from tests.containers import TestDatabaseContainer, TestSessionManager
@@ -29,8 +29,10 @@ def test_container(setup_env) -> ApplicationContainer:
     container.database.override(TestDatabaseContainer(settings=container.settings))
     container.wire(
         modules=[
-            "app.user.api",
-            "app.lecture.api",
+            "app.user.view",
+            "app.lecture.view",
+            "app.containers.auth",
+            "app.auth.access",
         ]
     )
     yield container
@@ -89,15 +91,9 @@ async def auth_redis() -> AsyncGenerator[RedisMock, None]:
 async def app(
     test_container: ApplicationContainer, stub_sess_manager: TestSessionManager
 ) -> FastAPI:
-    from app.depends.db import get_session
     from app.main import get_application
 
-    async def override_get_session():
-        async with stub_sess_manager.async_session() as session:
-            yield session
-
     application = get_application(container=test_container)
-    application.dependency_overrides[get_session] = override_get_session
     return application
 
 
@@ -107,7 +103,7 @@ async def user_manager_stub(
     test_session: AsyncSession,
     test_container: ApplicationContainer,
 ):
-    from app.depends.auth import get_user_db, get_user_manager
+    from app.containers.auth import get_user_db, get_user_manager
 
     class StubUserManager(UserManager):
         async def authenticate(
