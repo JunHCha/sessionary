@@ -1,9 +1,7 @@
 import asyncio
-from typing import AsyncGenerator
 
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import (
-    AsyncSession,
     async_scoped_session,
     async_sessionmaker,
     create_async_engine,
@@ -29,13 +27,6 @@ class TestSessionManager(SessionManager):
         )
 
 
-async def get_test_session(
-    session_manager: TestSessionManager,
-) -> AsyncGenerator[AsyncSession, None]:
-    async with session_manager.async_session() as session:
-        yield session
-
-
 class TestDatabaseContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration()
 
@@ -44,9 +35,4 @@ class TestDatabaseContainer(containers.DeclarativeContainer):
     session_manager = providers.Singleton(
         TestSessionManager,
         settings=settings,
-    )
-
-    session = providers.Resource(
-        get_test_session,
-        session_manager=session_manager,
     )

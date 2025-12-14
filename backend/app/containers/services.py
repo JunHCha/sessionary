@@ -13,12 +13,12 @@ class ServicesContainer(containers.DeclarativeContainer):
 
     user_repository = providers.Factory(
         UserRepository,
-        session=database.session,
+        session_manager=database.session_manager,
     )
 
     lecture_repository = providers.Factory(
         LectureRepository,
-        session=database.session,
+        session_manager=database.session_manager,
     )
 
     user_service = providers.Factory(

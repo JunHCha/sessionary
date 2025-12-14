@@ -1,17 +1,17 @@
 import abc
 
 from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.db import tables as tb
+from app.db.session import SessionManager
 from app.lecture.models import LectureDetail, LectureInList, PaginationMeta
 from app.lesson.models import LessonInLecture
 
 
 class BaseLectureRepository(abc.ABC):
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
+    def __init__(self, session_manager: SessionManager) -> None:
+        self._session_manager = session_manager
 
     @abc.abstractmethod
     async def fetch_lectures(
@@ -32,22 +32,28 @@ class LectureRepository(BaseLectureRepository):
     async def fetch_lectures(
         self, page: int, per_page: int
     ) -> tuple[list[LectureInList], PaginationMeta]:
-        total_items = (
-            await self.session.execute(func.count(tb.Lecture.id))
-        ).scalar_one()
-        results = (
-            (
-                await self.session.execute(
-                    select(tb.Lecture)
-                    .offset((page - 1) * per_page)
-                    .limit(per_page)
-                    .order_by(tb.Lecture.time_updated.desc())
+        async with self._session_manager.async_session() as session:
+            total_items = (
+                await session.execute(func.count(tb.Lecture.id))
+            ).scalar_one()
+            results = (
+                (
+                    await session.execute(
+                        select(tb.Lecture)
+                        .offset((page - 1) * per_page)
+                        .limit(per_page)
+                        .order_by(tb.Lecture.time_updated.desc())
+                    )
                 )
+                .unique()
+                .scalars()
+                .all()
             )
-            .unique()
-            .scalars()
-            .all()
-        )
+            return self._map_to_lecture_list(results, total_items, page, per_page)
+
+    def _map_to_lecture_list(
+        self, results, total_items: int, page: int, per_page: int
+    ) -> tuple[list[LectureInList], PaginationMeta]:
         return (
             [
                 LectureInList(
@@ -73,19 +79,23 @@ class LectureRepository(BaseLectureRepository):
         )
 
     async def get_lecture(self, lecture_id: int) -> LectureDetail:
-        result = (
-            (
-                await self.session.execute(
-                    select(tb.Lecture)
-                    .options(
-                        joinedload(tb.Lecture.artist), joinedload(tb.Lecture.lessons)
+        async with self._session_manager.async_session() as session:
+            result = (
+                (
+                    await session.execute(
+                        select(tb.Lecture)
+                        .options(
+                            joinedload(tb.Lecture.artist), joinedload(tb.Lecture.lessons)
+                        )
+                        .filter(tb.Lecture.id == lecture_id)
                     )
-                    .filter(tb.Lecture.id == lecture_id)
                 )
+                .unique()
+                .scalar_one()
             )
-            .unique()
-            .scalar_one()
-        )
+            return self._map_to_lecture_detail(result)
+
+    def _map_to_lecture_detail(self, result) -> LectureDetail:
         lessons = [
             LessonInLecture(
                 id=item.id,
@@ -109,17 +119,18 @@ class LectureRepository(BaseLectureRepository):
         )
 
     async def create_lecture(self, title: str, description: str) -> LectureDetail:
-        new_lecture = tb.Lecture(title=title, description=description)
-        self.session.add(new_lecture)
-        await self.session.flush()
-        await self.session.commit()
-        return LectureDetail(
-            id=new_lecture.id,
-            title=new_lecture.title,
-            artist=None,
-            lessons=[],
-            description=new_lecture.description,
-            length_sec=new_lecture.length_sec,
-            time_created=new_lecture.time_created,
-            time_updated=new_lecture.time_updated,
-        )
+        async with self._session_manager.async_session() as session:
+            new_lecture = tb.Lecture(title=title, description=description)
+            session.add(new_lecture)
+            await session.flush()
+            await session.commit()
+            return LectureDetail(
+                id=new_lecture.id,
+                title=new_lecture.title,
+                artist=None,
+                lessons=[],
+                description=new_lecture.description,
+                length_sec=new_lecture.length_sec,
+                time_created=new_lecture.time_created,
+                time_updated=new_lecture.time_updated,
+            )
