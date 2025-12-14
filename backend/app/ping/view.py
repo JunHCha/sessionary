@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.core.auth.access import authenticated_user
+from app.auth.access import authenticated_user
 from app.db.tables import User
 from app.user.models import UserRead
 

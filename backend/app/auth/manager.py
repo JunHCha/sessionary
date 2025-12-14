@@ -5,7 +5,7 @@ from fastapi import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from sqlalchemy import insert, update
 
-from app.db.tables import Subscription, User, UserSubscriptionHistory, Group
+from app.db.tables import Group, Subscription, User, UserSubscriptionHistory
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
@@ -25,9 +25,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
                 )
                 .returning(Subscription)
             )
-            subscription = (
-                await sess.execute(insert_subscription_stmt)
-            ).scalar_one()
+            subscription = (await sess.execute(insert_subscription_stmt)).scalar_one()
 
             update_user_subscription_stmt = (
                 update(User)
@@ -48,9 +46,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             group = (await sess.execute(insert_group_stmt)).scalar_one()
             # Update user with group_id
             update_user_group_stmt = (
-                update(User)
-                .where(User.id == user.id)
-                .values(group_id=group.id)
+                update(User).where(User.id == user.id).values(group_id=group.id)
             )
             await sess.execute(update_user_group_stmt)
             # Create subscription history record
@@ -66,7 +62,4 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        print(
-            f"User {user.id} has forgot their password. "
-            f"Reset token: {token}"
-        )
+        print(f"User {user.id} has forgot their password. Reset token: {token}")

@@ -1,4 +1,5 @@
 import uuid
+from typing import Callable
 
 import redis
 from fastapi import APIRouter
@@ -7,16 +8,14 @@ from fastapi_users.authentication import AuthenticationBackend, CookieTransport
 from fastapi_users.authentication.strategy import RedisStrategy
 from httpx_oauth.clients.google import GoogleOAuth2
 
-from app.core.auth.strategy import CustomRedisStrategy, RedisMock
+from app.auth.strategy import CustomRedisStrategy, RedisMock
 from app.core.settings.base import AppEnv, AppSettings
 from app.db.tables import User
-from app.depends.auth import get_user_manager
-from app.depends.settings import get_app_settings
 from app.user.models import UserRead, UserUpdate
 
 
 class AuthBackend:
-    def __init__(self, settings: AppSettings) -> None:
+    def __init__(self, settings: AppSettings, get_user_manager: Callable) -> None:
         self.app_env = settings.app_env
         self.cookie_transport = CookieTransport(
             cookie_name=settings.cookie_name,
@@ -83,6 +82,3 @@ class AuthBackend:
             lifetime_seconds=self.auth_session_age,
             key_prefix="auth-session-id:",
         )
-
-
-auth_backend = AuthBackend(settings=get_app_settings())

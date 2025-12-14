@@ -1,17 +1,17 @@
 import abc
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, lazyload
 
 from app.db import tables as tb
+from app.db.session import SessionManager
 from app.lecture.models import LectureInList
 from app.user.models import UserArtistInfo
 
 
 class BaseUserRepository(abc.ABC):
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
+    def __init__(self, session_manager: SessionManager) -> None:
+        self._session_manager = session_manager
 
     @abc.abstractmethod
     async def get_artists(self) -> list[UserArtistInfo]:
@@ -20,23 +20,27 @@ class BaseUserRepository(abc.ABC):
 
 class UserRepository(BaseUserRepository):
     async def get_artists(self) -> list[UserArtistInfo]:
-        results = (
-            (
-                await self.session.execute(
-                    select(tb.User)
-                    .options(
-                        joinedload(tb.User.lectures),
-                        lazyload(tb.User.oauth_accounts),
-                        lazyload(tb.User.subscription),
-                        lazyload(tb.User.lessons),
+        async with self._session_manager.async_session() as session:
+            results = (
+                (
+                    await session.execute(
+                        select(tb.User)
+                        .options(
+                            joinedload(tb.User.lectures),
+                            lazyload(tb.User.oauth_accounts),
+                            lazyload(tb.User.subscription),
+                            lazyload(tb.User.lessons),
+                        )
+                        .filter(tb.User.is_artist.is_(True))
                     )
-                    .filter(tb.User.is_artist.is_(True))
                 )
+                .unique()
+                .scalars()
+                .all()
             )
-            .unique()
-            .scalars()
-            .all()
-        )
+            return self._map_to_artist_info(results)
+
+    def _map_to_artist_info(self, results) -> list[UserArtistInfo]:
         return [
             UserArtistInfo(
                 id=row.id,

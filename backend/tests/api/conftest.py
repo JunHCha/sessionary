@@ -6,17 +6,17 @@ from fastapi_users.schemas import BaseUserCreate
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth.manager import UserManager
-from app.core.auth.strategy import AuthSessionSchema, RedisMock
-from app.core.settings.base import AppSettings
+from app.auth.manager import UserManager
+from app.auth.strategy import RedisMock
+from app.core.settings.test import TestAppSettings
 from app.db.tables import User
-from app.user.models import Subscription
+from app.user.models import AuthSessionSchema, Subscription
 
 
 @pytest.fixture
 async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
-        transport=ASGITransport(app=app),  # type: ignore
+        transport=ASGITransport(app=app),
         base_url="http://testserver",
         headers={"Content-Type": "application/json"},
     ) as client:
@@ -25,7 +25,6 @@ async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
 
 @pytest.fixture
 async def test_user(user_manager_stub: UserManager):
-
     user_create = BaseUserCreate(
         email="test@test.com",
         password="password",
@@ -33,13 +32,11 @@ async def test_user(user_manager_stub: UserManager):
         is_active=True,
     )
     user = await user_manager_stub.create(user_create)
-
     return user
 
 
 @pytest.fixture
 async def test_artist(user_manager_stub: UserManager, test_session: AsyncSession):
-
     user_create = BaseUserCreate(
         email="artist@test.com",
         password="password",
@@ -49,13 +46,11 @@ async def test_artist(user_manager_stub: UserManager, test_session: AsyncSession
     user = await user_manager_stub.create(user_create)
     user.is_artist = True
     await test_session.flush()
-
     return user
 
 
 @pytest.fixture
 async def test_admin(user_manager_stub: UserManager):
-
     user_create = BaseUserCreate(
         email="admin@test.com",
         password="password",
@@ -63,13 +58,14 @@ async def test_admin(user_manager_stub: UserManager):
         is_active=True,
     )
     user = await user_manager_stub.create(user_create)
-
     return user
 
 
 @pytest.fixture
 def make_authorized_client(
-    client: AsyncClient, auth_redis: RedisMock, test_settings: AppSettings
+    client: AsyncClient,
+    auth_redis: RedisMock,
+    test_settings: TestAppSettings,
 ):
     async def _make_client(user: User, session: AsyncSession, token: str):
         async with session:
@@ -98,7 +94,9 @@ def make_authorized_client(
 
 @pytest.fixture
 async def authorized_client(
-    make_authorized_client, test_user, test_session: AsyncSession
+    make_authorized_client,
+    test_user,
+    test_session: AsyncSession,
 ) -> AsyncGenerator[AsyncClient, None]:
     client = await make_authorized_client(test_user, test_session, token="SESSIONTOKEN")
     yield client
@@ -106,7 +104,9 @@ async def authorized_client(
 
 @pytest.fixture
 async def authorized_client_artist(
-    make_authorized_client, test_artist, test_session: AsyncSession
+    make_authorized_client,
+    test_artist,
+    test_session: AsyncSession,
 ) -> AsyncGenerator[AsyncClient, None]:
     client = await make_authorized_client(
         test_artist, test_session, token="SESSIONTOKEN_ARTIST"
@@ -116,7 +116,9 @@ async def authorized_client_artist(
 
 @pytest.fixture
 async def authorized_client_admin(
-    make_authorized_client, test_admin, test_session: AsyncSession
+    make_authorized_client,
+    test_admin,
+    test_session: AsyncSession,
 ) -> AsyncGenerator[AsyncClient, None]:
     client = await make_authorized_client(
         test_admin, test_session, token="SESSIONTOKEN_ADMIN"
