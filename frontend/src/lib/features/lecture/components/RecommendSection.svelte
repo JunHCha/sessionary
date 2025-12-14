@@ -2,14 +2,13 @@
 	import RecommendCard from './RecommendCard.svelte'
 	import type { LectureInList } from '$lib/api/client'
 
-	export let recommendedLectures: LectureInList[]
+	let { recommendedLectures }: { recommendedLectures: LectureInList[] } = $props()
 </script>
 
 <section class="flex flex-col items-center h-[90vh]">
 	<img
 		src="images/se-2-png.png"
-		srcset="images/se-2-png@2x.png 2x,
-	 images/se-2-png@3x.png 3x"
+		srcset="images/se-2-png@2x.png 2x, images/se-2-png@3x.png 3x"
 		class="absolute w-full object-contain -z-10"
 		alt="se2-png"
 	/>
@@ -18,6 +17,6 @@
 		<span class="text-brand-primary">TOP 10</span>
 	</span>
 	<div class="relative">
-		<RecommendCard lectures="{recommendedLectures}" />
+		<RecommendCard lectures={recommendedLectures} />
 	</div>
 </section>

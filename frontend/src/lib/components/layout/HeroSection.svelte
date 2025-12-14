@@ -17,7 +17,7 @@
 			</p>
 			<button
 				class="bg-brand-primary text-white px-5 py-3 w-[12rem]"
-				on:click="{handleStartClick}"
+				onclick={handleStartClick}
 			>
 				바로 START
 			</button>

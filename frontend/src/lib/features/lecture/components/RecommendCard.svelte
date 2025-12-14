@@ -4,11 +4,11 @@
 	import type { LectureInList } from '$lib/api/client'
 	import { getThumbnailSrc } from '../utils/format'
 
-	export let lectures: LectureInList[]
+	let { lectures }: { lectures: LectureInList[] } = $props()
 
-	let currentIndex = 0
-	$: visibleLectures = lectures.slice(currentIndex, currentIndex + 4)
-	let isHovered = false
+	let currentIndex = $state(0)
+	let visibleLectures = $derived(lectures.slice(currentIndex, currentIndex + 4))
+	let isHovered = $state(false)
 
 	const cardPosition = tweened(0, { duration: 400, easing: cubicOut })
 
@@ -47,8 +47,8 @@
 				style="filter: brightness({100 - idx * 15}%)"
 			>
 				<img
-					src="{getThumbnailSrc(lecture.thumbnail)}"
-					alt="{lecture.title}"
+					src={getThumbnailSrc(lecture.thumbnail)}
+					alt={lecture.title}
 					class="w-full h-full object-cover transition-all duration-400"
 					style="filter: brightness({100 - idx * 15}%)"
 				/>
@@ -58,10 +58,10 @@
 
 	<button
 		class="relative w-[776px] h-[429px] my-12 ml-[22px] rounded-[30px] shadow-[1px_1px_24px_2px_rgba(255,92,22,0.3)] overflow-hidden cursor-pointer transition-all duration-400"
-		on:click="{nextCard}"
-		on:mouseenter="{() => (isHovered = true)}"
-		on:mouseleave="{() => (isHovered = false)}"
-		on:keydown="{(e) => e.key === 'Enter' && nextCard()}"
+		onclick={nextCard}
+		onmouseenter={() => (isHovered = true)}
+		onmouseleave={() => (isHovered = false)}
+		onkeydown={(e) => e.key === 'Enter' && nextCard()}
 		style="
 			transform: {isHovered
 			? `perspective(1000px) translateZ(20px) translateX(${$cardPosition}%)`
@@ -71,8 +71,8 @@
 	>
 		<div class="w-full h-full bg-gray-800 flex items-center justify-center">
 			<img
-				src="{getThumbnailSrc(visibleLectures[0]?.thumbnail)}"
-				alt="{visibleLectures[0]?.title}"
+				src={getThumbnailSrc(visibleLectures[0]?.thumbnail)}
+				alt={visibleLectures[0]?.title}
 				class="w-full h-full object-cover"
 			/>
 		</div>

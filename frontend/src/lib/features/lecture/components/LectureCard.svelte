@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LectureInList } from '$lib/api/client'
 
-	export let lecture: LectureInList
+	let { lecture }: { lecture: LectureInList } = $props()
 </script>
 
 <div
