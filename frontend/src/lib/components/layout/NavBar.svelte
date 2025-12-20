@@ -26,16 +26,18 @@
 	class:minimal={isScrolled}
 	data-testid="navbar"
 >
-	<img
-		src="images/logo.png"
-		srcset="images/logo@2x.png 2x, images/logo@3x.png 3x"
-		class="w-[220px] h-[63.1px] mr-[69px] object-contain transition-opacity duration-300"
-		class:opacity-0={isScrolled}
-		alt="Sessionary Logo"
-	/>
+	<a href="/home">
+		<img
+			src="images/logo.png"
+			srcset="images/logo@2x.png 2x, images/logo@3x.png 3x"
+			class="w-[220px] h-[63.1px] mr-[69px] object-contain transition-opacity duration-300"
+			class:opacity-0={isScrolled}
+			alt="Sessionary Logo"
+		/>
+	</a>
 	<div class="flex gap-[60px] transition-opacity duration-300" class:opacity-0={isScrolled}>
-		<span class="text-lg font-pretendard font-bold uppercase text-white">즐겨찾기</span>
-		<span class="text-lg font-pretendard font-bold uppercase text-white">나의폴더</span>
+		<a href="/favorites" class="text-lg font-pretendard font-bold uppercase text-white">즐겨찾기</a>
+		<a href="/folder" class="text-lg font-pretendard font-bold uppercase text-white">나의폴더</a>
 	</div>
 	<div class="ml-auto flex gap-10">
 		<div class="transition-opacity duration-300" class:opacity-0={isScrolled}>
