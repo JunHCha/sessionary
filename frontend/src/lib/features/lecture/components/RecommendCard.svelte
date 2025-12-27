@@ -4,16 +4,22 @@
 	import type { LectureInList } from '$lib/api/client'
 	import { getThumbnailSrc } from '../utils/format'
 
-	let { lectures }: { lectures: LectureInList[] } = $props()
+	let { lectures = [] }: { lectures?: LectureInList[] } = $props()
 
 	let currentIndex = $state(0)
-	let visibleLectures = $derived(lectures.slice(currentIndex, currentIndex + 4))
+
+	let visibleLectures = $derived.by(() => {
+		if (!lectures || !Array.isArray(lectures)) {
+			return []
+		}
+		return lectures.slice(currentIndex, currentIndex + 4)
+	})
 	let isHovered = $state(false)
 
 	const cardPosition = tweened(0, { duration: 400, easing: cubicOut })
 
 	function nextCard() {
-		if (currentIndex < lectures.length - 1) {
+		if (lectures && Array.isArray(lectures) && currentIndex < lectures.length - 1) {
 			cardPosition.set(100, { duration: 400 }).then(() => {
 				currentIndex++
 				cardPosition.set(0, { duration: 0 })
@@ -31,7 +37,7 @@
 	{visibleLectures[0]?.title}
 </span>
 <div class="relative w-full">
-	{#each visibleLectures.slice(1, 3) as lecture, idx}
+	{#each Array.isArray(visibleLectures) && visibleLectures.length > 1 ? visibleLectures.slice(1, 3) : [] as lecture, idx}
 		<div
 			class="absolute w-[776px] h-[429px] my-12 ml-[22px] rounded-[30px] shadow-[1px_1px_24px_2px_rgba(255,92,22,0.3)] overflow-hidden transition-all duration-400"
 			style="

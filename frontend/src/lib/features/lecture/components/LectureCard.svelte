@@ -4,8 +4,9 @@
 	let { lecture }: { lecture: LectureInList } = $props()
 </script>
 
-<div
-	class="group bg-black rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-100 w-[25rem] mx-[1rem] mb-[5rem]"
+<a
+	href="/lecture/{lecture.id}"
+	class="group bg-black rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-100 w-[25rem] mx-[1rem] mb-[5rem] block"
 >
 	<div class="relative">
 		<div
@@ -30,4 +31,4 @@
 			</span>
 		</div>
 	</div>
-</div>
+</a>

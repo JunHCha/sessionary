@@ -2,7 +2,7 @@
 	import RecommendCard from './RecommendCard.svelte'
 	import type { LectureInList } from '$lib/api/client'
 
-	let { recommendedLectures }: { recommendedLectures: LectureInList[] } = $props()
+	let { recommendedLectures = [] }: { recommendedLectures?: LectureInList[] } = $props()
 </script>
 
 <section class="flex flex-col items-center h-[90vh]">
