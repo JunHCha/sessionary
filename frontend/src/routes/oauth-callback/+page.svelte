@@ -4,13 +4,16 @@
 	import { isAuthenticated } from '$lib/features/auth'
 	import {
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
-		usersCurrentUserUserMeGet
+		usersCurrentUserUserMeGet,
+		waitForApiInit
 	} from '$lib/api'
 	import { Spinner } from 'flowbite-svelte'
 
 	export let data: { props: { code?: string; state?: string; error?: string } }
 
 	onMount(async () => {
+		await waitForApiInit()
+
 		const code = data.props.code
 		const state = data.props.state
 		const error = data.props.error

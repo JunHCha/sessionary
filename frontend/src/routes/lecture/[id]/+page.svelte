@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores'
-	import { getLectureLectureLectureIdGet } from '$lib/api'
+	import { getLectureLectureLectureIdGet, waitForApiInit } from '$lib/api'
 	import type { LectureDetail } from '$lib/api'
 	import { LectureInfo, SessionList, SheetPreview } from '$lib/features/lecture'
 
@@ -9,6 +9,7 @@
 	let isLoading = $state(true)
 
 	async function fetchLecture(id: number) {
+		await waitForApiInit()
 		try {
 			isLoading = true
 			const response = await getLectureLectureLectureIdGet({ lectureId: id })

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.pcss'
+	import { onMount } from 'svelte'
 	import { initializeApi, usersCurrentUserUserMeGet } from '$lib/api'
 	import { isAuthenticated } from '$lib/features/auth'
 	import { NavBar, Footer } from '$lib/components/layout'
@@ -8,17 +9,9 @@
 	let { data, children }: { data: { env: { PUBLIC_API_BASE_URL: string } }; children: Snippet } =
 		$props()
 
-	let initialized = false
-
-	$effect(() => {
-		if (!initialized) {
-			initializeApi(data.env.PUBLIC_API_BASE_URL)
-			initialized = true
-		}
-
-		if (typeof window !== 'undefined') {
-			checkAuthentication()
-		}
+	onMount(() => {
+		initializeApi(data.env.PUBLIC_API_BASE_URL)
+		checkAuthentication()
 	})
 
 	async function checkAuthentication() {

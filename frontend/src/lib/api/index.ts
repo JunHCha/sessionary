@@ -1,2 +1,2 @@
 export * from './client'
-export { initializeApi } from './config'
+export { initializeApi, waitForApiInit, isApiInitialized } from './config'

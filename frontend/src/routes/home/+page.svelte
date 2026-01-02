@@ -1,21 +1,14 @@
 <script lang="ts">
-	import { getLecturesLectureGet, initializeApi } from '$lib/api'
+	import { getLecturesLectureGet, waitForApiInit } from '$lib/api'
 	import type { LectureInList } from '$lib/api'
 	import { LectureList, RecommendSection } from '$lib/features/lecture'
 	import { HeroSection } from '$lib/components/layout'
-	import { OpenAPI } from '$lib/api/client'
-	import { env } from '$env/dynamic/public'
 
 	let newLectures = $state<LectureInList[]>([])
 	let recommendedLectures = $state<LectureInList[]>([])
 
 	async function fetchLectures() {
-		if (!OpenAPI.BASE && env.PUBLIC_API_BASE_URL) {
-			initializeApi(env.PUBLIC_API_BASE_URL)
-		}
-		if (!OpenAPI.BASE) {
-			return
-		}
+		await waitForApiInit()
 		try {
 			const response = await getLecturesLectureGet({})
 			recommendedLectures = response.data || []
