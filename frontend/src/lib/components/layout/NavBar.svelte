@@ -1,29 +1,80 @@
 <script lang="ts">
 	import { LoginButton } from '$lib/features/auth'
+	import { onMount } from 'svelte'
 
 	let isScrolled = $state(false)
+	let isVisible = $state(true)
+	let lastScrollY = $state(0)
+	let hideTimer: ReturnType<typeof setTimeout> | null = null
 
-	function handleScroll() {
-		const heroSection = document.querySelector('.hero-section')
-		if (heroSection) {
-			const heroMiddle =
-				heroSection.getBoundingClientRect().top +
-				heroSection.getBoundingClientRect().height / 3
-			isScrolled = heroMiddle < 0
+	const SCROLL_THRESHOLD = 300
+	const HIDE_DELAY = 2000
+
+	function getScrollY() {
+		const mainElement = document.querySelector('main.overflow-y-scroll')
+		return mainElement
+			? mainElement.scrollTop
+			: window.scrollY || document.documentElement.scrollTop
+	}
+
+	function clearHideTimer() {
+		if (hideTimer) {
+			clearTimeout(hideTimer)
+			hideTimer = null
 		}
 	}
 
-	$effect(() => {
-		window.addEventListener('scroll', handleScroll)
+	function scheduleHide() {
+		clearHideTimer()
+		hideTimer = setTimeout(() => {
+			isVisible = false
+			hideTimer = null
+		}, HIDE_DELAY)
+	}
+
+	function handleScroll() {
+		const scrollY = getScrollY()
+		const scrolledPastThreshold = scrollY > SCROLL_THRESHOLD
+		const scrollingDown = scrollY > lastScrollY
+		const scrollingUp = scrollY < lastScrollY
+
+		isScrolled = scrolledPastThreshold
+
+		if (scrollingDown && scrolledPastThreshold) {
+			clearHideTimer()
+			isVisible = false
+		} else if (scrollingUp) {
+			clearHideTimer()
+			isVisible = true
+			if (scrolledPastThreshold) {
+				scheduleHide()
+			}
+		}
+
+		lastScrollY = scrollY
+	}
+
+	onMount(() => {
+		const mainElement = document.querySelector('main.overflow-y-scroll')
+		const scrollElement = mainElement || window
+
+		scrollElement.addEventListener('scroll', handleScroll, { passive: true })
+		handleScroll()
+
 		return () => {
-			window.removeEventListener('scroll', handleScroll)
+			scrollElement.removeEventListener('scroll', handleScroll)
+			clearHideTimer()
 		}
 	})
 </script>
 
 <div
-	class="w-full h-[clamp(3rem,5vh,5rem)] px-[clamp(2rem,5vw,5.25rem)] flex items-center bg-[#0C0C0C] opacity-95 fixed z-50 transition-all duration-300"
+	class="w-full h-[clamp(3rem,5vh,5rem)] px-[clamp(2rem,5vw,5.25rem)] flex items-center bg-[#0C0C0C] fixed z-50 transition-all duration-300"
 	class:minimal={isScrolled}
+	class:opacity-95={isVisible}
+	class:opacity-0={!isVisible}
+	class:-translate-y-full={!isVisible}
+	class:pointer-events-none={!isVisible}
 	data-testid="navbar"
 >
 	<a
@@ -34,7 +85,6 @@
 			src="images/logo.png"
 			srcset="images/logo@2x.png 2x, images/logo@3x.png 3x"
 			class="h-full w-full object-contain transition-opacity duration-300"
-			class:opacity-0={isScrolled}
 			alt="Sessionary Logo"
 		/>
 	</a>
@@ -42,14 +92,12 @@
 		<a
 			href="/favorites"
 			class="h-[clamp(3rem,5vh,5rem)] w-[clamp(6rem,8.75vw,8.75rem)] flex items-center justify-center p-[clamp(0.5rem,0.6vw,0.6rem)] text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
-			class:opacity-0={isScrolled}
 		>
 			즐겨찾기
 		</a>
 		<a
 			href="/folder"
 			class="h-[clamp(3rem,5vh,5rem)] w-[clamp(6rem,8.75vw,8.75rem)] flex items-center justify-center p-[clamp(0.5rem,0.6vw,0.6rem)] text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
-			class:opacity-0={isScrolled}
 		>
 			나의폴더
 		</a>
@@ -57,12 +105,11 @@
 	<div class="ml-auto flex items-center">
 		<div
 			class="h-[clamp(3rem,5vh,5rem)] min-w-[clamp(4rem,6.25vw,6.25rem)] flex items-center justify-end p-[clamp(0.5rem,0.6vw,0.6rem)] transition-opacity duration-300"
-			class:opacity-0={isScrolled}
 		>
 			<LoginButton />
 		</div>
 		<button
-			class="h-[clamp(3rem,5vh,5rem)] w-[clamp(3rem,5vw,5rem)] flex items-center justify-center"
+			class="h-[clamp(3rem,5vh,5rem)] w-[clamp(3rem,5vw,5rem)] flex items-center justify-center transition-opacity duration-300"
 		>
 			<img
 				src="images/iconamoon_search-bold.png"
