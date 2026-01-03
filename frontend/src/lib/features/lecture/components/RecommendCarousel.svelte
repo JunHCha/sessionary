@@ -42,7 +42,9 @@
 			style="transform: translateX(-{currentIndex * 100}%)"
 		>
 			{#each topLectures as lecture, index}
-				<RecommendCard {lecture} {index} />
+				<div class="w-full flex-shrink-0 flex justify-center">
+					<RecommendCard {lecture} {index} />
+				</div>
 			{/each}
 		</div>
 	</div>
