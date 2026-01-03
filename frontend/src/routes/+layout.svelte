@@ -10,8 +10,6 @@
 	let { data, children }: { data: { env: { PUBLIC_API_BASE_URL: string } }; children: Snippet } =
 		$props()
 
-	let showFooter = $derived($page.route.id !== '/home')
-
 	onMount(() => {
 		initializeApi(data.env.PUBLIC_API_BASE_URL)
 		checkAuthentication()
@@ -36,10 +34,7 @@
 <main>
 	{@render children()}
 </main>
-
-{#if showFooter}
-	<Footer />
-{/if}
+<Footer />
 
 <style>
 	:global(body) {
