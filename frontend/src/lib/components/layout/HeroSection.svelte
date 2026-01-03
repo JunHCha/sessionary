@@ -1,7 +1,8 @@
 <section class="h-screen snap-start snap-always flex items-center justify-center">
 	<div class="relative hero-section w-full h-full">
 		<img
-			src="http://localhost:3845/assets/596628f3dd5dba50d6f278250a0c1b43bdd799af.png"
+			src="/images/main.png"
+			srcset="/images/main.png"
 			alt="main"
 			class="w-full h-full object-cover object-center"
 		/>

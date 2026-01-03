@@ -82,7 +82,7 @@
 		class="h-full w-[clamp(8rem,13vw,13.4rem)] flex items-center justify-start pl-0 pr-[clamp(0.5rem,0.6vw,0.6rem)]"
 	>
 		<img
-			src="images/logo.png"
+			src="/images/logo.png"
 			srcset="images/logo@2x.png 2x, images/logo@3x.png 3x"
 			class="h-full w-full object-contain transition-opacity duration-300"
 			alt="Sessionary Logo"
@@ -112,7 +112,7 @@
 			class="h-[clamp(3rem,5vh,5rem)] w-[clamp(3rem,5vw,5rem)] flex items-center justify-center transition-opacity duration-300"
 		>
 			<img
-				src="images/iconamoon_search-bold.png"
+				src="/images/iconamoon_search-bold.png"
 				alt="search"
 				class="h-[clamp(1.2rem,1.9vw,1.9rem)] w-[clamp(1.2rem,1.9vw,1.9rem)]"
 			/>
