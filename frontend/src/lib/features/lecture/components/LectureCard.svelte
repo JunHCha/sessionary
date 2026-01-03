@@ -23,7 +23,7 @@
 
 <a
 	href="/lecture/{lecture.id}"
-	class="group relative w-full max-w-[clamp(15rem,26vw,26.25rem)] aspect-[420/339] bg-[#454545] rounded-[clamp(0.3rem,0.4vw,0.4rem)] overflow-hidden block"
+	class="group relative w-full max-w-[clamp(15rem,26vw,26.25rem)] aspect-[420/339] bg-black rounded-[clamp(0.3rem,0.4vw,0.4rem)] overflow-hidden block"
 >
 	<div class="relative w-full h-[70.38%] bg-gray-800">
 		<img
@@ -50,7 +50,7 @@
 			</svg>
 		</div>
 	</div>
-	<div class="absolute bottom-[5.31%] left-0 right-[clamp(0.8rem,1.25vw,1.25rem)] px-0 py-0">
+	<div class="absolute bottom-[5.31%] left-0 right-[clamp(0.8rem,1.25vw,1.25rem)] p-0">
 		<h5
 			class="text-[clamp(0.75rem,1.1vw,1.1rem)] font-pretendard font-bold leading-[clamp(1.2rem,1.7vw,1.7rem)] tracking-[-0.02em] text-[#F5F5F5] line-clamp-2 mb-[clamp(0.3rem,0.4vw,0.4rem)]"
 		>

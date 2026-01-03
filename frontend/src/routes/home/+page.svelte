@@ -25,7 +25,7 @@
 	})
 </script>
 
-<main class="h-screen overflow-y-scroll snap-y snap-mandatory bg-[#0C0C0C]">
+<main class="h-screen overflow-y-scroll snap-y snap-mandatory bg-black">
 	<HeroSection />
 	<RecommendSection {recommendedLectures} />
 	<LectureList title="새로운 렉쳐" lectures={newLectures} />

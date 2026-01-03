@@ -6,7 +6,7 @@
 			class="w-full h-full object-cover object-center"
 		/>
 		<div
-			class="absolute inset-0 bg-gradient-to-t from-[#0C0C0C] via-transparent to-transparent pointer-events-none"
+			class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none"
 		></div>
 		<div
 			class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 px-4"
