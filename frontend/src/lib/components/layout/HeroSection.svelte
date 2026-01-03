@@ -1,5 +1,5 @@
 <section>
-	<div class="relative hero-section h-[980px]">
+	<div class="relative hero-section h-[980px] mt-20">
 		<img
 			src="http://localhost:3845/assets/596628f3dd5dba50d6f278250a0c1b43bdd799af.png"
 			alt="main"

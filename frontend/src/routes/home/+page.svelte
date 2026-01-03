@@ -25,7 +25,7 @@
 	})
 </script>
 
-<main class="px-0 mx-0 flex flex-col">
+<main class="px-0 mx-0 flex flex-col bg-[#0C0C0C]">
 	<HeroSection />
 	<RecommendSection {recommendedLectures} />
 	<LectureList title="새로운 렉쳐" lectures={newLectures} />
