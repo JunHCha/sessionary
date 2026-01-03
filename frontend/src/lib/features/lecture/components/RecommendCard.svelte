@@ -32,7 +32,7 @@
 			</svg>
 		</div>
 		<div
-			class="absolute top-[clamp(2rem,3vh,3.5rem)] right-[clamp(3rem,7vw,6.9rem)] bg-[#FF5C16] h-[clamp(1.5rem,2.7vh,2.7rem)] px-[clamp(0.5rem,0.6vw,0.6rem)] py-[clamp(2rem,3vh,3.1rem)] rounded-[50px] flex items-center justify-center"
+			class="absolute top-[clamp(2rem,3vh,3.5rem)] right-[clamp(3rem,7vw,6.9rem)] bg-[#FF5C16] px-[clamp(0.5rem,1.0vw,1.2rem)] py-[clamp(0.2rem,0.4vh,0.5rem)] rounded-full flex items-center justify-center"
 		>
 			<span
 				class="text-[clamp(0.75rem,1.1vw,1.1rem)] font-pretendard font-bold leading-[clamp(1.2rem,1.7vw,1.7rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap"
