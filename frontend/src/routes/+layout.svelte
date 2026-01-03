@@ -32,9 +32,11 @@
 <NavBar />
 
 <main>
-	{@render children()}
+	<div class="flex-1">
+		{@render children()}
+	</div>
+	<Footer />
 </main>
-<Footer />
 
 <style>
 	:global(body) {
@@ -48,5 +50,12 @@
 
 	main {
 		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	main > div:first-child {
+		flex: 1 0 auto;
 	}
 </style>
