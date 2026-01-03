@@ -19,7 +19,7 @@
 	<div class="flex items-center justify-between">
 		<h2 class="text-2xl font-pretendard font-bold text-white">세션 목록</h2>
 		<div class="flex items-center gap-2 text-content-secondary">
-			<span class="text-brand-primary font-bold">{currentSessionIndex + 1}</span>
+			<span class="text-brand-primary font-bold">{currentSessionIndex}</span>
 			<span>/</span>
 			<span>{sessions.length}</span>
 		</div>

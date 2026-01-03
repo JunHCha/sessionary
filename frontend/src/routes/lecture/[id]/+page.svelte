@@ -5,7 +5,7 @@
 	import { LectureInfo, SessionList, SheetPreview } from '$lib/features/lecture'
 
 	let lecture = $state<LectureDetail | null>(null)
-	let currentSessionIndex = $state(1)
+	let currentSessionIndex = $state(0)
 	let isLoading = $state(true)
 
 	async function fetchLecture(id: number) {
@@ -38,12 +38,12 @@
 		</div>
 	{:else if lecture}
 		<div class="flex gap-12">
-			<section class="w-[45%] flex flex-col gap-8">
+			<section class="flex-[2] flex flex-col gap-8">
 				<LectureInfo {lecture} />
 				<SheetPreview />
 			</section>
 
-			<section class="w-[55%]">
+			<section class="flex-[3]">
 				<SessionList sessions={lecture.lessons} {currentSessionIndex} />
 			</section>
 		</div>
