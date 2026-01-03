@@ -1,4 +1,4 @@
-<footer class="relative w-full h-[198px] px-[84px] pt-[58px] pb-0 flex items-start">
+<footer class="relative w-full h-[300px] px-[84px] pt-[58px] pb-[2rem] flex items-start">
 	<div class="absolute top-0 left-0 right-0 h-px bg-[#454545]"></div>
 	<div class="h-[67px] w-[350px] flex items-center">
 		<img
