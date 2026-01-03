@@ -42,7 +42,7 @@
 			-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
 			'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
 			'Noto Color Emoji';
-		background-color: #000000;
+		background-color: #0c0c0c;
 		color: #ffffff;
 	}
 
