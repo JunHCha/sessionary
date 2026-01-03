@@ -2,7 +2,7 @@
 	import { getLecturesLectureGet, waitForApiInit } from '$lib/api'
 	import type { LectureInList } from '$lib/api'
 	import { LectureList, RecommendSection } from '$lib/features/lecture'
-	import { HeroSection } from '$lib/components/layout'
+	import { HeroSection, Footer } from '$lib/components/layout'
 
 	let newLectures = $state<LectureInList[]>([])
 	let recommendedLectures = $state<LectureInList[]>([])
@@ -25,8 +25,9 @@
 	})
 </script>
 
-<main class="px-0 mx-0 flex flex-col bg-[#0C0C0C]">
+<main class="h-screen overflow-y-scroll snap-y snap-mandatory bg-[#0C0C0C]">
 	<HeroSection />
 	<RecommendSection {recommendedLectures} />
 	<LectureList title="새로운 렉쳐" lectures={newLectures} />
+	<Footer />
 </main>

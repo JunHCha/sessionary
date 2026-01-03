@@ -1,94 +1,56 @@
 <script lang="ts">
-	import { tweened } from 'svelte/motion'
-	import { cubicOut } from 'svelte/easing'
 	import type { LectureInList } from '$lib/api/client'
 	import { getThumbnailSrc } from '../utils/format'
 
-	let { lectures = [] }: { lectures?: LectureInList[] } = $props()
-
-	let currentIndex = $state(0)
-
-	let visibleLectures = $derived.by(() => {
-		if (!lectures || !Array.isArray(lectures)) {
-			return []
-		}
-		return lectures.slice(currentIndex, currentIndex + 4)
-	})
-	let isHovered = $state(false)
-
-	const cardPosition = tweened(0, { duration: 400, easing: cubicOut })
-
-	function nextCard() {
-		if (lectures && Array.isArray(lectures) && currentIndex < lectures.length - 1) {
-			cardPosition.set(100, { duration: 400 }).then(() => {
-				currentIndex++
-				cardPosition.set(0, { duration: 0 })
-			})
-		}
-	}
+	let {
+		lecture,
+		index
+	}: {
+		lecture: LectureInList
+		index: number
+	} = $props()
 </script>
 
-<p
-	class="flex justify-center mt-[2rem] mb-[1rem] text-xl font-pretendard font-bold text-brand-primary uppercase truncate"
->
-	쫄지마. 널위해 준비했어. 언제 끝날지 모르는 기도회를 위한 무한반복.
-</p>
-<span class="flex items-center gap-2 text-4xl font-pretendard font-bold text-center mb-[3rem]">
-	{visibleLectures[0]?.title}
-</span>
-<div class="relative w-full">
-	{#each Array.isArray(visibleLectures) && visibleLectures.length > 1 ? visibleLectures.slice(1, 3) : [] as lecture, idx}
+<div class="relative flex-shrink-0 w-full flex flex-col items-center max-w-[70vw]">
+	<div class="relative w-full aspect-[1455/816.556]">
+		<img
+			src={getThumbnailSrc(lecture.thumbnail)}
+			alt={lecture.title}
+			class="w-full h-full object-cover object-center"
+		/>
+		<div class="absolute inset-0 bg-[#0C0C0C] opacity-80"></div>
 		<div
-			class="absolute w-[776px] h-[429px] my-12 ml-[22px] rounded-[30px] shadow-[1px_1px_24px_2px_rgba(255,92,22,0.3)] overflow-hidden transition-all duration-400"
-			style="
-				z-index: -{1 + idx};
-				right: -{idx * 20}px;
-				top: -{20 + idx * 20}px;
-				transform: translateX({$cardPosition}%);
-				opacity: {1 - idx * 0.2};
-			"
+			class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(4rem,7vw,7.4rem)] h-[clamp(4rem,7vw,7.4rem)] cursor-pointer hover:scale-110 transition-transform"
 		>
-			<div
-				class="w-full h-full bg-gray-800 flex items-center justify-center transition-all duration-400"
-				style="filter: brightness({100 - idx * 15}%)"
+			<svg
+				class="w-full h-full text-white"
+				fill="currentColor"
+				viewBox="0 0 24 24"
+				xmlns="http://www.w3.org/2000/svg"
 			>
-				<img
-					src={getThumbnailSrc(lecture.thumbnail)}
-					alt={lecture.title}
-					class="w-full h-full object-cover transition-all duration-400"
-					style="filter: brightness({100 - idx * 15}%)"
-				/>
-			</div>
+				<path d="M8 5v14l11-7z" fill-rule="evenodd" clip-rule="evenodd" />
+			</svg>
 		</div>
-	{/each}
-
-	<button
-		class="relative w-[776px] h-[429px] my-12 ml-[22px] rounded-[30px] shadow-[1px_1px_24px_2px_rgba(255,92,22,0.3)] overflow-hidden cursor-pointer transition-all duration-400"
-		onclick={nextCard}
-		onmouseenter={() => (isHovered = true)}
-		onmouseleave={() => (isHovered = false)}
-		onkeydown={(e) => e.key === 'Enter' && nextCard()}
-		style="
-			transform: {isHovered
-			? `perspective(1000px) translateZ(20px) translateX(${$cardPosition}%)`
-			: `perspective(1000px) translateX(${$cardPosition}%)`};
-			opacity: {1 - $cardPosition / 100};
-		"
-	>
-		<div class="w-full h-full bg-gray-800 flex items-center justify-center">
-			<img
-				src={getThumbnailSrc(visibleLectures[0]?.thumbnail)}
-				alt={visibleLectures[0]?.title}
-				class="w-full h-full object-cover"
-			/>
+		<div
+			class="absolute top-[clamp(2rem,3vh,3.5rem)] right-[clamp(3rem,7vw,6.9rem)] bg-[#FF5C16] h-[clamp(1.5rem,2.7vh,2.7rem)] px-[clamp(0.5rem,0.6vw,0.6rem)] py-[clamp(2rem,3vh,3.1rem)] rounded-[50px] flex items-center justify-center"
+		>
+			<span
+				class="text-[clamp(0.75rem,1.1vw,1.1rem)] font-pretendard font-bold leading-[clamp(1.2rem,1.7vw,1.7rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap"
+			>
+				TOP {index + 1}
+			</span>
 		</div>
-
-		{#if isHovered}
-			<div
-				class="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-br from-transparent to-white/10
-				transform origin-bottom-right transition-transform duration-300"
-				style="transform: rotate(-5deg) translate(5px, 5px);"
-			></div>
-		{/if}
-	</button>
+	</div>
+	<div class="mt-[clamp(1.5rem,2.4vh,2.4rem)] text-center w-full px-[clamp(1rem,2vw,2rem)]">
+		<div
+			class="text-[clamp(1.3rem,2vw,2rem)] font-pretendard font-bold leading-[clamp(1.8rem,2.9vw,2.9rem)] tracking-[-0.02em] text-[#F5F5F5] mb-[clamp(0.6rem,1vh,0.9rem)] break-words"
+		>
+			<span class="text-[#FF5C16]">언제 끝날지 모르는 기도회를 위한 무한반복</span>🔥
+		</div>
+		<div
+			class="text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#DDDDDD] break-words"
+		>
+			{lecture.title || '[위러브Ver] 우리가 주를 더욱 사랑하고 Easy 버전'}
+		</div>
+	</div>
 </div>

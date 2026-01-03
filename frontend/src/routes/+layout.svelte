@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.pcss'
 	import { onMount } from 'svelte'
+	import { page } from '$app/stores'
 	import { initializeApi, usersCurrentUserUserMeGet } from '$lib/api'
 	import { isAuthenticated } from '$lib/features/auth'
 	import { NavBar, Footer } from '$lib/components/layout'
@@ -8,6 +9,8 @@
 
 	let { data, children }: { data: { env: { PUBLIC_API_BASE_URL: string } }; children: Snippet } =
 		$props()
+
+	let showFooter = $derived($page.route.id !== '/home')
 
 	onMount(() => {
 		initializeApi(data.env.PUBLIC_API_BASE_URL)
@@ -34,7 +37,9 @@
 	{@render children()}
 </main>
 
-<Footer />
+{#if showFooter}
+	<Footer />
+{/if}
 
 <style>
 	:global(body) {

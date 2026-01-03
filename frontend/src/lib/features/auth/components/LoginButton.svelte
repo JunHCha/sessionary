@@ -36,14 +36,14 @@
 {#if $isAuthenticated}
 	<button
 		on:click={handleLogout}
-		class="text-[24px] font-pretendard font-bold leading-[36px] tracking-[-0.48px] text-[#F5F5F5] whitespace-nowrap text-right"
+		class="text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
 	>
 		로그아웃
 	</button>
 {:else}
 	<button
 		on:click={() => (formModal = true)}
-		class="text-[24px] font-pretendard font-bold leading-[36px] tracking-[-0.48px] text-[#F5F5F5] whitespace-nowrap text-right"
+		class="text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
 		data-testid="login-button"
 	>
 		로그인
