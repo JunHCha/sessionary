@@ -10,6 +10,14 @@ from app.core.settings.test import TestAppSettings
 
 
 def get_settings_class() -> type[AppSettings]:
+    """
+    현재 실행 환경에 대응하는 AppSettings 하위 클래스를 선택한다.
+    
+    환경 설정(BaseAppSettings().app_env)에 따라 적절한 설정 클래스(TestAppSettings, DevAppSettings, StagingAppSettings 또는 AppSettings)를 반환한다.
+    
+    Returns:
+        type[AppSettings]: 선택된 AppSettings 하위 클래스 타입.
+    """
     environments = {
         AppEnv.test: TestAppSettings,
         AppEnv.dev: DevAppSettings,

@@ -16,6 +16,20 @@ from app.user.models import UserRead, UserUpdate
 
 class AuthBackend:
     def __init__(self, settings: AppSettings, get_user_manager: Callable) -> None:
+        """
+        앱 설정과 사용자 매니저를 바탕으로 인증 관련 구성(쿠키 전송 설정, Redis 인증 백엔드, Google OAuth 클라이언트, FastAPIUsers 컴포넌트)을 초기화한다.
+        
+        Parameters:
+            settings (AppSettings): 다음 필드를 사용하여 구성 값을 제공해야 합니다:
+                - app_env: 실행 환경 판단(예: prod, test)
+                - cookie_domain: 쿠키 도메인 (값이 "localhost"이면 도메인 없이 설정)
+                - cookie_name: 인증 쿠키 이름
+                - auth_session_expire_seconds: 세션 만료(초)
+                - auth_redis_url: 인증 세션 저장용 Redis URL
+                - google_client_id, google_client_secret: Google OAuth 자격 증명
+                - google_oauth_redirect_uri: OAuth 리디렉션 URI
+            get_user_manager (Callable): FastAPI Users가 사용자 관리를 위해 호출하는 팩토리/콜러블. 이 값을 사용해 FastAPIUsers 컴포넌트를 생성한다.
+        """
         self.app_env = settings.app_env
         cookie_secure = self.app_env == AppEnv.prod
         cookie_domain = settings.cookie_domain if settings.cookie_domain != "localhost" else None
