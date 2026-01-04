@@ -16,12 +16,12 @@
 	</div>
 
 	<div class="flex flex-col gap-4">
-		<h1 class="text-4xl font-pretendard font-bold text-white leading-tight">
+		<h1 class="text-xl font-pretendard font-bold text-white leading-tight">
 			{lecture.title}
 		</h1>
 
 		{#if lecture.artist}
-			<p class="text-xl text-brand-primary font-medium">
+			<p class="text-lg text-brand-primary font-medium">
 				{lecture.artist.nickname}
 			</p>
 		{/if}
