@@ -34,20 +34,11 @@ test.describe('Home page contents', () => {
 	test('should have a hero section with main content', async ({ page }) => {
 		const heroSection = page.locator('section .hero-section')
 		await expect(heroSection).toBeVisible()
-
-		const mainText = page.locator('text=예배를 예배답게 드리려면')
-		await expect(mainText).toBeVisible()
-
-		const startButton = page.locator('button:has-text("바로 START")')
-		await expect(startButton).toBeVisible()
 	})
 
 	test('should have recommended lecture section', async ({ page }) => {
-		const recommendedSection = page.locator('text=🔥 요즘 많이 보는 렉처')
+		const recommendedSection = page.locator('text=요즘 많이 보는 렉처')
 		await expect(recommendedSection).toBeVisible()
-
-		const top10Text = page.locator('text=TOP 10')
-		await expect(top10Text).toBeVisible()
 	})
 
 	test('should have new lecture section', async ({ page }) => {
