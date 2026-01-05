@@ -139,6 +139,7 @@ test.describe('Google OAuth Login', () => {
 		mockAuthorizeApi(page, true)
 
 		const loginButton = page.locator('[data-testid="login-button"]')
+		await page.waitForTimeout(500)
 		await loginButton.click()
 
 		const googleButton = page.locator('button:has-text("Signup with Google")')
