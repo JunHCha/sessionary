@@ -2,6 +2,8 @@
 
 ## 참조 문서
 
+**⚠️ 중요: 이 spec 문서들은 Obsidian 워크스페이스에 로컬로 저장된 개인 문서이며, 외부 공유나 배포를 목적으로 하지 않습니다.**
+
 도메인 지식과 기획 문서는 Obsidian 워크스페이스의 `spec/` 폴더 참조:
 - [README.md](spec/README.md) - 프로젝트 개요
 - [terms/lecture.md](spec/terms/lecture.md) - Lecture 용어
