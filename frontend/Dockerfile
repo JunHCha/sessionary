@@ -15,7 +15,7 @@ FROM base AS builder
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN yarn build
 RUN yarn install --frozen-lockfile --production
 
 # Production stage
