@@ -23,13 +23,13 @@ jobs:
 
       - name: Install Playwright Browsers
         working-directory: ./frontend
-        run: npx playwright install --with-deps
+        run: yarn playwright install --with-deps
 
       - name: Run Playwright tests
         env:
           PUBLIC_API_BASE_URL: ""
         working-directory: ./frontend
-        run: npx playwright test --trace on
+        run: yarn playwright test --trace on
 
       - uses: actions/upload-artifact@v4
         if: always()
