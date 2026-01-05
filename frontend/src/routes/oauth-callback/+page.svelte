@@ -9,7 +9,7 @@
 	} from '$lib/api'
 	import { Spinner } from 'flowbite-svelte'
 
-	export let data: { props: { code?: string; state?: string; error?: string } }
+	let { data }: { data: { props: { code?: string; state?: string; error?: string } } } = $props()
 
 	onMount(async () => {
 		await waitForApiInit()
