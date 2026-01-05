@@ -1,26 +1,32 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
-	import { getLecturesLectureGet } from '$lib/client'
-	import LectureListSection from './LectureListSection.svelte'
-	import type { LectureInList } from '$lib/client'
-	import HomeMainSection from './HomeMainSection.svelte'
-	import RecommendationSection from './RecommendationSection.svelte'
+	import { getLecturesLectureGet, waitForApiInit } from '$lib/api'
+	import type { LectureInList } from '$lib/api'
+	import { LectureList, RecommendSection } from '$lib/features/lecture'
+	import { HeroSection } from '$lib/components/layout'
 
-	let newLectures: LectureInList[] = []
-	let recommendedLectures: LectureInList[] = []
+	let newLectures = $state<LectureInList[]>([])
+	let recommendedLectures = $state<LectureInList[]>([])
 
-	onMount(async () => {
+	async function fetchLectures() {
+		await waitForApiInit()
 		try {
-			recommendedLectures = (await getLecturesLectureGet({})).data
-			newLectures = (await getLecturesLectureGet({})).data
+			const response = await getLecturesLectureGet({})
+			recommendedLectures = response.data || []
+			newLectures = response.data || []
 		} catch (error) {
 			console.error('Failed to fetch lectures:', error)
+			recommendedLectures = []
+			newLectures = []
 		}
+	}
+
+	$effect(() => {
+		fetchLectures()
 	})
 </script>
 
-<main class="px-0 mx-0 flex flex-col">
-	<HomeMainSection />
-	<RecommendationSection {recommendedLectures} />
-	<LectureListSection title="새로운 렉쳐" lectures="{newLectures}" />
-</main>
+<div class="min-h-screen snap-y snap-mandatory bg-black">
+	<HeroSection />
+	<RecommendSection {recommendedLectures} />
+	<LectureList title="새로운 렉쳐" lectures={newLectures} />
+</div>

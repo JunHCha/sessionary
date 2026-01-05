@@ -2,4 +2,4 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
-lib/client
+src/lib/api/client

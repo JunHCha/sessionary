@@ -15,21 +15,25 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 21.7.3
+          node-version: 20
 
       - name: Install dependencies
         working-directory: ./frontend
         run: npm i -g yarn &&  yarn install --frozen-lockfile
 
+      - name: Sync SvelteKit
+        working-directory: ./frontend
+        run: yarn svelte-kit sync
+
       - name: Install Playwright Browsers
         working-directory: ./frontend
-        run: npx playwright install --with-deps
+        run: yarn playwright install chromium --with-deps
 
       - name: Run Playwright tests
         env:
           PUBLIC_API_BASE_URL: ""
         working-directory: ./frontend
-        run: npx playwright test --trace on
+        run: yarn playwright test --trace on
 
       - uses: actions/upload-artifact@v4
         if: always()

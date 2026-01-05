@@ -8,7 +8,7 @@
 	"overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
 	"semi": false,
 	"svelteSortOrder": "options-scripts-markup-styles",
-	"svelteStrictMode": true,
+	"svelteStrictMode": false,
 	"svelteBracketNewLine": true,
 	"svelteAllowShorthand": true,
 	"svelteIndentScriptAndStyle": true

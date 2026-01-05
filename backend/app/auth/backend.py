@@ -17,11 +17,13 @@ from app.user.models import UserRead, UserUpdate
 class AuthBackend:
     def __init__(self, settings: AppSettings, get_user_manager: Callable) -> None:
         self.app_env = settings.app_env
+        cookie_secure = self.app_env == AppEnv.prod
+        cookie_domain = settings.cookie_domain if settings.cookie_domain != "localhost" else None
         self.cookie_transport = CookieTransport(
             cookie_name=settings.cookie_name,
             cookie_max_age=settings.auth_session_expire_seconds,
-            cookie_domain=settings.cookie_domain,
-            cookie_secure=True,
+            cookie_domain=cookie_domain,
+            cookie_secure=cookie_secure,
             cookie_httponly=True,
             cookie_samesite="lax",
         )

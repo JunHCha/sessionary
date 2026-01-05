@@ -1,21 +1,14 @@
-<script>
-	import { Section, Page404 } from 'flowbite-svelte-blocks'
+<script lang="ts">
 	import { Button } from 'flowbite-svelte'
 </script>
 
-<Section name="page404">
-	<Page404 class="flex flex-col items-center justify-center h-screen">
-		<svelte:fragment slot="h1">404</svelte:fragment>
-		<svelte:fragment slot="paragraph">
-			<p
-				class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white"
-			>
-				Something's missing.
-			</p>
-			<p class="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
-				Sorry, we can't find that page. You'll find lots to explore on the home page.
-			</p>
-			<Button href="/home" size="lg">Back to Homepage</Button>
-		</svelte:fragment>
-	</Page404>
-</Section>
+<section class="flex flex-col items-center justify-center h-screen bg-surface-default">
+	<h1 class="text-9xl font-extrabold text-brand-primary">404</h1>
+	<p class="mt-4 text-3xl tracking-tight font-bold text-white md:text-4xl">
+		Something's missing.
+	</p>
+	<p class="mt-4 text-lg font-light text-content-muted">
+		Sorry, we can't find that page. You'll find lots to explore on the home page.
+	</p>
+	<Button href="/home" size="lg" class="mt-8">Back to Homepage</Button>
+</section>

@@ -1,21 +1,23 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { isAuthenticated } from '$lib/stores/auth'
+	import { setIsAuthenticated } from '$lib/features/auth'
 	import {
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
-		usersCurrentUserUserMeGet
-	} from '$lib/client/services.gen'
+		usersCurrentUserUserMeGet,
+		waitForApiInit
+	} from '$lib/api'
 	import { Spinner } from 'flowbite-svelte'
 
-	export let data: {
-		props: { code?: string; state?: string; error?: string }
-	}
+	let { data }: { data: { props: { code?: string; state?: string; error?: string } } } = $props()
 
 	onMount(async () => {
-		let code = data.props.code
-		let state = data.props.state
-		let error = data.props.error
+		await waitForApiInit()
+
+		const code = data.props.code
+		const state = data.props.state
+		const error = data.props.error
+
 		if (error || !code || !state) {
 			console.error('OAuth2 error:', { error, code, state })
 			alert('로그인 중 오류가 발생했습니다. 다시 시도해 주세요.')
@@ -24,20 +26,15 @@
 		}
 
 		try {
-			await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({
-				code,
-				state
-			})
+			await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({ code, state })
 
 			if (typeof window !== 'undefined') {
-				const userResponse = await usersCurrentUserUserMeGet()
-				localStorage.setItem('me', JSON.stringify(userResponse))
-				isAuthenticated.set(true)
-
+				await usersCurrentUserUserMeGet()
+				setIsAuthenticated(true)
 				goto('/home')
 			}
-		} catch (error) {
-			console.error('Callback error:', error)
+		} catch (err) {
+			console.error('Callback error:', err)
 			goto('/not-found')
 		}
 	})
