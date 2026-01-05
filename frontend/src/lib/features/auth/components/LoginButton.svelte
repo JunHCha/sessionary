@@ -56,6 +56,6 @@
 			Sign in to our platform
 		</h3>
 
-		<Button type="submit" class="w-full" onclick={handleLogin}>Signup with Google</Button>
+		<Button type="submit" class="w-full" onclick={handleLogin}>Sign in with Google</Button>
 	</form>
 </Modal>

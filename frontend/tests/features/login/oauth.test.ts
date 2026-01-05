@@ -115,7 +115,7 @@ test.describe('Google OAuth Login', () => {
 		await page.waitForTimeout(500)
 		await loginButton.click()
 
-		const googleButton = page.locator('button:has-text("Signup with Google")')
+		const googleButton = page.locator('button:has-text("Sign in with Google")')
 		await expect(googleButton).toBeVisible({ timeout: 10000 })
 
 		await googleButton.click()
@@ -142,7 +142,7 @@ test.describe('Google OAuth Login', () => {
 		await page.waitForTimeout(500)
 		await loginButton.click()
 
-		const googleButton = page.locator('button:has-text("Signup with Google")')
+		const googleButton = page.locator('button:has-text("Sign in with Google")')
 
 		const [response] = await Promise.all([
 			page.waitForResponse('**/user/oauth/google/authorize*'),
