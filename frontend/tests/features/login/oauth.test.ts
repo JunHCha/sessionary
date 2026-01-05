@@ -139,16 +139,16 @@ test.describe('Google OAuth Login', () => {
 		mockAuthorizeApi(page, true)
 
 		const loginButton = page.locator('[data-testid="login-button"]')
-		await page.waitForTimeout(500)
+		await expect(loginButton).toBeVisible()
 		await loginButton.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
+		await expect(googleButton).toBeVisible({ timeout: 10000 })
 
-		const [response] = await Promise.all([
-			page.waitForResponse('**/user/oauth/google/authorize*'),
-			googleButton.click()
-		])
+		const responsePromise = page.waitForResponse('**/user/oauth/google/authorize*')
+		await googleButton.click()
 
+		const response = await responsePromise
 		expect(response.status()).toBe(422)
 	})
 

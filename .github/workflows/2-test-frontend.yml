@@ -21,9 +21,13 @@ jobs:
         working-directory: ./frontend
         run: npm i -g yarn &&  yarn install --frozen-lockfile
 
+      - name: Sync SvelteKit
+        working-directory: ./frontend
+        run: yarn svelte-kit sync
+
       - name: Install Playwright Browsers
         working-directory: ./frontend
-        run: yarn playwright install --with-deps
+        run: yarn playwright install chromium --with-deps
 
       - name: Run Playwright tests
         env:
