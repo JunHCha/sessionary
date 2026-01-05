@@ -109,6 +109,8 @@
 			<LoginButton />
 		</div>
 		<button
+			aria-label="검색"
+			type="button"
 			class="h-[clamp(3rem,5vh,5rem)] w-[clamp(3rem,5vw,5rem)] flex items-center justify-center transition-opacity duration-300"
 		>
 			<img
