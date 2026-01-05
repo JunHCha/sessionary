@@ -23,7 +23,7 @@
 
 	$effect(() => {
 		const id = Number($page.params.id)
-		if (id) {
+		if (!isNaN(id) && id > 0) {
 			fetchLecture(id)
 		}
 	})
