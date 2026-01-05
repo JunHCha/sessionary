@@ -11,11 +11,8 @@
 
 <div class="flex flex-col gap-6">
 	<div class="relative w-full aspect-video rounded-2xl overflow-hidden">
-		<img
-			src={getThumbnailSrc(lecture.thumbnail)}
-			alt={lecture.title}
-			class="w-full h-full object-cover"
-		/>
+		<!-- TODO: lectureDetail에 thumbnail prop 구현 필요 -->
+		<img src={getThumbnailSrc(null)} alt={lecture.title} class="w-full h-full object-cover" />
 		<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
 	</div>
 
