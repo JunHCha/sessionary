@@ -1,11 +1,6 @@
 <section class="h-screen snap-start snap-always flex items-center justify-center">
 	<div class="relative hero-section w-full h-full">
-		<img
-			src="/images/main.png"
-			srcset="/images/main.png"
-			alt="main"
-			class="w-full h-full object-cover object-center"
-		/>
+		<img src="/images/main.png" alt="main" class="w-full h-full object-cover object-center" />
 		<div
 			class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none"
 		></div>
