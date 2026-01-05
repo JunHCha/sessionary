@@ -42,7 +42,7 @@ test.describe('홈 페이지 콘텐츠', () => {
 	})
 
 	test('새로운 렉처 섹션을 표시합니다', async ({ page }) => {
-		const newSection = page.locator('h2:has-text("새로운 렉쳐")')
+		const newSection = page.locator('h2:has-text("새로운 렉처")')
 		await expect(newSection).toBeVisible()
 	})
 })
