@@ -19,7 +19,9 @@
 			class="w-full h-full object-cover object-center"
 		/>
 		<div class="absolute inset-0 bg-[#0C0C0C] opacity-80"></div>
-		<div
+		<button
+			type="button"
+			aria-label="강의 재생"
 			class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(4rem,7vw,7.4rem)] h-[clamp(4rem,7vw,7.4rem)] cursor-pointer hover:scale-110 transition-transform"
 		>
 			<svg
@@ -27,10 +29,11 @@
 				fill="currentColor"
 				viewBox="0 0 24 24"
 				xmlns="http://www.w3.org/2000/svg"
+				aria-hidden="true"
 			>
 				<path d="M8 5v14l11-7z" fill-rule="evenodd" clip-rule="evenodd" />
 			</svg>
-		</div>
+		</button>
 		<div
 			class="absolute top-[clamp(2rem,3vh,3.5rem)] right-[clamp(3rem,7vw,6.9rem)] bg-[#FF5C16] px-[clamp(0.5rem,1.0vw,1.2rem)] py-[clamp(0.2rem,0.4vh,0.5rem)] rounded-full flex items-center justify-center"
 		>
