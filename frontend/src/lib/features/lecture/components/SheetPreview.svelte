@@ -1,8 +1,32 @@
+<script lang="ts">
+	import { createEventDispatcher } from 'svelte'
+
+	const dispatch = createEventDispatcher<{
+		download: void
+	}>()
+
+	function handleDownload(event: MouseEvent | KeyboardEvent) {
+		event.preventDefault()
+		dispatch('download')
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault()
+			handleDownload(event)
+		}
+	}
+</script>
+
 <div class="flex flex-col gap-4">
 	<h2 class="text-lg font-pretendard font-bold text-white">악보 미리보기</h2>
 
 	<div
+		role="button"
+		tabindex="0"
 		class="group relative w-auto h-[30vh] flex items-center justify-center rounded-xl overflow-hidden bg-surface-card cursor-pointer"
+		onclick={handleDownload}
+		onkeydown={handleKeyDown}
 	>
 		<img
 			src="/images/sheet-preview.png"
