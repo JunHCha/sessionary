@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
 	import { initializeApi, usersCurrentUserUserMeGet } from '$lib/api'
-	import { isAuthenticated } from '$lib/features/auth'
+	import { setIsAuthenticated } from '$lib/features/auth'
 	import { NavBar, Footer } from '$lib/components/layout'
 	import type { Snippet } from 'svelte'
 
@@ -20,11 +20,11 @@
 			const userResponse = await usersCurrentUserUserMeGet()
 			if (userResponse) {
 				localStorage.setItem('me', JSON.stringify(userResponse))
-				isAuthenticated.set(true)
+				setIsAuthenticated(true)
 			}
 		} catch {
 			localStorage.removeItem('me')
-			isAuthenticated.set(false)
+			setIsAuthenticated(false)
 		}
 	}
 </script>

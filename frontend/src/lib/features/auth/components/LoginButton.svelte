@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { isAuthenticated } from '../stores/auth.svelte'
+	import { useAuth, setIsAuthenticated } from '../stores/auth.svelte'
 	import { Button, Modal } from 'flowbite-svelte'
 	import {
 		oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet,
 		authRedisLogoutUserAuthLogoutPost
 	} from '$lib/api/client'
 
-	let formModal = false
+	const auth = useAuth()
+	let formModal = $state(false)
 
 	async function handleLogin() {
 		try {
@@ -25,7 +26,7 @@
 		try {
 			await authRedisLogoutUserAuthLogoutPost()
 			localStorage.removeItem('me')
-			isAuthenticated.set(false)
+			setIsAuthenticated(false)
 			goto('/home')
 		} catch (error) {
 			console.error('Logout error:', error)
@@ -33,16 +34,16 @@
 	}
 </script>
 
-{#if $isAuthenticated}
+{#if auth.isAuthenticated}
 	<button
-		on:click={handleLogout}
+		onclick={handleLogout}
 		class="text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
 	>
 		로그아웃
 	</button>
 {:else}
 	<button
-		on:click={() => (formModal = true)}
+		onclick={() => (formModal = true)}
 		class="text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.3rem,2vw,2rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
 		data-testid="login-button"
 	>

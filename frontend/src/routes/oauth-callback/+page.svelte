@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { isAuthenticated } from '$lib/features/auth'
+	import { setIsAuthenticated } from '$lib/features/auth'
 	import {
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
 		usersCurrentUserUserMeGet,
@@ -31,7 +31,7 @@
 			if (typeof window !== 'undefined') {
 				const userResponse = await usersCurrentUserUserMeGet()
 				localStorage.setItem('me', JSON.stringify(userResponse))
-				isAuthenticated.set(true)
+				setIsAuthenticated(true)
 				goto('/home')
 			}
 		} catch (err) {

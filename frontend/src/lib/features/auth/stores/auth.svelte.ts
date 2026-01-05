@@ -1,17 +1,13 @@
-import { writable } from 'svelte/store'
+let isAuthenticated = $state(false)
 
-export const isAuthenticated = writable(false)
-
-let _authenticated = $state(false)
-
-isAuthenticated.subscribe((value) => {
-	_authenticated = value
-})
+export function setIsAuthenticated(value: boolean) {
+	isAuthenticated = value
+}
 
 export function useAuth() {
 	return {
 		get isAuthenticated() {
-			return _authenticated
+			return isAuthenticated
 		}
 	}
 }
