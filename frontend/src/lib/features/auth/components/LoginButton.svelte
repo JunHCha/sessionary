@@ -25,7 +25,6 @@
 	async function handleLogout() {
 		try {
 			await authRedisLogoutUserAuthLogoutPost()
-			localStorage.removeItem('me')
 			setIsAuthenticated(false)
 			goto('/home')
 		} catch (error) {

@@ -29,8 +29,7 @@
 			await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({ code, state })
 
 			if (typeof window !== 'undefined') {
-				const userResponse = await usersCurrentUserUserMeGet()
-				localStorage.setItem('me', JSON.stringify(userResponse))
+				await usersCurrentUserUserMeGet()
 				setIsAuthenticated(true)
 				goto('/home')
 			}

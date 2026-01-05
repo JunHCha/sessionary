@@ -17,13 +17,9 @@
 
 	async function checkAuthentication() {
 		try {
-			const userResponse = await usersCurrentUserUserMeGet()
-			if (userResponse) {
-				localStorage.setItem('me', JSON.stringify(userResponse))
-				setIsAuthenticated(true)
-			}
+			await usersCurrentUserUserMeGet()
+			setIsAuthenticated(true)
 		} catch {
-			localStorage.removeItem('me')
 			setIsAuthenticated(false)
 		}
 	}

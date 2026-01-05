@@ -102,9 +102,6 @@ function mockAllOAuthApis(
 test.describe('Google OAuth Login', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/home')
-		await page.evaluate(() => {
-			localStorage.clear()
-		})
 	})
 
 	test('OAuth login flow를 성공적으로 수행합니다', async ({ page }) => {
@@ -130,17 +127,12 @@ test.describe('Google OAuth Login', () => {
 		await page.waitForResponse('**/user/oauth/google/callback*')
 		await page.waitForResponse('**/user/me*')
 
-		const userData = await page.evaluate(() => {
-			return localStorage.getItem('me')
-		})
-
-		expect(userData).not.toBeNull()
-		const user = JSON.parse(userData!)
-		expect(user).toHaveProperty('email')
-		expect(user).toHaveProperty('nickname')
-
 		await page.waitForURL('**/home')
 		expect(page.url()).toContain('/home')
+
+		await expect(loginButton).not.toBeVisible()
+		const logoutButton = page.locator('button:has-text("로그아웃")')
+		await expect(logoutButton).toBeVisible()
 	})
 
 	test('authorize API 실패를 처리합니다', async ({ page }) => {
