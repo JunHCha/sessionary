@@ -19,12 +19,8 @@ function createDummyUser(): UserRead {
 	}
 }
 
-function mockAuthorizeApi(page: Page, shouldFail = false, onMockCalled?: () => void) {
+function mockAuthorizeApi(page: Page, shouldFail = false) {
 	page.route('**/user/oauth/google/authorize*', async (route: Route) => {
-		if (onMockCalled) {
-			onMockCalled()
-		}
-
 		if (shouldFail) {
 			await route.fulfill({
 				status: 422,
@@ -100,8 +96,10 @@ function mockAllOAuthApis(
 }
 
 test.describe('Google OAuth Login', () => {
-	test.beforeEach(async ({ page }) => {
+	test.beforeEach(async ({ page, context }) => {
+		await context.clearCookies()
 		await page.goto('/home')
+		await page.reload()
 	})
 
 	test('OAuth login flow를 성공적으로 수행합니다', async ({ page }) => {
@@ -109,18 +107,18 @@ test.describe('Google OAuth Login', () => {
 		mockCallbackApi(page)
 		mockUserMeApi(page)
 
+		await page.waitForLoadState('networkidle')
+
 		const loginButton = page.locator('[data-testid="login-button"]')
 		await expect(loginButton).toBeVisible()
-
-		await page.waitForTimeout(500)
+		await expect(loginButton).toBeEnabled()
 		await loginButton.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
 		await expect(googleButton).toBeVisible({ timeout: 10000 })
+		await expect(googleButton).toBeEnabled()
 
 		await googleButton.click()
-
-		await page.waitForTimeout(1000)
 
 		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`)
 
@@ -137,10 +135,14 @@ test.describe('Google OAuth Login', () => {
 
 	test('authorize API 실패를 처리합니다', async ({ page }) => {
 		mockAuthorizeApi(page, true)
+		mockUserMeApi(page)
+
+		await page.waitForLoadState('networkidle')
 
 		const loginButton = page.locator('[data-testid="login-button"]')
 		await expect(loginButton).toBeVisible()
-		await page.waitForTimeout(500)
+		await expect(loginButton).toBeEnabled()
+
 		await loginButton.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
