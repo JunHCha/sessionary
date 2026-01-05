@@ -4,14 +4,14 @@
 
 	type SessionType = 'play' | 'talk' | 'jam' | 'basic' | 'sheet'
 
-	let { 
-		session, 
-		index, 
-		isCurrent = false 
-	}: { 
+	let {
+		session,
+		index,
+		isCurrent = false
+	}: {
 		session: LessonInLecture
 		index: number
-		isCurrent?: boolean 
+		isCurrent?: boolean
 	} = $props()
 
 	const sessionTypes: SessionType[] = ['play', 'talk', 'jam', 'basic', 'sheet']
@@ -29,8 +29,13 @@
 </script>
 
 <button
-	class="w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 text-left group {!isCurrent ? 'bg-surface-card hover:bg-white/5' : ''}"
-	style={isCurrent ? `background: linear-gradient(135deg, ${config.bg}, rgba(255,92,22,0.1))` : ''}
+	type="button"
+	class="w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 text-left group {!isCurrent
+		? 'bg-surface-card hover:bg-white/5'
+		: ''}"
+	style={isCurrent
+		? `background: linear-gradient(135deg, ${config.bg}, rgba(255,92,22,0.1))`
+		: ''}
 >
 	<div
 		class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider"
@@ -40,7 +45,7 @@
 	</div>
 
 	<div class="flex-1 min-w-0">
-		<p 
+		<p
 			class="font-medium truncate transition-colors"
 			class:text-white={isCurrent}
 			class:text-content-secondary={!isCurrent}
@@ -54,22 +59,29 @@
 		<span class="text-sm text-content-muted">
 			{formatDuration(session.length_sec)}
 		</span>
-		
+
 		{#if isCurrent}
 			<div class="flex items-center gap-1">
 				<span class="w-1.5 h-4 bg-brand-primary rounded-full animate-pulse"></span>
-				<span class="w-1.5 h-6 bg-brand-primary rounded-full animate-pulse" style="animation-delay: 0.1s"></span>
-				<span class="w-1.5 h-3 bg-brand-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
+				<span
+					class="w-1.5 h-6 bg-brand-primary rounded-full animate-pulse"
+					style="animation-delay: 0.1s"
+				></span>
+				<span
+					class="w-1.5 h-3 bg-brand-primary rounded-full animate-pulse"
+					style="animation-delay: 0.2s"
+				></span>
 			</div>
 		{:else}
-			<svg 
-				class="w-5 h-5 text-content-muted opacity-0 group-hover:opacity-100 transition-opacity" 
-				fill="currentColor" 
+			<svg
+				class="w-5 h-5 text-content-muted opacity-0 group-hover:opacity-100 transition-opacity"
+				fill="currentColor"
 				viewBox="0 0 20 20"
 			>
-				<path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+				<path
+					d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"
+				/>
 			</svg>
 		{/if}
 	</div>
 </button>
-
