@@ -45,6 +45,15 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
 
+[tool.ruff.lint]
+select = ["I"]
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+combine-as-imports = true
+split-on-trailing-comma = true
+force-sort-within-sections = true
+
 [tool.mypy]
 ignore_missing_imports = true
 plugins = ["sqlalchemy.ext.mypy.plugin"]
