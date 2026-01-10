@@ -1,11 +1,12 @@
 from os import environ
+from pathlib import Path
 from typing import AsyncGenerator
 
-import pytest
 from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import exceptions
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.manager import UserManager
@@ -22,6 +23,17 @@ def setup_env():
     yield
 
 
+def _delete_test_db():
+    test_db_paths = [
+        Path("test.db"),
+        Path("backend/test.db"),
+        Path(__file__).parent.parent / "test.db",
+    ]
+    for db_path in test_db_paths:
+        if db_path.exists():
+            db_path.unlink()
+
+
 @pytest.fixture(scope="session")
 def test_container(setup_env) -> ApplicationContainer:
     container = ApplicationContainer()
@@ -36,7 +48,9 @@ def test_container(setup_env) -> ApplicationContainer:
         ]
     )
     yield container
+    container.database.session_manager.reset()
     container.unwire()
+    _delete_test_db()
 
 
 @pytest.fixture(scope="session")
