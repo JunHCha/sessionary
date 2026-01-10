@@ -40,6 +40,10 @@ class LectureRepository(BaseLectureRepository):
                 (
                     await session.execute(
                         select(tb.Lecture)
+                        .options(
+                            joinedload(tb.Lecture.artist),
+                            joinedload(tb.Lecture.lessons),
+                        )
                         .offset((page - 1) * per_page)
                         .limit(per_page)
                         .order_by(tb.Lecture.time_updated.desc())
@@ -54,13 +58,35 @@ class LectureRepository(BaseLectureRepository):
     def _map_to_lecture_list(
         self, results, total_items: int, page: int, per_page: int
     ) -> tuple[list[LectureInList], PaginationMeta]:
-        return (
-            [
+        from app.lecture.models import ArtistInfoInLecture
+
+        lecture_list = []
+        for row in results:
+            lessons = [
+                LessonInLecture(
+                    id=item.id,
+                    title=item.title,
+                    length_sec=item.length_sec,
+                    lecture_ordering=item.lecture_ordering,
+                    time_created=item.time_created,
+                    time_updated=item.time_updated,
+                )
+                for item in row.lessons
+            ]
+            artist = None
+            if row.artist:
+                artist = ArtistInfoInLecture(
+                    id=row.artist.id,
+                    nickname=row.artist.nickname,
+                    is_artist=row.artist.is_artist,
+                )
+            lecture_list.append(
                 LectureInList(
                     id=row.id,
                     thumbnail=row.thumbnail,
                     title=row.title,
-                    artist=row.artist.nickname if row.artist else None,
+                    artist=artist,
+                    lessons=lessons,
                     description=row.description,
                     tags=row.tags,
                     length_sec=row.length_sec,
@@ -68,8 +94,9 @@ class LectureRepository(BaseLectureRepository):
                     time_created=row.time_created,
                     time_updated=row.time_updated,
                 )
-                for row in results
-            ],
+            )
+        return (
+            lecture_list,
             PaginationMeta(
                 total_items=total_items,
                 total_pages=(total_items + per_page - 1) // per_page,
@@ -85,7 +112,8 @@ class LectureRepository(BaseLectureRepository):
                     await session.execute(
                         select(tb.Lecture)
                         .options(
-                            joinedload(tb.Lecture.artist), joinedload(tb.Lecture.lessons)
+                            joinedload(tb.Lecture.artist),
+                            joinedload(tb.Lecture.lessons),
                         )
                         .filter(tb.Lecture.id == lecture_id)
                     )
@@ -107,13 +135,25 @@ class LectureRepository(BaseLectureRepository):
             )
             for item in result.lessons
         ]
+        artist = None
+        if result.artist:
+            from app.lecture.models import ArtistInfoInLecture
+
+            artist = ArtistInfoInLecture(
+                id=result.artist.id,
+                nickname=result.artist.nickname,
+                is_artist=result.artist.is_artist,
+            )
         return LectureDetail(
             id=result.id,
             title=result.title,
             lessons=lessons,
-            artist=result.artist,
+            artist=artist,
             description=result.description,
+            thumbnail=result.thumbnail,
+            tags=result.tags,
             length_sec=result.length_sec,
+            lecture_count=result.lecture_count,
             time_created=result.time_created,
             time_updated=result.time_updated,
         )
@@ -130,7 +170,10 @@ class LectureRepository(BaseLectureRepository):
                 artist=None,
                 lessons=[],
                 description=new_lecture.description,
+                thumbnail=new_lecture.thumbnail,
+                tags=new_lecture.tags,
                 length_sec=new_lecture.length_sec,
+                lecture_count=new_lecture.lecture_count,
                 time_created=new_lecture.time_created,
                 time_updated=new_lecture.time_updated,
             )
