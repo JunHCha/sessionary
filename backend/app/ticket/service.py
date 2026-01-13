@@ -51,6 +51,16 @@ class TicketService:
             expires_at = ticket_usage.used_at + datetime.timedelta(
                 weeks=self.TICKET_VALIDITY_WEEKS
             )
+            now = datetime.datetime.now(datetime.timezone.utc)
+            if expires_at.tzinfo is None:
+                now = now.replace(tzinfo=None)
+            if now > expires_at:
+                return LectureAccessStatus(
+                    accessible=False,
+                    reason="ticket_expired",
+                    expires_at=expires_at,
+                    ticket_count=user.ticket_count,
+                )
             return LectureAccessStatus(
                 accessible=True,
                 reason="ticket_used",
@@ -74,6 +84,14 @@ class TicketService:
         )
 
     async def use_ticket(self, user: tb.User, lecture_id: int) -> LectureAccessStatus:
+        if self._is_unlimited_subscription(user):
+            return LectureAccessStatus(
+                accessible=True,
+                reason="unlimited",
+                expires_at=None,
+                ticket_count=user.ticket_count,
+            )
+
         if user.ticket_count <= 0:
             raise HTTPException(status_code=403, detail="No tickets available")
 
@@ -89,8 +107,16 @@ class TicketService:
                 ticket_count=user.ticket_count,
             )
 
-        ticket_usage = await self.repository.create_ticket_usage(user.id, lecture_id)
-        updated_user = await self.repository.decrease_user_ticket_count(user.id)
+        try:
+            ticket_usage, updated_user = await self.repository.use_ticket_atomically(
+                user.id, lecture_id, user.ticket_count
+            )
+        except ValueError as e:
+            if "concurrent modification" in str(e).lower():
+                raise HTTPException(
+                    status_code=409, detail="Ticket count changed during operation"
+                )
+            raise HTTPException(status_code=404, detail="User not found")
 
         expires_at = ticket_usage.used_at + datetime.timedelta(
             weeks=self.TICKET_VALIDITY_WEEKS
@@ -107,4 +133,14 @@ class TicketService:
             return True
 
         ticket_usage = await self.repository.get_ticket_usage(user.id, lecture_id)
-        return ticket_usage is not None
+        if not ticket_usage:
+            return False
+
+        expires_at = ticket_usage.used_at + datetime.timedelta(
+            weeks=self.TICKET_VALIDITY_WEEKS
+        )
+        now = datetime.datetime.now(datetime.timezone.utc)
+        if expires_at.tzinfo is None:
+            now = now.replace(tzinfo=None)
+
+        return expires_at >= now

@@ -2,7 +2,8 @@ import abc
 import datetime
 import uuid
 
-from sqlalchemy import select
+from fastapi import HTTPException
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
 from app.db import tables as tb
@@ -33,6 +34,12 @@ class BaseTicketRepository(abc.ABC):
     async def decrease_user_ticket_count(self, user_id: uuid.UUID) -> tb.User:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    async def use_ticket_atomically(
+        self, user_id: uuid.UUID, lecture_id: int, expected_ticket_count: int
+    ) -> tuple[tb.TicketUsage, tb.User]:
+        raise NotImplementedError
+
 
 class TicketRepository(BaseTicketRepository):
     async def get_ticket_usage(
@@ -60,6 +67,7 @@ class TicketRepository(BaseTicketRepository):
             )
             session.add(ticket_usage)
             await session.flush()
+            await session.commit()
             await session.refresh(ticket_usage)
             return ticket_usage
 
@@ -74,10 +82,54 @@ class TicketRepository(BaseTicketRepository):
 
     async def decrease_user_ticket_count(self, user_id: uuid.UUID) -> tb.User:
         async with self._session_manager.async_session() as session:
-            result = await session.execute(select(tb.User).where(tb.User.id == user_id))
-            user = result.scalar_one()
-            user.ticket_count -= 1
-            await session.flush()
-            await session.refresh(user)
+            stmt = (
+                update(tb.User)
+                .where(
+                    tb.User.id == user_id,
+                    tb.User.ticket_count > 0,
+                )
+                .values(ticket_count=tb.User.ticket_count - 1)
+                .returning(tb.User)
+            )
+            result = await session.execute(stmt)
+            user = result.scalar_one_or_none()
+
+            if user is None:
+                raise HTTPException(
+                    status_code=403, detail="No tickets available or user not found"
+                )
+
             await session.commit()
+            await session.refresh(user, ["subscription"])
             return user
+
+    async def use_ticket_atomically(
+        self, user_id: uuid.UUID, lecture_id: int, expected_ticket_count: int
+    ) -> tuple[tb.TicketUsage, tb.User]:
+        async with self._session_manager.async_session() as session:
+            async with session.begin():
+                result = await session.execute(
+                    select(tb.User).where(
+                        tb.User.id == user_id,
+                        tb.User.ticket_count == expected_ticket_count,
+                    )
+                )
+                user = result.scalar_one_or_none()
+                if not user:
+                    raise ValueError(
+                        "User not found or ticket count changed (concurrent modification)"
+                    )
+
+                ticket_usage = tb.TicketUsage(
+                    user_id=user_id,
+                    lecture_id=lecture_id,
+                )
+                session.add(ticket_usage)
+                await session.flush()
+                await session.refresh(ticket_usage)
+
+                user.ticket_count -= 1
+                await session.flush()
+                await session.refresh(user)
+
+                return ticket_usage, user
