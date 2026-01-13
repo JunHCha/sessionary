@@ -81,6 +81,14 @@ class AppSettings(BaseAppSettings):
     google_client_secret: str = "GOOGLE_CLIENT_SECRET"
     google_oauth_redirect_uri: str = ""
 
+    # Video
+    video_provider: str = "local"
+    minio_endpoint: str = "localhost:9000"
+    minio_access_key: str = "minioadmin"
+    minio_secret_key: str = "minioadmin"
+    cloudflare_account_id: str = ""
+    cloudflare_api_token: str = ""
+
     # Logging
     logging_level: int = logging.INFO
     loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
