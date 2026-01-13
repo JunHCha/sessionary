@@ -2,14 +2,39 @@ from dependency_injector import containers, providers
 
 from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
+from app.lesson.repository import LessonRepository
+from app.ticket.repository import TicketRepository
+from app.ticket.service import TicketService
 from app.user.repository import UserRepository
 from app.user.service import UserService
+from app.video.service import VideoProvider
+
+
+def _create_video_provider(settings) -> VideoProvider:
+    if settings.video_provider == "local":
+        from app.video.minio import MinIOVideoProvider
+
+        return MinIOVideoProvider(
+            endpoint=settings.minio_endpoint,
+            access_key=settings.minio_access_key,
+            secret_key=settings.minio_secret_key,
+        )
+    elif settings.video_provider == "cloudflare":
+        from app.video.cloudflare import CloudflareVideoProvider
+
+        return CloudflareVideoProvider(
+            account_id=settings.cloudflare_account_id,
+            api_token=settings.cloudflare_api_token,
+        )
+    else:
+        raise ValueError(f"Unknown video provider: {settings.video_provider}")
 
 
 class ServicesContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration()
 
     database = providers.DependenciesContainer()
+    settings = providers.Dependency()
 
     user_repository = providers.Factory(
         UserRepository,
@@ -29,4 +54,24 @@ class ServicesContainer(containers.DeclarativeContainer):
     lecture_service = providers.Factory(
         LectureService,
         repository=lecture_repository,
+    )
+
+    ticket_repository = providers.Factory(
+        TicketRepository,
+        session_manager=database.session_manager,
+    )
+
+    ticket_service = providers.Factory(
+        TicketService,
+        repository=ticket_repository,
+    )
+
+    lesson_repository = providers.Factory(
+        LessonRepository,
+        session_manager=database.session_manager,
+    )
+
+    video_provider = providers.Factory(
+        _create_video_provider,
+        settings=settings,
     )
