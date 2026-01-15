@@ -43,3 +43,6 @@ class SessionManager:
             raise
         finally:
             await session.close()
+
+    def reset(self) -> None:
+        self._engine.dispose()
