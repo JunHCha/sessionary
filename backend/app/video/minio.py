@@ -1,5 +1,5 @@
 import datetime
-from datetime import timedelta
+from datetime import timedelta, timezone
 
 from minio import Minio
 from minio.error import S3Error
@@ -36,7 +36,7 @@ class MinIOVideoProvider(VideoProvider):
         except S3Error as e:
             raise ValueError(f"Failed to generate presigned URL: {e}")
 
-        expires_at = datetime.datetime.utcnow() + expires
+        expires_at = datetime.datetime.now(timezone.utc) + expires
         return VideoURLResponse(
             url=presigned_url,
             type="direct",

@@ -1,5 +1,5 @@
 import datetime
-from datetime import timedelta
+from datetime import timedelta, timezone
 
 from app.video.models import VideoURLResponse
 from app.video.service import VideoProvider
@@ -13,7 +13,7 @@ class CloudflareVideoProvider(VideoProvider):
 
     async def get_video_url(self, video_id: str) -> VideoURLResponse:
         signed_token = self._generate_signed_token(video_id)
-        expires_at = datetime.datetime.utcnow() + timedelta(hours=2)
+        expires_at = datetime.datetime.now(timezone.utc) + timedelta(hours=2)
         return VideoURLResponse(
             url=f"https://customer-{self.subdomain}.cloudflarestream.com/{video_id}/manifest/video.m3u8?token={signed_token}",
             type="hls",
