@@ -87,7 +87,9 @@ def make_authorized_client(
                     id=user_db.id,
                     email=user_db.email,
                     nickname=user_db.nickname,
-                    subscription=Subscription.model_validate(user_db.subscription),
+                    subscription=Subscription.model_validate(user_db.subscription)
+                    if user_db.subscription
+                    else None,
                     time_created=user_db.time_created,
                     time_updated=user_db.time_updated,
                     is_artist=user_db.is_artist,

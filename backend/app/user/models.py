@@ -27,7 +27,7 @@ class AuthSessionSchema(BaseModel):
     email: str
     nickname: str
     is_artist: bool
-    subscription: Subscription
+    subscription: Subscription | None
     time_created: datetime.datetime | None
     time_updated: datetime.datetime | None
     is_active: bool
