@@ -246,9 +246,47 @@ export const $LectureDetail = {
             type: 'string',
             title: 'Description'
         },
+        thumbnail: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Thumbnail'
+        },
+        tags: {
+            anyOf: [
+                {
+                    prefixItems: [
+                        {
+                            type: 'string',
+                            enum: ['원곡카피', '해석버전', '기본기']
+                        },
+                        {
+                            type: 'string',
+                            enum: ['Easy', 'Intermediate', 'Advanced']
+                        }
+                    ],
+                    type: 'array',
+                    maxItems: 2,
+                    minItems: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tags'
+        },
         length_sec: {
             type: 'integer',
             title: 'Length Sec'
+        },
+        lecture_count: {
+            type: 'integer',
+            title: 'Lecture Count'
         },
         time_created: {
             type: 'string',
@@ -262,7 +300,7 @@ export const $LectureDetail = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'artist', 'lessons', 'description', 'length_sec', 'time_created', 'time_updated'],
+    required: ['id', 'title', 'artist', 'lessons', 'description', 'thumbnail', 'tags', 'length_sec', 'lecture_count', 'time_created', 'time_updated'],
     title: 'LectureDetail'
 } as const;
 
@@ -290,13 +328,19 @@ export const $LectureInList = {
         artist: {
             anyOf: [
                 {
-                    type: 'string'
+                    '$ref': '#/components/schemas/ArtistInfoInLecture'
                 },
                 {
                     type: 'null'
                 }
-            ],
-            title: 'Artist'
+            ]
+        },
+        lessons: {
+            items: {
+                '$ref': '#/components/schemas/LessonInLecture'
+            },
+            type: 'array',
+            title: 'Lessons'
         },
         description: {
             type: 'string',
@@ -345,7 +389,7 @@ export const $LectureInList = {
         }
     },
     type: 'object',
-    required: ['id', 'thumbnail', 'title', 'artist', 'description', 'tags', 'length_sec', 'lecture_count', 'time_created', 'time_updated'],
+    required: ['id', 'thumbnail', 'title', 'artist', 'lessons', 'description', 'tags', 'length_sec', 'lecture_count', 'time_created', 'time_updated'],
     title: 'LectureInList'
 } as const;
 

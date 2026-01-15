@@ -26,7 +26,8 @@ class UserRepository(BaseUserRepository):
                     await session.execute(
                         select(tb.User)
                         .options(
-                            joinedload(tb.User.lectures),
+                            joinedload(tb.User.lectures).joinedload(tb.Lecture.lessons),
+                            joinedload(tb.User.lectures).joinedload(tb.Lecture.artist),
                             lazyload(tb.User.oauth_accounts),
                             lazyload(tb.User.subscription),
                             lazyload(tb.User.lessons),
@@ -41,6 +42,9 @@ class UserRepository(BaseUserRepository):
             return self._map_to_artist_info(results)
 
     def _map_to_artist_info(self, results) -> list[UserArtistInfo]:
+        from app.lecture.models import ArtistInfoInLecture
+        from app.lesson.models import LessonInLecture
+
         return [
             UserArtistInfo(
                 id=row.id,
@@ -51,7 +55,24 @@ class UserRepository(BaseUserRepository):
                         id=lecture.id,
                         thumbnail=lecture.thumbnail,
                         title=lecture.title,
-                        artist=lecture.artist.nickname if lecture.artist else None,
+                        artist=ArtistInfoInLecture(
+                            id=lecture.artist.id,
+                            nickname=lecture.artist.nickname,
+                            is_artist=lecture.artist.is_artist,
+                        )
+                        if lecture.artist
+                        else None,
+                        lessons=[
+                            LessonInLecture(
+                                id=lesson.id,
+                                title=lesson.title,
+                                length_sec=lesson.length_sec,
+                                lecture_ordering=lesson.lecture_ordering,
+                                time_created=lesson.time_created,
+                                time_updated=lesson.time_updated,
+                            )
+                            for lesson in lecture.lessons
+                        ],
                         description=lecture.description,
                         tags=lecture.tags,
                         length_sec=lecture.length_sec,

@@ -25,6 +25,7 @@ dependencies = [
     "idna>=3.7",
     "aiosqlite>=0.20.0",
     "dependency-injector>=4.41.0",
+    "minio>=7.2.0",
 ]
 
 [tool.pytest.ini_options]
@@ -44,6 +45,15 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
+
+[tool.ruff.lint]
+select = ["I"]
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+combine-as-imports = true
+split-on-trailing-comma = true
+force-sort-within-sections = true
 
 [tool.mypy]
 ignore_missing_imports = true

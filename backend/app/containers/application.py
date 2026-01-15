@@ -31,12 +31,14 @@ class ApplicationContainer(containers.DeclarativeContainer):
         modules=[
             "app.user.view",
             "app.lecture.view",
+            "app.lesson.view",
+            "app.ticket.view",
             "app.containers.auth",
             "app.auth.access",
         ]
     )
 
-    settings = providers.Singleton(get_settings_class())
+    settings = providers.Singleton(get_app_settings)
 
     database = providers.Container(
         DatabaseContainer,
@@ -46,6 +48,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     services = providers.Container(
         ServicesContainer,
         database=database,
+        settings=settings,
     )
 
     auth = providers.Container(

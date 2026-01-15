@@ -1,9 +1,10 @@
 from typing import AsyncGenerator
 
-import pytest
 from fastapi import FastAPI
 from fastapi_users.schemas import BaseUserCreate
 from httpx import ASGITransport, AsyncClient
+import pytest
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.manager import UserManager
@@ -69,21 +70,32 @@ def make_authorized_client(
 ):
     async def _make_client(user: User, session: AsyncSession, token: str):
         async with session:
-            user = await session.merge(user)
+            from sqlalchemy.orm import selectinload
+
+            from app.db.tables import User as UserTable
+
+            result = await session.execute(
+                select(UserTable)
+                .options(selectinload(UserTable.subscription))
+                .where(UserTable.id == user.id)
+            )
+            user_db = result.scalar_one()
             await auth_redis.setex(
                 f"auth-session-id:{token}",
                 test_settings.auth_session_expire_seconds,
                 AuthSessionSchema(
-                    id=user.id,
-                    email=user.email,
-                    nickname=user.nickname,
-                    subscription=Subscription.model_validate(user.subscription),
-                    time_created=user.time_created,
-                    time_updated=user.time_updated,
-                    is_artist=user.is_artist,
-                    is_active=user.is_active,
-                    is_superuser=user.is_superuser,
-                    is_verified=user.is_verified,
+                    id=user_db.id,
+                    email=user_db.email,
+                    nickname=user_db.nickname,
+                    subscription=Subscription.model_validate(user_db.subscription)
+                    if user_db.subscription
+                    else None,
+                    time_created=user_db.time_created,
+                    time_updated=user_db.time_updated,
+                    is_artist=user_db.is_artist,
+                    is_active=user_db.is_active,
+                    is_superuser=user_db.is_superuser,
+                    is_verified=user_db.is_verified,
                 ).model_dump_json(),
             )
             client.cookies.set("satk", token)

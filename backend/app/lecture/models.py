@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import datetime
 import json
-import uuid
 from typing import List, Literal
+import uuid
 
 from pydantic import field_validator
 
@@ -17,7 +17,10 @@ class LectureDetail(BaseModel):
     artist: ArtistInfoInLecture | None
     lessons: List[LessonInLecture]
     description: str
+    thumbnail: str | None
+    tags: tuple[LectureType, DifficultyLevel] | None
     length_sec: int
+    lecture_count: int
     time_created: datetime.datetime
     time_updated: datetime.datetime
 
@@ -37,7 +40,8 @@ class LectureInList(BaseModel):
     id: int
     thumbnail: str | None
     title: str
-    artist: str | None
+    artist: ArtistInfoInLecture | None
+    lessons: List[LessonInLecture]
     description: str
     tags: tuple[LectureType, DifficultyLevel] | None
     length_sec: int

@@ -2,8 +2,8 @@ import datetime
 import json
 import random
 import string
-import uuid
 from typing import List, Literal
+import uuid
 
 from fastapi_users_db_sqlalchemy import (
     SQLAlchemyBaseOAuthAccountTableUUID,
@@ -17,6 +17,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -238,3 +239,21 @@ class PlaylistXLesson(Base):
     lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey("lesson.id"))
 
     __tablename__ = "playlist_x_lesson"
+
+
+class TicketUsage(Base):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("user.id"), nullable=False
+    )
+    lecture_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("lecture.id"), nullable=False
+    )
+    used_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime, default=func.now(), nullable=False
+    )
+
+    __tablename__ = "ticket_usage"
+    __table_args__ = (
+        UniqueConstraint("user_id", "lecture_id", name="uq_user_lecture"),
+    )

@@ -26,6 +26,13 @@ class TestAppSettings(AppSettings):
     auth_session_refresh_interval: int = 2
     auth_redis_url: str = ""
 
+    video_provider: str = "local"
+    minio_endpoint: str = "localhost:9000"
+    minio_access_key: str = "minioadmin"
+    minio_secret_key: str = "minioadmin"
+    cloudflare_account_id: str = ""
+    cloudflare_api_token: str = ""
+
     # Logging
     logging_level: int = logging.DEBUG
     loggers: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")

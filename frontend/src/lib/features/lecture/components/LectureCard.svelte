@@ -59,7 +59,7 @@
 		<p
 			class="text-[clamp(0.45rem,0.7vw,0.7rem)] font-pretendard font-bold leading-[normal] tracking-[-0.01em] text-[#DDDDDD] mb-[clamp(0.4rem,0.6vw,0.6rem)]"
 		>
-			{lecture.artist || ''}
+			{lecture.artist?.nickname || '익명의 아티스트'}
 		</p>
 		<div class="flex flex-wrap gap-[clamp(0.3rem,0.4vw,0.4rem)]">
 			{#each getTagLabel(lecture.tags) as tag}

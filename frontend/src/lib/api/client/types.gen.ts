@@ -62,7 +62,10 @@ export type LectureDetail = {
     artist: ArtistInfoInLecture | null;
     lessons: Array<LessonInLecture>;
     description: string;
+    thumbnail: string | null;
+    tags: unknown[] | null;
     length_sec: number;
+    lecture_count: number;
     time_created: string;
     time_updated: string;
 };
@@ -71,7 +74,8 @@ export type LectureInList = {
     id: number;
     thumbnail: string | null;
     title: string;
-    artist: string | null;
+    artist: ArtistInfoInLecture | null;
+    lessons: Array<LessonInLecture>;
     description: string;
     tags: unknown[] | null;
     length_sec: number;
