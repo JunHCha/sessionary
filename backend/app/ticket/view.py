@@ -19,11 +19,7 @@ async def get_lecture_access_status(
         Provide[ApplicationContainer.services.ticket_service]
     ),
 ):
-    user_with_subscription = await ticket_service.repository.get_user(user.id)
-    if not user_with_subscription:
-        from fastapi import HTTPException
-
-        raise HTTPException(status_code=404, detail="User not found")
+    user_with_subscription = await ticket_service.get_user_or_raise(user.id)
     return await ticket_service.get_lecture_access_status(
         user_with_subscription, lecture_id
     )
@@ -38,9 +34,5 @@ async def use_ticket(
         Provide[ApplicationContainer.services.ticket_service]
     ),
 ):
-    user_with_subscription = await ticket_service.repository.get_user(user.id)
-    if not user_with_subscription:
-        from fastapi import HTTPException
-
-        raise HTTPException(status_code=404, detail="User not found")
+    user_with_subscription = await ticket_service.get_user_or_raise(user.id)
     return await ticket_service.use_ticket(user_with_subscription, lecture_id)

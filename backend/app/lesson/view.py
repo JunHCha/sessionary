@@ -34,7 +34,7 @@ async def get_lesson_video(
     if not lesson.lecture_id:
         raise HTTPException(status_code=400, detail="Lesson has no lecture")
 
-    user_with_subscription = await ticket_service.repository.get_user(user.id)
+    user_with_subscription = await ticket_service.get_user_or_raise(user.id)
     if not user_with_subscription:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -43,5 +43,8 @@ async def get_lesson_video(
     )
     if not can_access:
         raise HTTPException(status_code=403, detail="Access denied")
+
+    if not lesson.video_url:
+        raise HTTPException(status_code=404, detail="Video not available for this lesson")
 
     return await video_provider.get_video_url(lesson.video_url)

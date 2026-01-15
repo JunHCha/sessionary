@@ -14,6 +14,12 @@ class TicketService:
     def __init__(self, repository: BaseTicketRepository) -> None:
         self.repository = repository
 
+    async def get_user_or_raise(self, user_id: uuid.UUID) -> tb.User:
+        user = await self.repository.get_user(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+
     def _is_unlimited_subscription(self, user: tb.User) -> bool:
         if not user.subscription:
             return False
@@ -92,9 +98,6 @@ class TicketService:
                 ticket_count=user.ticket_count,
             )
 
-        if user.ticket_count <= 0:
-            raise HTTPException(status_code=403, detail="No tickets available")
-
         existing_usage = await self.repository.get_ticket_usage(user.id, lecture_id)
         if existing_usage:
             expires_at = existing_usage.used_at + datetime.timedelta(
@@ -106,6 +109,9 @@ class TicketService:
                 expires_at=expires_at,
                 ticket_count=user.ticket_count,
             )
+
+        if user.ticket_count <= 0:
+            raise HTTPException(status_code=403, detail="No tickets available")
 
         try:
             ticket_usage, updated_user = await self.repository.use_ticket_atomically(

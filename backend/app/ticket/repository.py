@@ -46,13 +46,13 @@ class TicketRepository(BaseTicketRepository):
         self, user_id: uuid.UUID, lecture_id: int
     ) -> tb.TicketUsage | None:
         async with self._session_manager.async_session() as session:
+            now = datetime.datetime.now(datetime.timezone.utc)
+            one_week_ago = now - datetime.timedelta(weeks=1)
             result = await session.execute(
                 select(tb.TicketUsage).where(
                     tb.TicketUsage.user_id == user_id,
                     tb.TicketUsage.lecture_id == lecture_id,
-                    tb.TicketUsage.used_at
-                    > datetime.datetime.now(datetime.timezone.utc)
-                    - datetime.timedelta(weeks=1),
+                    tb.TicketUsage.used_at > one_week_ago,
                 )
             )
             return result.scalar_one_or_none()
