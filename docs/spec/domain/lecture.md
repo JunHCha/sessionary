@@ -1,0 +1,94 @@
+---
+created: 2025-12-21T01:24
+updated: 2026-01-15T23:30
+---
+
+# Lecture
+
+하나의 곡에 대한 강의 모음, 또는 특정 주제로 기획된 강의 시리즈입니다.
+
+- 여러 개의 Session으로 구성됨 (약 10개 내외)
+- 곡 단위 또는 주제별로 기획
+
+## 접근 권한
+
+| 페이지         | 비로그인         | Ticket Plan        | 무제한 구독 |
+| -------------- | ---------------- | ------------------ | ----------- |
+| Lecture 목록   | ✅               | ✅                 | ✅          |
+| Lecture detail | ✅               | ✅                 | ✅          |
+| Session detail | ❌ (로그인 유도) | 티켓 차감 후 접근  | ✅          |
+| 비디오 재생    | ❌               | 티켓 사용된 경우만 | ✅          |
+
+## 티켓 시스템
+
+### 티켓 차감 플로우
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant DB
+
+    Note over User,DB: Lecture Detail View (Public)
+    User->>Frontend: Lecture 상세 페이지 접근
+    Frontend->>Backend: GET /api/lecture/{lecture_id}
+    Backend-->>Frontend: Lecture 정보 + Session 목록 (메타정보만)
+    Frontend->>User: Lecture 상세 페이지 표시
+
+    Note over User,DB: Session Detail View 진입 시도
+    User->>Frontend: Session 클릭 (Session detail view 진입 시도)
+
+    alt 미인증 사용자
+        Frontend->>User: 로그인 모달 표시
+        User->>Frontend: 로그인 완료
+        Frontend->>Frontend: 모달 닫기, 아래 플로우 계속
+    end
+
+    Frontend->>Backend: GET /api/ticket/lecture/{lecture_id}
+    Note right of Backend: 인증 필요 (401 if 미인증)
+    Backend->>DB: TicketUsage 조회 (user_id, lecture_id, 1주 이내)
+    Backend->>DB: User 구독 정보 조회
+
+    alt 무제한 구독 (Personal/Group/Experimental)
+        Backend-->>Frontend: { accessible: true, reason: "unlimited" }
+        Frontend->>Frontend: Session detail view로 이동
+    else 이미 티켓 사용됨 (1주 이내)
+        Backend-->>Frontend: { accessible: true, reason: "ticket_used", expires_at: ... }
+        Frontend->>Frontend: Session detail view로 이동
+    else 티켓 미사용 & 티켓 있음
+        Backend-->>Frontend: { accessible: false, ticket_count: 3 }
+        Frontend->>User: 티켓 차감 확인 모달
+        User->>Frontend: 차감 확인
+        Frontend->>Backend: POST /api/ticket/lecture/{lecture_id}
+        Backend->>DB: TicketUsage 생성 + User.ticket_count 차감
+        Backend-->>Frontend: { accessible: true, reason: "ticket_used", expires_at: ... }
+        Frontend->>Frontend: Session detail view로 이동
+    else 티켓 없음
+        Backend-->>Frontend: { accessible: false, ticket_count: 0 }
+        Frontend->>User: 티켓 부족 안내 (구독 유도)
+    end
+
+    Note over User,DB: Session Detail View 내 비디오 재생
+    User->>Frontend: 비디오 재생 요청
+    Frontend->>Backend: GET /api/lesson/{lesson_id}/video
+    Backend->>DB: TicketUsage 또는 구독 상태 확인
+    alt 접근 권한 있음
+        Backend->>Backend: VideoProvider.get_video_url()
+        Backend-->>Frontend: { url, type, expires_at }
+        Frontend->>User: 비디오 재생
+    else 접근 권한 없음
+        Backend-->>Frontend: 403 Forbidden
+    end
+```
+
+### 티켓 유효 기간
+
+- 티켓 사용 시 해당 Lecture에 대해 **1주간** 접근 가능
+- 1주 후 만료되면 다시 티켓 차감 필요
+
+### 무제한 구독 판단 기준
+
+- `subscription.name` in ["personal", "group", "experimental"]
+- `subscription.is_active` = true
+- `user.expires_at` > now (만료되지 않음)

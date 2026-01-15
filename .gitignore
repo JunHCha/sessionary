@@ -2,3 +2,5 @@ backend/dev-scripts/*.sql
 sessionary.code-workspace
 .cursorrules
 .cursor/skills/rule/SKILL.md
+
+.claude/
