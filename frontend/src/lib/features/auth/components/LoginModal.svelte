@@ -54,7 +54,7 @@
 			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-white font-bold py-3 rounded-lg"
 			onclick={handleLogin}
 		>
-			Google로 로그인
+			Sign in with Google
 		</Button>
 	</div>
 </Modal>
