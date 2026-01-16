@@ -31,7 +31,11 @@
 			if (typeof window !== 'undefined') {
 				await usersCurrentUserUserMeGet()
 				setIsAuthenticated(true)
-				goto('/home')
+
+				// sessionStorage에서 redirectUrl 읽기
+				const redirectUrl = sessionStorage.getItem('redirectUrl') || '/home'
+				sessionStorage.removeItem('redirectUrl')
+				goto(redirectUrl)
 			}
 		} catch (err) {
 			console.error('Callback error:', err)
