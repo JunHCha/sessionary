@@ -97,11 +97,11 @@ python3 .claude/skills/pr-review-resolver/scripts/post_comments.py
 `.pr-review-progress.yaml`을 읽고 GitHub PR 코멘트에 결과를 답글로 작성한다.
 
 ```bash
-# 실행
-python3 scripts/post_comments.py
+# 실행 (저장소 루트에서)
+python3 .claude/skills/pr-review-resolver/scripts/post_comments.py
 
 # 테스트 (실제 코멘트 작성 없이 출력만)
-python3 scripts/post_comments.py --dry-run
+python3 .claude/skills/pr-review-resolver/scripts/post_comments.py --dry-run
 ```
 
 **요구사항**: `pyyaml` 패키지, `gh` CLI
