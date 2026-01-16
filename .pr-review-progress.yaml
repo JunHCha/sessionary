@@ -1,0 +1,203 @@
+pr_number: 72
+total_comments: 22
+resolved: 0
+comments:
+  # GitHub Security Bot - Clear-text storage/logging (3개) - 스킵 대상 (보안 스캔 자동 알림)
+  - id: 1
+    github_comment_id: 2699209017
+    file: .claude/skills/youtube-collector/scripts/setup_api_key.py
+    line: 76
+    summary: "Clear-text storage of sensitive information"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 2
+    github_comment_id: 2699209024
+    file: .claude/skills/youtube-collector/scripts/setup_api_key.py
+    line: 107
+    summary: "Clear-text logging of sensitive information"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 3
+    github_comment_id: 2699209029
+    file: .claude/skills/youtube-collector/scripts/setup_api_key.py
+    line: 147
+    summary: "Clear-text logging of sensitive information"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  # CodeRabbit - Critical/Major/Minor issues
+  - id: 4
+    github_comment_id: 2699227441
+    file: .claude/agents/brand-logo-finder.md
+    line: 6
+    summary: "Brandfetch API 엔드포인트와 인증 정보를 수정하세요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 5
+    github_comment_id: 2699227445
+    file: .claude/commands/project-draft-pr.md
+    line: 15
+    summary: "브랜치명 패턴 일관성 문서화 필요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 6
+    github_comment_id: 2699227449
+    file: .claude/commands/resolve-issue.md
+    line: 46
+    summary: "브랜치명 생성 스크립트에 한글 처리 문제"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 7
+    github_comment_id: 2699227453
+    file: .claude/SKILL.md
+    line: 34
+    summary: "docs/spec/ 참조 문서가 저장소에 존재하지 않는 문제"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 8
+    github_comment_id: 2699227457
+    file: .claude/skills/hook-creator/references/examples.md
+    line: 226
+    summary: "JSON 유효성 검사 로직에 버그"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 9
+    github_comment_id: 2699227460
+    file: .claude/skills/hook-creator/references/examples.md
+    line: 246
+    summary: "Linting 실패 시 차단되지 않는 문제"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 10
+    github_comment_id: 2699227464
+    file: .claude/skills/hook-creator/references/examples.md
+    line: 268
+    summary: "환경 파일 source 시 보안 고려 사항"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 11
+    github_comment_id: 2699227467
+    file: .claude/skills/pr-review-resolver/scripts/post_comments.py
+    line: 25
+    summary: "YAML 파싱/스키마 오류를 명확히 처리하세요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 12
+    github_comment_id: 2699227470
+    file: .claude/skills/pr-review-resolver/scripts/post_comments.py
+    line: 70
+    summary: "commit_sha가 null이면 슬라이싱 오류"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 13
+    github_comment_id: 2699227474
+    file: .claude/skills/pr-review-resolver/scripts/post_comments.py
+    line: 76
+    summary: "skip_reason이 null이면 None이 그대로 출력"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 14
+    github_comment_id: 2699227475
+    file: .claude/skills/pr-review-resolver/SKILL.md
+    line: 65
+    summary: "코드 블록 언어 지정으로 markdownlint 오류 방지"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 15
+    github_comment_id: 2699227478
+    file: .claude/skills/skill-creator/scripts/package_skill.py
+    line: 16
+    summary: "임포트 경로 및 사용 문서 불일치"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 16
+    github_comment_id: 2699227482
+    file: .claude/skills/youtube-collector/README.md
+    line: 90
+    summary: "펜스 코드 블록에 언어 지정 추가 필요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 17
+    github_comment_id: 2699227484
+    file: .claude/skills/youtube-collector/references/data-schema.md
+    line: 20
+    summary: "실행 경로를 명확히 해주세요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 18
+    github_comment_id: 2699227486
+    file: .claude/skills/youtube-collector/scripts/collect_videos.py
+    line: 259
+    summary: "채널 핸들이 비어 있으면 저장 경로가 충돌"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 19
+    github_comment_id: 2699227489
+    file: .claude/skills/youtube-collector/scripts/fetch_transcript.py
+    line: 96
+    summary: "자막 목록 탐색에서 bare except 제거 필요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 20
+    github_comment_id: 2699227493
+    file: .claude/skills/youtube-collector/scripts/register_channel.py
+    line: 116
+    summary: "YAML 파싱 실패 시 기존 채널 목록이 소실될 수 있음"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 21
+    github_comment_id: 2699227497
+    file: .claude/skills/youtube-collector/scripts/setup_api_key.py
+    line: 77
+    summary: "API 키 파일 권한 제한이 필요"
+    status: pending
+    commit_sha: null
+    skip_reason: null
+
+  - id: 22
+    github_comment_id: 2699227499
+    file: .claude/skills/youtube-collector/SKILL.md
+    line: 158
+    summary: "오류 메시지 예시가 실제 출력과 다름"
+    status: pending
+    commit_sha: null
+    skip_reason: null
