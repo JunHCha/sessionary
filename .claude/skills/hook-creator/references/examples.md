@@ -223,7 +223,7 @@ Complete, tested hook configurations for common use cases.
         "hooks": [
           {
             "type": "command",
-            "command": "jq -e '.tool_input | select(.file_path | endswith(\".json\")) | .content' | jq . > /dev/null 2>&1 || { echo 'Invalid JSON content'; exit 2; }"
+            "command": "jq -r 'if (.tool_input.file_path | endswith(\".json\")) then (.tool_input.content | fromjson | empty) else empty end' > /dev/null 2>&1 || { echo 'Invalid JSON content'; exit 2; }"
           }
         ]
       }
@@ -243,7 +243,7 @@ Complete, tested hook configurations for common use cases.
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command' | grep -q 'git commit' && npx eslint . --max-warnings 0 || exit 0"
+            "command": "jq -r '.tool_input.command' | grep -q 'git commit' && { npx eslint . --max-warnings 0 || exit 2; } || exit 0"
           }
         ]
       }
@@ -255,6 +255,11 @@ Complete, tested hook configurations for common use cases.
 ## Session Hooks
 
 ### Initialize Environment on Session Start
+
+> **보안 주의**: `.claude-env` 파일을 source하면 임의의 코드가 실행될 수 있습니다.
+> - 버전 관리에 포함하기 전 내용 검토 필수
+> - 민감한 정보(API 키, 비밀번호)는 직접 포함하지 말 것
+> - POSIX 환경에서는 파일 권한을 600으로 제한 권장
 
 ```json
 {
