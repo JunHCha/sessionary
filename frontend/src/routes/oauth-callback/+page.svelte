@@ -33,8 +33,14 @@
 				setIsAuthenticated(true)
 
 				// sessionStorage에서 redirectUrl 읽기
-				const redirectUrl = sessionStorage.getItem('redirectUrl') || '/home'
+				let redirectUrl = sessionStorage.getItem('redirectUrl') || '/home'
 				sessionStorage.removeItem('redirectUrl')
+
+				// 내부 경로만 허용 (외부 URL 방지)
+				if (!redirectUrl.startsWith('/') || redirectUrl.startsWith('//')) {
+					redirectUrl = '/home'
+				}
+
 				goto(redirectUrl)
 			}
 		} catch (err) {
