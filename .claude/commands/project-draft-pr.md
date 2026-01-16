@@ -10,6 +10,10 @@ allowed-tools: Bash(gh:*), Bash(git:*)
 ## 워크플로우
 
 1. 현재 브랜치명에서 이슈 번호 추출 (예: `70-스트리밍-서버-구현` → `70`)
+   ```bash
+   # 브랜치명 패턴: {이슈번호}-{설명}
+   ISSUE_NUMBER=$(git branch --show-current | cut -d'-' -f1)
+   ```
 2. GitHub에서 이슈 정보 조회: `gh issue view <번호> --json title,body,labels`
 3. Draft PR 생성: `gh pr create --draft`
 

@@ -42,7 +42,10 @@ argument-hint: <issue-number>
 1. `/project-update` 호출하여 이슈를 "In Progress"로 이동
 2. 작업 브랜치 생성: `$ARGUMENTS-{description}`
    ```bash
-   git checkout -b "$ARGUMENTS-$(gh issue view $ARGUMENTS --json title -q '.title' | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | cut -c1-30)"
+   # 이슈 제목을 안전하게 브랜치명으로 변환 (한글/특수문자 처리)
+   ISSUE_TITLE=$(gh issue view $ARGUMENTS --json title -q '.title')
+   BRANCH_SUFFIX=$(echo "$ISSUE_TITLE" | sed 's/[^가-힣a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//' | cut -c1-50)
+   git checkout -b "${ARGUMENTS}-${BRANCH_SUFFIX}"
    ```
 
 ### 3.2 TDD 개발
