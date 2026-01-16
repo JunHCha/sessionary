@@ -66,6 +66,11 @@ def package_skill(skill_path, output_dir=None):
 
     skill_filename = output_path / f"{skill_name}.skill"
 
+    if skill_filename.exists():
+        print(f"❌ Error: Output file already exists: {skill_filename}")
+        print("   Use a different output directory or remove the existing file.")
+        return None
+
     # Create the .skill file (zip format)
     try:
         with zipfile.ZipFile(skill_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
