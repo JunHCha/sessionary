@@ -42,7 +42,11 @@ def get_pr_number() -> int | None:
     if result.returncode != 0:
         print("Error: Could not get PR number")
         return None
-    return int(result.stdout.strip())
+    try:
+        return int(result.stdout.strip())
+    except ValueError:
+        print("Error: Invalid PR number output")
+        return None
 
 
 def post_comment(pr_number: int, comment_id: int, body: str, dry_run: bool = False):
