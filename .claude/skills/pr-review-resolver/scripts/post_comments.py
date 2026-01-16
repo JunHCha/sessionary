@@ -20,8 +20,16 @@ def load_progress(path: Path = Path(".pr-review-progress.yaml")) -> dict | None:
     if not path.exists():
         print(f"Error: {path} not found")
         return None
-    with open(path) as f:
-        return yaml.safe_load(f)
+    try:
+        with open(path) as f:
+            data = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        print(f"Error: Failed to parse {path}: {e}")
+        return None
+    if not isinstance(data, dict):
+        print(f"Error: {path} must be a mapping")
+        return None
+    return data
 
 
 def get_pr_number() -> int | None:
@@ -66,13 +74,13 @@ def post_comment(pr_number: int, comment_id: int, body: str, dry_run: bool = Fal
 
 def format_resolved_message(comment: dict) -> str:
     """resolved 코멘트에 대한 메시지를 생성한다."""
-    commit_sha = comment.get("commit_sha", "unknown")
-    return f"Resolved in commit `{commit_sha[:7]}`"
+    commit_sha = comment.get("commit_sha") or "unknown"
+    return f"Resolved in commit `{str(commit_sha)[:7]}`"
 
 
 def format_skipped_message(comment: dict) -> str:
     """skipped 코멘트에 대한 메시지를 생성한다."""
-    reason = comment.get("skip_reason", "No reason provided")
+    reason = comment.get("skip_reason") or "No reason provided"
     return f"Skipped: {reason}"
 
 
