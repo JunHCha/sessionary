@@ -17,6 +17,7 @@ const mockSessionStorage = {
 
 beforeEach(() => {
 	mockSessionStorage.clear()
+	vi.clearAllMocks()
 	vi.stubGlobal('sessionStorage', mockSessionStorage)
 })
 
@@ -46,7 +47,7 @@ describe('LoginModal', () => {
 			expect(mockSessionStorage.setItem).toHaveBeenCalledWith('redirectUrl', '/my-page')
 		})
 
-		it('redirectUrl이 없으면 기본값 "/home"이 저장된다', async () => {
+		it('getDefaultRedirectUrl()로 기본값 "/home"을 가져올 수 있다', async () => {
 			const { saveRedirectUrl, getDefaultRedirectUrl } = await import('$lib/features/auth/components/LoginModal.svelte')
 			saveRedirectUrl(getDefaultRedirectUrl())
 			expect(mockSessionStorage.setItem).toHaveBeenCalledWith('redirectUrl', '/home')
