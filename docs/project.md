@@ -42,14 +42,12 @@
 
 | # | 제목 | 담당자 | 우선순위 | 크기 | 시작일 | 라벨 |
 |---|------|--------|----------|------|--------|------|
-| [#70](https://github.com/JunHCha/sessionary/issues/70) | ⚙️ ⚒️ 스트리밍 서버 구현 | JunHCha | P1 | XL | 2026-01-10 | feature |
-| [#48](https://github.com/JunHCha/sessionary/issues/48) | ⚙️⚒️ Ticket plan 차감 로직 구현 | JunHCha | P2 | M | 2024-10-20 | feature |
+| [#46](https://github.com/JunHCha/sessionary/issues/46) | 🖥️⚒️ 로그인 Modal 레이아웃 구현 | JunHCha | P2 | S | 2026-01-17 | feature |
 
 ### Backlog (대기)
 
 | # | 제목 | 담당자 | 우선순위 | 크기 | 시작일 | 라벨 |
 |---|------|--------|----------|------|--------|------|
-| [#46](https://github.com/JunHCha/sessionary/issues/46) | 🖥️⚒️ 로그인 Modal 레이아웃 구현 | JunHCha | P2 | S | 2024-10-20 | feature |
 | [#44](https://github.com/JunHCha/sessionary/issues/44) | 🖥️⚒️ UserInfo 컴포넌트 및 profile setting, plan info page 추가 | JunHCha | P2 | M | 2024-10-20 | feature |
 | [#49](https://github.com/JunHCha/sessionary/issues/49) | 🖥️⚒️ Ticket Plan alert modal 레이아웃 구현 | JunHCha | P2 | S | 2024-10-20 | feature |
 | [#52](https://github.com/JunHCha/sessionary/issues/52) | 🖥️⚒️ Session detail view 레이아웃 구현 | JunHCha | P2 | M | 2024-10-20 | feature |
@@ -62,6 +60,8 @@
 
 | # | 제목 | 담당자 | 우선순위 | 크기 | 시작일 | 종료일 | 라벨 |
 |---|------|--------|----------|------|--------|--------|------|
+| [#70](https://github.com/JunHCha/sessionary/issues/70) | ⚙️ ⚒️ 스트리밍 서버 구현 | JunHCha | P1 | XL | 2026-01-10 | 2026-01-16 | feature |
+| [#48](https://github.com/JunHCha/sessionary/issues/48) | ⚙️⚒️ Ticket plan 차감 로직 구현 | JunHCha | P2 | M | 2024-10-20 | 2026-01-16 | feature |
 | [#45](https://github.com/JunHCha/sessionary/issues/45) | 🖥️⚒️ Lecture Detail view 페이지 레이아웃 구현 | JunHCha | P2 | M | 2024-10-20 | 2026-01-10 | feature |
 | [#47](https://github.com/JunHCha/sessionary/issues/47) | ⚙️⚒️ subscription history 모델 추가 | kor-kms | P2 | L | 2025-01-09 | 2025-10-11 | feature |
 | [#50](https://github.com/JunHCha/sessionary/issues/50) | ⚙️⚒️ auth token 발급 로직 개편 | JunHCha, kor-kms | P2 | M | 2025-01-09 | 2025-01-22 | feature |
@@ -151,5 +151,5 @@
 
 ---
 
-*마지막 업데이트: 2026-01-16*
+*마지막 업데이트: 2026-01-17 (이슈 #46 In Progress)*
 *원본: https://github.com/users/JunHCha/projects/2*

@@ -11,10 +11,21 @@ Examples:
     init_command.py test --path ./my-commands # Creates ./my-commands/test.md
 """
 
+import re
 import sys
 import os
 from pathlib import Path
 import argparse
+
+
+COMMAND_NAME_PATTERN = re.compile(r'^[a-z0-9][a-z0-9-]*$')
+
+
+def validate_command_name(command_name: str) -> tuple[bool, str]:
+    """Validate command name to avoid path traversal."""
+    if not COMMAND_NAME_PATTERN.fullmatch(command_name):
+        return False, "command_name must be lowercase letters, numbers, and hyphens only."
+    return True, ""
 
 
 COMMAND_TEMPLATE = '''---
@@ -92,6 +103,12 @@ def init_command(
     Returns:
         Path to created command file, or None if error
     """
+    # Validate command name to avoid path traversal
+    valid, error = validate_command_name(command_name)
+    if not valid:
+        print(f"Error: {error}")
+        return None
+
     # Determine base path
     if custom_path:
         base_path = Path(custom_path).resolve()
@@ -124,29 +141,21 @@ def init_command(
     description = description or f"[TODO: Brief description of /{command_name}]"
     body = body or f"[TODO: Add instructions for /{command_name}]\n\n$ARGUMENTS"
 
-    # Choose template based on options
-    if allowed_tools and argument_hint and model:
-        content = COMMAND_TEMPLATE_FULL.format(
-            allowed_tools=allowed_tools,
-            argument_hint=argument_hint,
-            description=description,
-            model=model,
-            command_title=command_title,
-            body=body
-        )
-    elif allowed_tools:
-        content = COMMAND_TEMPLATE_WITH_TOOLS.format(
-            allowed_tools=allowed_tools,
-            description=description,
-            command_title=command_title,
-            body=body
-        )
-    else:
-        content = COMMAND_TEMPLATE.format(
-            description=description,
-            command_title=command_title,
-            body=body
-        )
+    # Build frontmatter dynamically so optional fields are never dropped
+    frontmatter_lines = ["---"]
+    if allowed_tools:
+        frontmatter_lines.append(f"allowed-tools: {allowed_tools}")
+    if argument_hint:
+        frontmatter_lines.append(f"argument-hint: {argument_hint}")
+    frontmatter_lines.append(f"description: {description}")
+    if model:
+        frontmatter_lines.append(f"model: {model}")
+    frontmatter_lines.append("---")
+
+    content = "\n".join(
+        frontmatter_lines
+        + ["", f"# {command_title}", "", body, ""]
+    )
 
     # Write command file
     try:

@@ -3,5 +3,5 @@ import viteConfig from './vite.config'
 
 export default mergeConfig(
 	viteConfig,
-	defineConfig({ test: { include: ['src/**/*.{test,spec}.{js,ts}'] } })
+	defineConfig({ test: { include: ['tests/unit/**/*.{test,spec}.{js,ts}'] } })
 )

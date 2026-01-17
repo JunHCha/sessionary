@@ -31,7 +31,17 @@
 			if (typeof window !== 'undefined') {
 				await usersCurrentUserUserMeGet()
 				setIsAuthenticated(true)
-				goto('/home')
+
+				// sessionStorage에서 redirectUrl 읽기
+				let redirectUrl = sessionStorage.getItem('redirectUrl') || '/home'
+				sessionStorage.removeItem('redirectUrl')
+
+				// 내부 경로만 허용 (외부 URL 방지)
+				if (!redirectUrl.startsWith('/') || redirectUrl.startsWith('//')) {
+					redirectUrl = '/home'
+				}
+
+				goto(redirectUrl)
 			}
 		} catch (err) {
 			console.error('Callback error:', err)
