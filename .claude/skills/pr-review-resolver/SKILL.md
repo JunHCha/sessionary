@@ -14,24 +14,18 @@ PR에 달린 코드 리뷰 코멘트를 체계적으로 해결한다.
 먼저 GraphQL API로 review thread의 상태만 가볍게 조회한다 (context 비용 절감):
 
 ```bash
-gh api graphql -f query='
-query($owner: String!, $repo: String!, $pr: Int!) {
-  repository(owner: $owner, name: $repo) {
-    pullRequest(number: $pr) {
-      reviewThreads(first: 100) {
-        nodes {
-          id
-          isResolved
-          isOutdated
-          comments(first: 1) {
-            nodes { databaseId }
-          }
-        }
-      }
-    }
-  }
-}' -f owner=:owner -f repo=:repo -F pr=$(gh pr view --json number -q .number)
+# 저장소 정보 조회 (GraphQL에서는 :owner/:repo 플레이스홀더가 지원되지 않음)
+OWNER=$(gh repo view --json owner -q .owner.login)
+REPO=$(gh repo view --json name -q .name)
+PR_NUM=<PR번호>
+
+# 쿼리에 직접 값 삽입 (쌍따옴표 사용, GraphQL 변수 문법은 쉘과 충돌함)
+gh api graphql -f query="query { repository(owner: \"$OWNER\", name: \"$REPO\") { pullRequest(number: $PR_NUM) { reviewThreads(first: 100) { nodes { id isResolved isOutdated comments(first: 1) { nodes { databaseId } } } } } } }"
 ```
+
+**참고**:
+- gh CLI의 `:owner`, `:repo` 플레이스홀더는 REST API 엔드포인트에서만 작동하며, GraphQL API에서는 지원되지 않는다
+- GraphQL 변수 문법 (`$owner` 등)은 쉘 변수와 충돌하므로, 쿼리에 직접 값을 삽입하는 방식을 사용한다
 
 **GitHub 코멘트 상태 필드**:
 - `isResolved`: GitHub UI에서 "Resolve conversation" 버튼으로 해결됨
@@ -57,39 +51,12 @@ progress 파일이 없거나 상태 불일치 시, **미해결 코멘트만** �
 GraphQL API를 사용하여 `isResolved: false` AND `isOutdated: false`인 코멘트만 가져온다:
 
 ```bash
-gh api graphql -f query='
-query($owner: String!, $repo: String!, $pr: Int!) {
-  repository(owner: $owner, name: $repo) {
-    pullRequest(number: $pr) {
-      reviewThreads(first: 100) {
-        nodes {
-          id
-          isResolved
-          isOutdated
-          path
-          line
-          comments(first: 1) {
-            nodes {
-              databaseId
-              body
-              author { login }
-            }
-          }
-        }
-      }
-    }
-  }
-}' -f owner=:owner -f repo=:repo -F pr=$(gh pr view --json number -q .number) \
-  --jq '.data.repository.pullRequest.reviewThreads.nodes
-    | map(select(.isResolved == false and .isOutdated == false))
-    | .[] | {
-        thread_id: .id,
-        github_comment_id: .comments.nodes[0].databaseId,
-        path: .path,
-        line: .line,
-        body: .comments.nodes[0].body,
-        author: .comments.nodes[0].author.login
-      }'
+# 저장소 정보 조회
+OWNER=$(gh repo view --json owner -q .owner.login)
+REPO=$(gh repo view --json name -q .name)
+PR_NUM=<PR번호>
+
+gh api graphql -f query="query { repository(owner: \"$OWNER\", name: \"$REPO\") { pullRequest(number: $PR_NUM) { reviewThreads(first: 100) { nodes { id isResolved isOutdated path line comments(first: 1) { nodes { databaseId body author { login } } } } } } } }" --jq '.data.repository.pullRequest.reviewThreads.nodes | map(select(.isResolved == false and .isOutdated == false))'
 ```
 
 **제외 대상**:
