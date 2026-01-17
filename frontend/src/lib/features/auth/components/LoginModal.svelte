@@ -31,7 +31,10 @@
 		redirectUrl = getDefaultRedirectUrl()
 	}: Props = $props()
 
+	let errorMessage = $state('')
+
 	async function handleLogin() {
+		errorMessage = ''
 		try {
 			saveRedirectUrl(redirectUrl)
 			const response = await oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet({
@@ -41,6 +44,7 @@
 			window.location.href = authorization_url
 		} catch (error) {
 			console.error('Login error:', error)
+			errorMessage = '로그인 처리 중 오류가 발생했습니다. 다시 시도해 주세요.'
 		}
 	}
 </script>
@@ -48,6 +52,10 @@
 <Modal bind:open size="xs" autoclose={false} class="w-full">
 	<div class="flex flex-col items-center space-y-6 p-4">
 		<h3 class="text-xl font-bold text-white">{message}</h3>
+
+		{#if errorMessage}
+			<p class="text-red-500 text-sm">{errorMessage}</p>
+		{/if}
 
 		<Button
 			type="button"
