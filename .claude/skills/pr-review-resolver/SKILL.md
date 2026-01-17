@@ -41,58 +41,92 @@ query($owner: String!, $repo: String!, $pr: Int!) {
 
 `.pr-review-progress.yaml` 파일이 존재하면:
 
-1. 파일의 각 코멘트 `github_comment_id`와 `github_resolved` 상태를 GraphQL 결과와 비교
-2. **상태 일치**: 기존 progress 파일 재사용, pending 코멘트부터 작업 계속
-3. **상태 불일치**: 코멘트 전체 수집 + progress 파일 재작성
+1. GraphQL로 미해결 코멘트 ID 목록 조회 (`isResolved: false` AND `isOutdated: false`)
+2. progress 파일의 pending 코멘트 ID 목록과 비교
+3. **일치**: 기존 progress 파일 재사용, pending 코멘트부터 작업 계속
+4. **불일치**: progress 파일 재작성
 
 불일치 판단 기준:
-- GraphQL에서 `isResolved: true`인데 progress에서 `github_resolved: false`
-- progress에 없는 새 코멘트가 GraphQL에 존재
+- progress의 pending 코멘트가 GraphQL에서 resolved/outdated로 변경됨
+- GraphQL에 새로운 미해결 코멘트가 추가됨
 
 ### 2. 코멘트 수집 (필요시)
 
-progress 파일이 없거나 상태 불일치 시, 전체 코멘트를 수집한다:
+progress 파일이 없거나 상태 불일치 시, **미해결 코멘트만** 수집한다.
+
+GraphQL API를 사용하여 `isResolved: false` AND `isOutdated: false`인 코멘트만 가져온다:
 
 ```bash
-gh api repos/:owner/:repo/pulls/$(gh pr view --json number -q .number)/comments \
-  --jq '.[] | {id: .id, path: .path, line: .line, body: .body, author: .user.login}'
+gh api graphql -f query='
+query($owner: String!, $repo: String!, $pr: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) {
+      reviewThreads(first: 100) {
+        nodes {
+          id
+          isResolved
+          isOutdated
+          path
+          line
+          comments(first: 1) {
+            nodes {
+              databaseId
+              body
+              author { login }
+            }
+          }
+        }
+      }
+    }
+  }
+}' -f owner=:owner -f repo=:repo -F pr=$(gh pr view --json number -q .number) \
+  --jq '.data.repository.pullRequest.reviewThreads.nodes
+    | map(select(.isResolved == false and .isOutdated == false))
+    | .[] | {
+        thread_id: .id,
+        github_comment_id: .comments.nodes[0].databaseId,
+        path: .path,
+        line: .line,
+        body: .comments.nodes[0].body,
+        author: .comments.nodes[0].author.login
+      }'
 ```
+
+**제외 대상**:
+- `isResolved: true` - GitHub에서 이미 해결됨
+- `isOutdated: true` - 코드 변경으로 더 이상 유효하지 않음
 
 ### 3. 진행 상황 추적 파일 생성
 
-`.pr-review-progress.yaml` 파일을 생성하여 진행 상황을 추적한다:
+`.pr-review-progress.yaml` 파일을 생성하여 진행 상황을 추적한다.
+
+**참고**: 수집 단계에서 resolved/outdated 코멘트는 이미 제외되었으므로, progress 파일에는 미해결 코멘트만 포함된다.
 
 ```yaml
 pr_number: 123
-total_comments: 8
+total_comments: 2
 resolved: 0
 comments:
   - id: 1
-    github_comment_id: 2686928751  # GitHub API에서 가져온 코멘트 ID
-    thread_id: "PRT_xxx"           # GraphQL thread ID
+    thread_id: "PRT_xxx"           # GraphQL thread ID (상태 조회용)
+    github_comment_id: 2686928751  # REST API comment ID (답글 작성용)
     file: backend/app/lesson/view.py
     line: 47
     summary: "video_url 유효성 검사 누락"
-    github_resolved: false         # GitHub에서 resolved 상태
-    github_outdated: false         # GitHub에서 outdated 상태
     status: pending                # pending | in_progress | resolved | skipped
     commit_sha: null
     skip_reason: null
 
   - id: 2
-    github_comment_id: 2686928752
     thread_id: "PRT_yyy"
+    github_comment_id: 2686928752
     file: backend/app/ticket/repository.py
     line: 58
     summary: "timezone-aware datetime 비교 불일치"
-    github_resolved: true          # 이미 GitHub에서 해결됨 → 자동 스킵
-    github_outdated: false
-    status: skipped
+    status: pending
     commit_sha: null
-    skip_reason: "GitHub에서 이미 resolved 상태"
+    skip_reason: null
 ```
-
-**자동 스킵**: `github_resolved: true`인 코멘트는 자동으로 `status: skipped` 처리
 
 ### 4. 반복 실행 (1 코멘트 → 1 작업 → 1 테스트 → 1 커밋)
 
@@ -117,12 +151,13 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ### 5. 스킵 기준
 
 다음 경우 코멘트를 `skipped`로 표시:
-- **GitHub에서 이미 resolved**: `github_resolved: true` (자동 스킵)
 - 구현에 필요한 외부 의존성이 있지만 현재 사용할 수 없는 경우 (예: API 키, 설정 값)
 - 코멘트가 "향후 구현" 또는 "추후 개선"을 언급한 경우
 - 현재 PR 범위를 벗어나는 대규모 리팩토링을 요구하는 경우
 
 스킵 시 사유를 `skip_reason` 필드에 기록한다.
+
+**참고**: `isResolved`, `isOutdated` 코멘트는 수집 단계에서 이미 제외됨
 
 ### 6. 완료 및 GitHub 코멘트 작성
 
