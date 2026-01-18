@@ -2,7 +2,7 @@
 
 ## 커밋 메시지 형식
 
-```
+```text
 {type}: {description}
 
 [optional body]
@@ -46,7 +46,7 @@
 
 RED-GREEN-REFACTOR 사이클에서:
 
-```
+```text
 test: {기능} 테스트 추가        # RED phase
 feat: {기능} 구현               # GREEN phase
 refactor: {기능} 코드 정리      # REFACTOR phase
@@ -60,6 +60,6 @@ refactor: {기능} 코드 정리      # REFACTOR phase
 ## Co-Author
 
 Claude Code 사용 시:
-```
+```text
 Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ```

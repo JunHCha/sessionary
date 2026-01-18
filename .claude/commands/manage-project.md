@@ -54,7 +54,7 @@ gh project list --owner <org-name>
 
 ### 출력 형식
 
-```
+```text
 ## 현재 작업 중 (In Progress)
 - #70 스트리밍 서버 구현 (P1)
 
@@ -211,7 +211,7 @@ gh project field-list <PROJECT_NUMBER> --owner @me --format json
 
 ## 참고: GitHub Project 구조
 
-```
+```text
 Project (GitHub Projects v2)
 ├── Status (Single Select Field)
 │   ├── Backlog

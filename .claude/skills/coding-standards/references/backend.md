@@ -13,7 +13,7 @@ FastAPI + SQLAlchemy + dependency-injector 기반 백엔드 개발 가이드
 
 ## 디렉토리 구조
 
-```
+```text
 backend/app/
 ├── main.py              # FastAPI 앱 엔트리포인트
 ├── containers/          # DI 컨테이너
@@ -40,7 +40,7 @@ backend/app/
 
 ## 레이어드 아키텍처
 
-```
+```text
 View (Router) → Service → Repository → DB
 ```
 

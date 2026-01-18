@@ -63,7 +63,7 @@ yarn test:unit         # Vitest Unit
 
 ### 핵심 패턴
 
-```
+```text
 View (Router) → Service → Repository → DB
 ```
 

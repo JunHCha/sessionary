@@ -12,7 +12,7 @@ Svelte 5 + SvelteKit + TailwindCSS 기반 프론트엔드 개발 가이드
 
 ## 디렉토리 구조
 
-```
+```text
 frontend/src/
 ├── routes/              # SvelteKit 라우트
 │   ├── +layout.svelte   # 전역 레이아웃
