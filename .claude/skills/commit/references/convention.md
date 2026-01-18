@@ -28,7 +28,7 @@
 ### Description
 
 - 한글 사용
-- 평서문으로 작성 (예: "추가합니다.", "수정합니다.", "제거합니다.")
+- 명령형으로 작성 (예: "구현", "수정", "추가", "제거")
 - 50자 이내
 - 마침표 없음
 
@@ -61,5 +61,5 @@ refactor: {기능} 코드 정리      # REFACTOR phase
 
 Claude Code 사용 시:
 ```text
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
