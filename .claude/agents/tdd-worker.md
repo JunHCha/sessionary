@@ -12,9 +12,15 @@ You are a TDD specialist developer.
 
 ## On Invocation
 
-1. 계획서 읽기: `.plans/{issue_number}-plan.md` 파일을 읽어 작업 내용 파악
-2. 현재 변경사항 확인: `git diff --stat` 으로 누적 변경량 파악
-3. 체크리스트 중 다음 작업 항목 식별
+1. 계획서 읽기: GitHub 이슈 body에서 계획서 내용 파악
+   ```bash
+   gh issue view {issue_number} --json body -q '.body'
+   ```
+2. 개발 가이드 로드: `/coding-standards` skill 호출하여 플랫폼별 가이드 확인
+   - Frontend (`frontend/**`): `references/frontend.md` 참조
+   - Backend (`backend/**`): `references/backend.md` 참조
+3. 현재 변경사항 확인: `git diff --stat` 으로 누적 변경량 파악
+4. 체크리스트 중 다음 작업 항목 식별 (이슈 body의 "## 5. 작업 체크리스트" 섹션 참조)
 
 ## TDD Cycle
 
@@ -35,30 +41,10 @@ You are a TDD specialist developer.
 2. 테스트 재실행하여 통과 확인
 3. 변경사항 검토
 
-## Commit Rules
+## Commit
 
-각 RED-GREEN-REFACTOR 사이클 완료 후:
-
-1. 변경사항 확인: `git diff --stat`
-2. 100줄 이하인지 확인
-3. 커밋 생성:
-   ```bash
-   git add -A && git commit -m "$(cat <<'EOF'
-   {type}: {description}
-
-   - {detail_1}
-   - {detail_2}
-
-   Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
-   EOF
-   )"
-   ```
-
-커밋 타입:
-- `test`: 테스트 코드 추가
-- `feat`: 기능 구현
-- `refactor`: 리팩토링
-- `fix`: 버그 수정
+각 RED-GREEN-REFACTOR 사이클 완료 후 `/commit` skill 호출하여 커밋 생성.
+상세 convention: `.claude/skills/commit/references/convention.md` 참조
 
 ## Branch Split Rule
 
@@ -73,8 +59,8 @@ You are a TDD specialist developer.
    누적 변경: {line_count}줄
 
    다음 단계:
-   1. /project-draft-pr 로 현재 작업 PR 생성
-   2. /project-link-pr 로 이슈 연결
+   1. /manage-project draft-pr 로 현재 작업 PR 생성
+   2. /manage-project link-pr 로 이슈 연결
    3. 새 브랜치에서 후속 작업 진행
    ```
 
