@@ -23,7 +23,7 @@
 
 <a
 	href="/lecture/{lecture.id}"
-	class="group relative w-full max-w-[296px] aspect-[420/339] bg-black rounded-[6px] overflow-hidden block"
+	class="group relative w-[296px] h-[239px] bg-black rounded-[6px] overflow-hidden block"
 >
 	<div class="relative w-full h-[70.38%] bg-gray-800">
 		<img
