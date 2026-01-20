@@ -6,7 +6,7 @@
 </script>
 
 <section
-	class="h-screen snap-start snap-always flex flex-col items-center py-[15vh]"
+	class="h-screen snap-start snap-always flex flex-col py-[15vh]"
 >
 <div class="w-[1280px]">
 	<h2

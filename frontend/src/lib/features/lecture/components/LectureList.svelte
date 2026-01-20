@@ -6,7 +6,7 @@
 </script>
 
 <section
-	class="h-screen snap-start snap-always flex flex-col justify-center items-center"
+	class="h-screen snap-start snap-always flex flex-col justify-center"
 >
 <div class="w-[1280px]">
 	<div

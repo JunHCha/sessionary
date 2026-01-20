@@ -21,14 +21,14 @@
 {#if auth.isAuthenticated}
 	<button
 		onclick={handleLogout}
-		class="text-[21px] font-pretendard font-bold leading-[32px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
+		class="text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
 	>
 		로그아웃
 	</button>
 {:else}
 	<button
 		onclick={() => (modalOpen = true)}
-		class="text-[21px] font-pretendard font-bold leading-[32px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
+		class="text-[13px] font-pretendard font-bold leading-[32px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap text-right"
 		data-testid="login-button"
 	>
 		로그인

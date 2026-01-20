@@ -37,7 +37,7 @@
 			></div>
 		</div>
 	{:else if lecture}
-		<div class="flex gap-[50px] w-[1280px] mx-auto">
+		<div class="flex gap-[50px] w-[1280px]">
 			<section class="w-[480px] flex-shrink-0 flex flex-col gap-[26px] py-[20px]">
 				<LectureInfo {lecture} />
 				<SheetPreview />
