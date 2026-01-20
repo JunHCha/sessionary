@@ -29,7 +29,7 @@
 	})
 </script>
 
-<main class="min-h-screen bg-[#0c0c0c] pt-[23px]">
+<main class="min-h-screen bg-[#0c0c0c] pt-[73px]">
 	{#if isLoading}
 		<div class="flex items-center justify-center h-[60vh]">
 			<div
