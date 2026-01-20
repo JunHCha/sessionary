@@ -1,8 +1,17 @@
-<section class="h-screen snap-start snap-always flex items-center justify-center">
+<section class="h-screen snap-start snap-always flex items-center justify-center bg-[#0c0c0c]">
 	<div class="relative hero-section w-full h-full">
 		<img src="/images/main.png" alt="main" class="w-full h-full object-cover object-center" />
+		<!-- Bottom gradient -->
 		<div
 			class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none"
+		></div>
+		<!-- Left fade overlay -->
+		<div
+			class="absolute inset-y-0 left-0 w-[200px] bg-gradient-to-r from-[#0c0c0c] to-transparent pointer-events-none"
+		></div>
+		<!-- Right fade overlay -->
+		<div
+			class="absolute inset-y-0 right-0 w-[200px] bg-gradient-to-l from-[#0c0c0c] to-transparent pointer-events-none"
 		></div>
 		<div
 			class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 px-4"
