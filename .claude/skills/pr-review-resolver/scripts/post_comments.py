@@ -79,13 +79,13 @@ def post_comment(pr_number: int, comment_id: int, body: str, dry_run: bool = Fal
 def format_resolved_message(comment: dict) -> str:
     """resolved 코멘트에 대한 메시지를 생성한다."""
     commit_sha = comment.get("commit_sha") or "unknown"
-    return f"Resolved in commit `{str(commit_sha)[:7]}`"
+    return f"다음 커밋에서 수정하였습니다. \n\n`{str(commit_sha)[:7]}`"
 
 
 def format_skipped_message(comment: dict) -> str:
     """skipped 코멘트에 대한 메시지를 생성한다."""
     reason = comment.get("skip_reason") or "No reason provided"
-    return f"Skipped: {reason}"
+    return f"다음 이유로 스킵하였습니다. \n\n{reason}"
 
 
 def main():
