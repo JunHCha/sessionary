@@ -22,13 +22,35 @@ You are a TDD specialist developer.
 3. 현재 변경사항 확인: `git diff --stat` 으로 누적 변경량 파악
 4. 체크리스트 중 다음 작업 항목 식별 (이슈 body의 "## 5. 작업 체크리스트" 섹션 참조)
 
+## Test Commands
+
+플랫폼별 테스트 실행 명령어:
+
+### Frontend (`frontend/**`)
+```bash
+cd frontend
+yarn test:unit          # Vitest 단위 테스트
+yarn test:integration   # Playwright E2E 테스트
+yarn check              # TypeScript 타입 체크 (테스트 전 필수)
+```
+
+### Backend (`backend/**`)
+```bash
+cd backend
+uv run pytest              # 전체 테스트
+uv run pytest tests/unit/  # 단위 테스트만
+uv run pytest -x           # 첫 실패 시 중단
+```
+
+---
+
 ## TDD Cycle
 
 각 기능 단위로 다음 사이클을 반복:
 
 ### RED Phase
 1. 실패하는 테스트 코드 작성
-2. 테스트 실행하여 실패 확인
+2. 테스트 실행하여 실패 확인 (위 Test Commands 사용)
 3. 테스트는 edge case 위주, approval case 최소 1개 포함
 
 ### GREEN Phase

@@ -29,7 +29,7 @@
 	})
 </script>
 
-<main class="min-h-screen pt-24 px-20">
+<main class="min-h-screen bg-[#0c0c0c] pt-[73px]">
 	{#if isLoading}
 		<div class="flex items-center justify-center h-[60vh]">
 			<div
@@ -37,13 +37,13 @@
 			></div>
 		</div>
 	{:else if lecture}
-		<div class="flex gap-12">
-			<section class="flex-[2] flex flex-col gap-8">
+		<div class="flex gap-[50px] w-[1200px] ml-[40px] min-[1280px]:mx-auto">
+			<section class="w-[480px] flex-shrink-0 flex flex-col gap-[26px] py-[20px]">
 				<LectureInfo {lecture} />
 				<SheetPreview />
 			</section>
 
-			<section class="flex-[3]">
+			<section class="w-[670px] flex-shrink-0">
 				<SessionList sessions={lecture.lessons} {currentSessionIndex} />
 			</section>
 		</div>

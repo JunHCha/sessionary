@@ -35,7 +35,7 @@
 	}
 </script>
 
-<div class="relative w-full max-w-[90vw] mx-auto">
+<div class="relative w-full max-w-[1280px] mx-auto">
 	<div class="relative overflow-hidden">
 		<div
 			class="flex transition-transform duration-500 ease-in-out"
@@ -55,11 +55,11 @@
 				type="button"
 				onclick={goToPrevious}
 				disabled={!canGoPrevious}
-				class="absolute left-[clamp(1rem,2vw,2rem)] top-1/2 -translate-y-1/2 w-[clamp(2.5rem,4vw,4rem)] h-[clamp(2.5rem,4vw,4rem)] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
+				class="absolute left-[32px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
 				aria-label="이전 슬라이드"
 			>
 				<svg
-					class="w-[clamp(1.5rem,2vw,2rem)] h-[clamp(1.5rem,2vw,2rem)]"
+					class="w-[32px] h-[32px]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -78,11 +78,11 @@
 				type="button"
 				onclick={goToNext}
 				disabled={!canGoNext}
-				class="absolute right-[clamp(1rem,2vw,2rem)] top-1/2 -translate-y-1/2 w-[clamp(2.5rem,4vw,4rem)] h-[clamp(2.5rem,4vw,4rem)] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
+				class="absolute right-[32px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
 				aria-label="다음 슬라이드"
 			>
 				<svg
-					class="w-[clamp(1.5rem,2vw,2rem)] h-[clamp(1.5rem,2vw,2rem)]"
+					class="w-[32px] h-[32px]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -99,16 +99,16 @@
 		</div>
 
 		<div
-			class="carousel-indicators flex justify-center gap-[clamp(0.5rem,0.75vw,0.75rem)] mt-[clamp(1.5rem,2vh,2rem)]"
+			class="carousel-indicators flex justify-center gap-[12px] mt-[32px]"
 		>
 			{#each topLectures as _, index}
 				<button
 					type="button"
 					onclick={() => goToSlide(index)}
-					class="h-[clamp(0.5rem,0.75vw,0.75rem)] rounded-full transition-all {index ===
+					class="h-[12px] rounded-full transition-all {index ===
 					currentIndex
-						? 'bg-[#FF5C16] w-[clamp(1.5rem,2vw,2rem)]'
-						: 'bg-[#666666] hover:bg-[#888888] w-[clamp(0.5rem,0.75vw,0.75rem)]'}"
+						? 'bg-[#FF5C16] w-[32px]'
+						: 'bg-[#666666] hover:bg-[#888888] w-[12px]'}"
 					aria-label="슬라이드 {index + 1}로 이동"
 				></button>
 			{/each}
