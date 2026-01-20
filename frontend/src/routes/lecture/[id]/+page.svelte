@@ -37,13 +37,13 @@
 			></div>
 		</div>
 	{:else if lecture}
-		<div class="flex gap-[50px] max-w-[1280px] min-w-[1280px] mx-auto px-4">
+		<div class="flex gap-[50px] w-[1280px] mx-auto">
 			<section class="w-[480px] flex-shrink-0 flex flex-col gap-[26px] py-[20px]">
 				<LectureInfo {lecture} />
 				<SheetPreview />
 			</section>
 
-			<section class="flex-1">
+			<section class="w-[750px] flex-shrink-0">
 				<SessionList sessions={lecture.lessons} {currentSessionIndex} />
 			</section>
 		</div>

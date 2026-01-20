@@ -6,8 +6,9 @@
 </script>
 
 <section
-	class="h-screen snap-start snap-always flex flex-col px-[clamp(2rem,5vw,5.25rem)] py-[15vh]"
+	class="h-screen snap-start snap-always flex flex-col items-center py-[15vh]"
 >
+<div class="w-[1280px]">
 	<h2
 		class="mb-[clamp(2rem,4vh,4rem)] flex items-center text-[clamp(1.8rem,2.8vw,2.3rem)] font-pretendard font-extrabold leading-[clamp(2.5rem,4vw,3.9rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap"
 	>
@@ -17,4 +18,5 @@
 	<div class="flex-1 flex items-center justify-center">
 		<RecommendCarousel lectures={recommendedLectures} />
 	</div>
+</div>
 </section>

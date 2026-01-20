@@ -6,8 +6,9 @@
 </script>
 
 <section
-	class="h-screen snap-start snap-always flex flex-col justify-center px-[clamp(2rem,5vw,5.25rem)]"
+	class="h-screen snap-start snap-always flex flex-col justify-center items-center"
 >
+<div class="w-[1280px]">
 	<div
 		class="inline-flex items-center gap-[clamp(0.3rem,0.5vw,0.5rem)] mb-[clamp(1.5rem,2vh,2rem)]"
 	>
@@ -21,10 +22,11 @@
 		></div>
 	</div>
 	<div
-		class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[clamp(1rem,1.5vw,1.5rem)] overflow-y-auto"
+		class="grid grid-cols-4 gap-[24px] overflow-y-auto"
 	>
 		{#each lectures as lecture}
 			<LectureCard {lecture} />
 		{/each}
 	</div>
+</div>
 </section>
