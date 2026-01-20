@@ -38,7 +38,9 @@ argument-hint: <issue-number | 자연어 요구사항>
    - 필요시 WebSearch로 real world example, 업계 표준, 베스트 프랙티스 조사
 
 4. **연구 결과 파일 저장**
-   - `.claude/tmp/research-{issue-number}.md`에 연구 결과 저장
+   - 기존 이슈: `.claude/tmp/research-{issue-number}.md`에 저장
+   - 신규 이슈: `.claude/tmp/research-{timestamp}.md`로 임시 저장 (예: `research-20250121-143052.md`)
+   - 이슈 생성 후: `.claude/tmp/research-{issue-number}.md`로 리네임
    - **요구사항 섹션을 최상단에 배치**
    - 발견한 사실만 나열 (출처 명시)
    - 불확실한 부분은 "확인 필요"로 표시
@@ -50,7 +52,7 @@ argument-hint: <issue-number | 자연어 요구사항>
 
 수행 항목:
 1. **연구 파일 참조**
-   - `.claude/tmp/research-{issue-number}.md` 읽어서 근거 확보
+   - `.claude/tmp/research-{issue-number}.md` 또는 임시 파일 읽어서 근거 확보
 
 2. **방안 선택**
    - 가능한 접근 방식 나열
