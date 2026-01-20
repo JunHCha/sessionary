@@ -27,7 +27,7 @@
 
 <div class="min-h-screen snap-y snap-mandatory bg-black">
 	<HeroSection />
-	<div class="max-w-[1280px] mx-auto">
+	<div class="max-w-[1280px] min-w-[1280px] mx-auto">
 		<RecommendSection {recommendedLectures} />
 		<LectureList title="새로운 렉쳐" lectures={newLectures} />
 	</div>
