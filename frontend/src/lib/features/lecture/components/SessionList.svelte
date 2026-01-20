@@ -15,7 +15,7 @@
 	)
 </script>
 
-<div class="flex flex-col gap-4 pt-5 pb-[50px] px-[55px]">
+<div class="flex flex-col gap-4 pt-5 pb-[50px]">
 	<h2
 		class="text-[28px] font-bold"
 		style="font-family: Helvetica, Arial, sans-serif; color: #f5f5f5;"
