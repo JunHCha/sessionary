@@ -25,9 +25,8 @@
 		악보 다운로드
 	</h2>
 
-	<div
-		role="button"
-		tabindex="0"
+	<button
+		type="button"
 		class="group relative w-full h-[200px] rounded-[6px] overflow-hidden cursor-pointer"
 		onclick={handleDownload}
 		onkeydown={handleKeyDown}
@@ -40,7 +39,7 @@
 		<div
 			class="absolute inset-0 flex items-center justify-center bg-[#0c0c0c] opacity-0 group-hover:opacity-80 transition-opacity"
 		>
-			<button
+			<span
 				class="flex items-center gap-2 bg-[#ff5c16] h-[48px] px-[24px] rounded-[50px] font-helvetica font-bold text-[16px] text-[#f5f5f5]"
 			>
 				<svg
@@ -58,7 +57,7 @@
 					/>
 				</svg>
 				다운로드
-			</button>
+			</span>
 		</div>
-	</div>
+	</button>
 </div>
