@@ -17,13 +17,13 @@
 			class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 px-4"
 		>
 			<p
-				class="text-[clamp(2rem,4vw,3.3rem)] font-pretendard font-bold leading-[clamp(2.5rem,4.2vw,4.2rem)] tracking-[-0.1em] text-[#F5F5F5] whitespace-nowrap"
+				class="text-[53px] font-pretendard font-bold leading-[67px] tracking-[-0.1em] text-[#F5F5F5] whitespace-nowrap"
 			>
 				찬양으로 하나 되는 순간,<br />
 				연습이 만듭니다
 			</p>
 			<p
-				class="mt-[clamp(3rem,8vh,5rem)] text-[clamp(0.9rem,1.3vw,1.3rem)] font-pretendard font-bold leading-[clamp(1.5rem,2vw,2rem)] tracking-[-0.02em] text-[#DDDDDD] whitespace-nowrap"
+				class="mt-[80px] text-[21px] font-pretendard font-bold leading-[32px] tracking-[-0.02em] text-[#DDDDDD] whitespace-nowrap"
 			>
 				인도자의 "기타 SOLO~!" 외침이 두렵지 않을 때까지...
 			</p>

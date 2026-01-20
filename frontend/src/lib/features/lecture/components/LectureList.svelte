@@ -10,15 +10,15 @@
 >
 <div class="w-[1280px]">
 	<div
-		class="inline-flex items-center gap-[clamp(0.3rem,0.5vw,0.5rem)] mb-[clamp(1.5rem,2vh,2rem)]"
+		class="inline-flex items-center gap-[8px] mb-[32px]"
 	>
 		<h2
-			class="text-[clamp(1.5rem,2.6vw,2.25rem)] font-pretendard font-extrabold leading-[clamp(2.2rem,3.9vw,3.9rem)] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap"
+			class="text-[36px] font-pretendard font-extrabold leading-[62px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap"
 		>
 			{title}
 		</h2>
 		<div
-			class="w-[clamp(0.4rem,0.6vw,0.6rem)] h-[clamp(0.4rem,0.6vw,0.6rem)] rounded-full bg-[#FF5C16]"
+			class="w-[10px] h-[10px] rounded-full bg-[#FF5C16]"
 		></div>
 	</div>
 	<div

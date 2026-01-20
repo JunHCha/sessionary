@@ -69,7 +69,7 @@
 </script>
 
 <div
-	class="w-full h-[clamp(3rem,5vh,5rem)] bg-[#0C0C0C] fixed z-50 transition-all duration-300"
+	class="w-full h-[80px] bg-[#0C0C0C] fixed z-50 transition-all duration-300"
 	class:minimal={isScrolled}
 	class:opacity-95={isVisible}
 	class:opacity-0={!isVisible}
@@ -89,25 +89,25 @@
 		<div class="flex gap-0">
 			<a
 				href="/favorites"
-				class="h-[clamp(3rem,5vh,5rem)] w-[88px] flex items-center justify-center text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
+				class="h-[80px] w-[88px] flex items-center justify-center text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
 			>
 				즐겨찾기
 			</a>
 			<a
 				href="/folder"
-				class="h-[clamp(3rem,5vh,5rem)] w-[88px] flex items-center justify-center text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
+				class="h-[80px] w-[88px] flex items-center justify-center text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
 			>
 				나의폴더
 			</a>
 		</div>
 		<div class="ml-auto flex items-center">
-			<div class="h-[clamp(3rem,5vh,5rem)] flex items-center justify-end transition-opacity duration-300">
+			<div class="h-[80px] flex items-center justify-end transition-opacity duration-300">
 				<LoginButton />
 			</div>
 			<button
 				aria-label="검색"
 				type="button"
-				class="h-[clamp(3rem,5vh,5rem)] w-[50px] flex items-center justify-center transition-opacity duration-300"
+				class="h-[80px] w-[50px] flex items-center justify-center transition-opacity duration-300"
 			>
 				<img
 					src="/images/iconamoon_search-bold.png"
