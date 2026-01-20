@@ -1,6 +1,6 @@
 <footer class="relative w-full">
 	<div class="absolute top-0 left-0 right-0 h-px bg-[#454545]"></div>
-	<div class="w-[1280px] h-[5rem] py-4 flex items-start">
+	<div class="w-[1280px] ml-[40px] min-[1280px]:mx-auto h-[5rem] py-4 flex items-start">
 		<div class="h-[67px] w-[350px] flex items-center">
 			<img
 				src="/images/logo.png"

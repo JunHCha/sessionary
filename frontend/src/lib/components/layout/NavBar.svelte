@@ -77,7 +77,7 @@
 	class:pointer-events-none={!isVisible}
 	data-testid="navbar"
 >
-	<div class="w-[1280px] h-full flex items-center">
+	<div class="w-[1280px] ml-[40px] min-[1280px]:mx-auto h-full flex items-center">
 		<a href="/home" class="h-full w-[134px] flex items-center justify-start">
 			<img
 				src="/images/logo.png"
