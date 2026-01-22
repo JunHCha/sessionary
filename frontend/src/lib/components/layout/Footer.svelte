@@ -4,7 +4,7 @@
 		<div class="h-[67px] w-[350px] flex items-center">
 			<img
 				src="/images/logo.png"
-				srcset="/images/logo@2x.png 2x, /images/logo@3x.png 3x"
+				srcset="/images/logo@2x.png 2x"
 				class="w-full h-full object-contain opacity-50"
 				alt="Sessionary Logo"
 			/>
