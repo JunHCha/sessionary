@@ -69,7 +69,10 @@ argument-hint: <issue-number | 자연어 요구사항>
 
 계획서를 사용자에게 제시하고 검토 요청.
 
-- **승인** → 이슈 생성/수정 후 종료
+- **승인** → 아래 작업 수행 후 종료:
+  1. 이슈 생성/수정
+  2. **연구 파일을 최종 계획서 내용으로 업데이트** (`.claude/tmp/research-{issue-number}.md`)
+  3. 신규 이슈의 경우 임시 파일을 이슈 번호로 리네임
 - **피드백** → 연구 파일 업데이트 후 1단계부터 다시 시작. 승인될 때까지 반복.
 
 ```bash
@@ -79,6 +82,8 @@ gh issue create --title "{제목}" --body "{계획서}"
 gh issue edit $ARGUMENTS --body "{계획서}"
 # Project 추가
 gh project item-add <PROJECT_NUMBER> --owner @me --url <이슈URL>
+# 연구 파일 업데이트 (Write 도구 사용)
+# - 최종 승인된 계획서 내용을 .claude/tmp/research-{issue-number}.md에 반영
 ```
 
 ---
