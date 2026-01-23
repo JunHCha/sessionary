@@ -15,8 +15,14 @@ import re
 import sys
 from pathlib import Path
 
+# 프로젝트 루트 자동 탐색 (스크립트 위치 기준)
+_REPO_ROOT = Path(__file__).resolve()
+while _REPO_ROOT != _REPO_ROOT.parent and not (_REPO_ROOT / "docs/spec").exists():
+    _REPO_ROOT = _REPO_ROOT.parent
+REPO_ROOT = _REPO_ROOT
+
 # 프로젝트 루트 기준 docs/spec 경로
-DOCS_SPEC_PATH = "docs/spec"
+DOCS_SPEC_PATH = REPO_ROOT / "docs/spec"
 
 # 문서별 키워드 매핑 (사전 정의)
 DOC_KEYWORDS = {
@@ -54,7 +60,10 @@ DOC_KEYWORDS = {
 def extract_headers(file_path: str) -> list[str]:
     """마크다운 파일에서 헤더 추출"""
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        path = Path(file_path)
+        if not path.is_absolute():
+            path = REPO_ROOT / path
+        with open(path, "r", encoding="utf-8") as f:
             content = f.read()
 
         headers = re.findall(r"^#{1,3}\s+(.+)$", content, re.MULTILINE)
