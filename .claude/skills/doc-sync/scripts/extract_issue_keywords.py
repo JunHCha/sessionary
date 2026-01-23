@@ -116,7 +116,11 @@ def main():
         print("Usage: python3 extract_issue_keywords.py <issue_number>", file=sys.stderr)
         sys.exit(1)
 
-    issue_number = int(sys.argv[1])
+    try:
+        issue_number = int(sys.argv[1])
+    except ValueError:
+        print("issue_number는 정수여야 합니다.", file=sys.stderr)
+        sys.exit(1)
 
     # Issue 내용 가져오기
     issue_data = get_issue_content(issue_number)
