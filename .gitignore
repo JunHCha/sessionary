@@ -11,3 +11,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 .mypy_cache
+
+# cc-telegram
+.cc-telegram/

@@ -14,8 +14,6 @@
 
 - 데이터의 연관관계도 code-level에서 compute할 수 있는 것들은 가능한 미리 처리해서 전달하는 편이 좋다.
 
-- 이미지 리소스도 정확히 다운로드해야하며, placeholder도 모두 추출해야한다.
-
 claude code를 사용할 것이다. master agent가 전체 작업흐름을 담당하고, context 소모가 큰 하위 작업을 sub agent에게 위임한다.
 
 요구사항:
