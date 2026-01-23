@@ -68,7 +68,7 @@ Output: 관련 문서 목록
 
 변경이 필요한 문서별로 `doc-updater` sub-agent 생성하여 병렬 처리.
 
-```
+```text
 Task tool 사용:
 - subagent_type: "doc-updater" (또는 general-purpose)
 - 각 문서 + 관련 Issue 섹션만 전달
