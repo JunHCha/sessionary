@@ -39,7 +39,7 @@ def get_current_branch() -> str:
     return result.stdout.strip()
 
 
-def get_pr_info(pr_number: str = None) -> dict:
+def get_pr_info(pr_number: str | None = None) -> dict | None:
     """PR 정보 가져오기"""
     cmd = ["gh", "pr", "view"]
     if pr_number:
