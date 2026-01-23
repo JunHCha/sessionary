@@ -58,6 +58,9 @@ def get_issue_content(issue_number: int) -> dict:
             check=True
         )
         return json.loads(result.stdout)
+    except FileNotFoundError:
+        print("gh CLI를 찾을 수 없습니다. GitHub CLI 설치 및 인증 상태를 확인해 주세요.", file=sys.stderr)
+        sys.exit(1)
     except subprocess.CalledProcessError as e:
         print(f"Error fetching issue: {e.stderr}", file=sys.stderr)
         sys.exit(1)
