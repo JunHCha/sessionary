@@ -53,7 +53,7 @@ def get_pr_info(pr_number: str | None = None) -> dict | None:
         return None
 
 
-def get_changed_files(pr_number: str = None) -> list[str]:
+def get_changed_files(pr_number: str | None = None) -> list[str]:
     """PR에서 변경된 파일 목록 가져오기"""
     cmd = ["gh", "pr", "diff"]
     if pr_number:
