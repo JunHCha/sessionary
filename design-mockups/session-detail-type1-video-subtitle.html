@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Detail - Type 1: Video + Subtitle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body { font-family: 'Pretendard', Helvetica, Arial, sans-serif; }
+    .subtitle-container::-webkit-scrollbar { width: 4px; }
+    .subtitle-container::-webkit-scrollbar-track { background: #1a1a1a; }
+    .subtitle-container::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { primary: '#FF5C16', tag: '#734e38' },
+            surface: { default: '#000000', card: '#1a1a1a', dark: '#0c0c0c' },
+            content: { primary: '#FFFFFF', secondary: '#848484', muted: '#656565' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-dark min-h-screen">
+  <!-- Navigation Bar -->
+  <nav class="fixed top-0 left-0 right-0 h-[50px] bg-surface-dark z-50 flex items-center px-10">
+    <div class="flex items-center gap-8">
+      <span class="text-brand-primary font-bold text-xl">Sessionary</span>
+    </div>
+    <div class="ml-auto flex items-center gap-6">
+      <span class="text-content-secondary text-sm">즐겨찾기</span>
+      <span class="text-content-secondary text-sm">나의폴더</span>
+      <button class="px-4 py-1.5 rounded-full border border-content-muted text-content-primary text-sm">로그인</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-[73px] pb-12">
+    <div class="w-[1200px] mx-auto">
+      <!-- Back Button & Session Title -->
+      <div class="flex items-center gap-4 mb-6">
+        <button class="flex items-center gap-2 text-content-secondary hover:text-content-primary transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span class="text-sm">렉처로 돌아가기</span>
+        </button>
+        <div class="h-4 w-px bg-content-muted"></div>
+        <span class="text-content-muted text-sm">Smoke on the Water - Deep Purple</span>
+      </div>
+
+      <!-- Session Header -->
+      <div class="flex items-center gap-4 mb-8">
+        <span class="px-3 py-1 rounded-full text-xs font-bold text-white bg-brand-primary">NEXT</span>
+        <span class="text-brand-primary font-bold text-lg" style="font-family: Helvetica, Arial, sans-serif;">01</span>
+        <h1 class="text-2xl font-bold text-content-primary">인트로 리프 연주하기</h1>
+        <span class="ml-auto text-content-secondary text-sm">2:34</span>
+      </div>
+
+      <!-- Video + Subtitle Layout -->
+      <div class="flex gap-8">
+        <!-- Video Player Section -->
+        <div class="flex-1">
+          <div class="relative w-full aspect-video bg-surface-card rounded-xl overflow-hidden">
+            <!-- Video Placeholder -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=450&fit=crop" class="w-full h-full object-cover opacity-60" alt="Video thumbnail">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <!-- Play Button -->
+              <button class="absolute inset-0 flex items-center justify-center">
+                <div class="w-20 h-20 rounded-full bg-brand-primary/90 flex items-center justify-center hover:bg-brand-primary transition-colors">
+                  <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              </button>
+            </div>
+
+            <!-- Video Controls -->
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-white text-xs">0:00</span>
+                <div class="flex-1 h-1 bg-white/30 rounded-full">
+                  <div class="w-0 h-full bg-brand-primary rounded-full"></div>
+                </div>
+                <span class="text-white text-xs">2:34</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <button class="text-white/80 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.334 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/>
+                    </svg>
+                  </button>
+                  <button class="text-white/80 hover:text-white">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                  <button class="text-white/80 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center gap-4">
+                  <button class="text-white/80 hover:text-white text-xs font-bold px-2 py-1 rounded border border-white/30">0.5x</button>
+                  <button class="text-white/80 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 12h.01"/>
+                    </svg>
+                  </button>
+                  <button class="text-white/80 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session Navigation -->
+          <div class="flex items-center justify-between mt-6 px-2">
+            <button class="flex items-center gap-2 text-content-muted hover:text-content-secondary transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M15 19l-7-7 7-7"/>
+              </svg>
+              <span class="text-sm">이전 세션</span>
+            </button>
+            <div class="flex items-center gap-2">
+              <span class="text-content-primary font-bold">01</span>
+              <span class="text-content-muted">/</span>
+              <span class="text-content-muted">08</span>
+            </div>
+            <button class="flex items-center gap-2 text-brand-primary hover:text-orange-400 transition-colors">
+              <span class="text-sm font-medium">다음 세션</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Subtitle Rollout Section -->
+        <div class="w-[360px] flex-shrink-0">
+          <div class="bg-surface-card rounded-xl p-6 h-[calc(100vh-200px)] flex flex-col">
+            <h3 class="text-content-primary font-bold text-lg mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+              </svg>
+              자막
+            </h3>
+
+            <div class="subtitle-container flex-1 overflow-y-auto space-y-3 pr-2">
+              <div class="p-3 rounded-lg bg-brand-primary/10 border-l-2 border-brand-primary">
+                <span class="text-brand-primary text-xs font-bold">0:00</span>
+                <p class="text-content-primary text-sm mt-1">자, 이번 세션에서는 Smoke on the Water의 상징적인 인트로 리프를 배워볼 거예요.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">0:08</span>
+                <p class="text-content-secondary text-sm mt-1">먼저 기본 포지션부터 잡아볼게요. 왼손은 3번 프렛 위치에 두시고요.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">0:18</span>
+                <p class="text-content-secondary text-sm mt-1">이 리프의 핵심은 파워코드의 움직임이에요. G5에서 시작해서 Bb5, 그리고 C5로 이동합니다.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">0:32</span>
+                <p class="text-content-secondary text-sm mt-1">천천히 따라해 볼까요? 준비되셨으면 시작할게요.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">0:45</span>
+                <p class="text-content-secondary text-sm mt-1">G5... Bb5... C5... 다시 Bb5로 돌아갑니다.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">1:02</span>
+                <p class="text-content-secondary text-sm mt-1">좋아요! 이제 조금 더 빠르게 해볼게요.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">1:20</span>
+                <p class="text-content-secondary text-sm mt-1">리듬을 잘 들어보세요. 다다-다다-다... 이 패턴이 반복됩니다.</p>
+              </div>
+
+              <div class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors">
+                <span class="text-content-muted text-xs">1:45</span>
+                <p class="text-content-secondary text-sm mt-1">완벽해요! 이제 원곡 속도로 연습해 보겠습니다.</p>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-content-muted/20">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 rounded border-content-muted accent-brand-primary">
+                <span class="text-content-secondary text-sm">자동 스크롤</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

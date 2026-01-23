@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Detail - Type 4: Practice Mode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body { font-family: 'Pretendard', Helvetica, Arial, sans-serif; }
+    .tab-notation { font-family: 'Courier New', monospace; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+    }
+    input[type="range"]::-webkit-slider-track {
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #FF5C16;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -5px;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { primary: '#FF5C16', tag: '#734e38' },
+            surface: { default: '#000000', card: '#1a1a1a', dark: '#0c0c0c' },
+            content: { primary: '#FFFFFF', secondary: '#848484', muted: '#656565' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-dark min-h-screen">
+  <!-- Navigation Bar -->
+  <nav class="fixed top-0 left-0 right-0 h-[50px] bg-surface-dark z-50 flex items-center px-10">
+    <div class="flex items-center gap-8">
+      <span class="text-brand-primary font-bold text-xl">Sessionary</span>
+    </div>
+    <div class="ml-auto flex items-center gap-6">
+      <span class="text-content-secondary text-sm">즐겨찾기</span>
+      <span class="text-content-secondary text-sm">나의폴더</span>
+      <button class="px-4 py-1.5 rounded-full border border-content-muted text-content-primary text-sm">로그인</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-[73px] pb-12">
+    <div class="w-[1200px] mx-auto">
+      <!-- Back Button & Session Title -->
+      <div class="flex items-center gap-4 mb-6">
+        <button class="flex items-center gap-2 text-content-secondary hover:text-content-primary transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span class="text-sm">렉처로 돌아가기</span>
+        </button>
+        <div class="h-4 w-px bg-content-muted"></div>
+        <span class="text-content-muted text-sm">Sweet Child O' Mine - Guns N' Roses</span>
+      </div>
+
+      <!-- Session Header with Practice Badge -->
+      <div class="flex items-center gap-4 mb-8">
+        <span class="px-3 py-1 rounded-full text-xs font-bold text-white" style="background: linear-gradient(135deg, #FF5C16 0%, #b2400f 100%);">
+          🎸 PRACTICE
+        </span>
+        <span class="text-brand-primary font-bold text-lg" style="font-family: Helvetica, Arial, sans-serif;">05</span>
+        <h1 class="text-2xl font-bold text-content-primary">인트로 리프 연습 모드</h1>
+        <div class="ml-auto flex items-center gap-3">
+          <span class="px-2 py-1 rounded bg-green-500/20 text-green-400 text-xs font-bold">연습중</span>
+          <span class="text-content-secondary text-sm">반복 연습: 12회</span>
+        </div>
+      </div>
+
+      <!-- Main Practice Interface -->
+      <div class="grid grid-cols-12 gap-6">
+        <!-- Left: Video with Loop Controls -->
+        <div class="col-span-7">
+          <div class="bg-surface-card rounded-xl overflow-hidden">
+            <!-- Video Area -->
+            <div class="relative w-full aspect-video">
+              <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=450&fit=crop" class="w-full h-full object-cover opacity-50" alt="Video thumbnail">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+
+              <!-- Loop Region Indicator -->
+              <div class="absolute top-4 left-4 right-4">
+                <div class="bg-black/60 rounded-lg px-3 py-2 inline-flex items-center gap-2">
+                  <svg class="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                  </svg>
+                  <span class="text-brand-primary text-sm font-bold">루프 구간: 0:08 - 0:24</span>
+                </div>
+              </div>
+
+              <!-- Center Play Button -->
+              <button class="absolute inset-0 flex items-center justify-center">
+                <div class="w-20 h-20 rounded-full bg-brand-primary/90 flex items-center justify-center hover:bg-brand-primary transition-colors">
+                  <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <rect x="6" y="4" width="4" height="16"/>
+                    <rect x="14" y="4" width="4" height="16"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Speed Indicator -->
+              <div class="absolute top-4 right-4">
+                <div class="bg-brand-primary rounded-lg px-4 py-2">
+                  <span class="text-white text-lg font-bold">0.5x</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Progress Bar with Loop Selection -->
+            <div class="p-4 bg-surface-dark/50">
+              <div class="relative h-8 mb-4">
+                <!-- Full Track -->
+                <div class="absolute inset-x-0 top-3 h-2 bg-content-muted/30 rounded-full"></div>
+                <!-- Loop Region -->
+                <div class="absolute top-3 h-2 bg-brand-primary/40 rounded-full" style="left: 15%; width: 30%;"></div>
+                <!-- Progress -->
+                <div class="absolute top-3 h-2 bg-brand-primary rounded-full" style="left: 15%; width: 10%;"></div>
+                <!-- Loop Start Handle -->
+                <div class="absolute top-0 w-4 h-8 bg-brand-primary rounded cursor-ew-resize flex items-center justify-center" style="left: calc(15% - 8px);">
+                  <div class="w-0.5 h-4 bg-white/50"></div>
+                </div>
+                <!-- Loop End Handle -->
+                <div class="absolute top-0 w-4 h-8 bg-brand-primary rounded cursor-ew-resize flex items-center justify-center" style="left: calc(45% - 8px);">
+                  <div class="w-0.5 h-4 bg-white/50"></div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-content-secondary">0:12 / 1:48</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-content-muted">루프</span>
+                  <span class="text-brand-primary font-bold">0:08</span>
+                  <span class="text-content-muted">~</span>
+                  <span class="text-brand-primary font-bold">0:24</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Practice Control Panel -->
+          <div class="bg-surface-card rounded-xl p-6 mt-4">
+            <h3 class="text-content-primary font-bold mb-4">연습 설정</h3>
+
+            <div class="grid grid-cols-2 gap-6">
+              <!-- Speed Control -->
+              <div>
+                <label class="text-content-secondary text-sm mb-2 block">재생 속도</label>
+                <div class="flex items-center gap-4">
+                  <input type="range" min="25" max="100" value="50" class="flex-1">
+                  <span class="text-brand-primary font-bold w-12 text-right">50%</span>
+                </div>
+                <div class="flex justify-between text-content-muted text-xs mt-1">
+                  <span>0.25x</span>
+                  <span>1.0x</span>
+                </div>
+              </div>
+
+              <!-- Loop Count -->
+              <div>
+                <label class="text-content-secondary text-sm mb-2 block">자동 반복 횟수</label>
+                <div class="flex items-center gap-3">
+                  <button class="w-10 h-10 rounded-lg bg-surface-dark text-content-secondary hover:text-content-primary flex items-center justify-center">-</button>
+                  <span class="text-content-primary font-bold text-xl w-12 text-center">∞</span>
+                  <button class="w-10 h-10 rounded-lg bg-surface-dark text-content-secondary hover:text-content-primary flex items-center justify-center">+</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Speed Buttons -->
+            <div class="flex items-center gap-2 mt-6">
+              <span class="text-content-secondary text-sm mr-2">빠른 선택:</span>
+              <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary hover:text-content-primary text-sm">25%</button>
+              <button class="px-3 py-1.5 rounded-lg bg-brand-primary/20 text-brand-primary text-sm font-bold">50%</button>
+              <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary hover:text-content-primary text-sm">75%</button>
+              <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary hover:text-content-primary text-sm">100%</button>
+              <div class="ml-auto flex items-center gap-2">
+                <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-sm">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                  </svg>
+                  메트로놈 ON
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Tab with Practice Focus -->
+        <div class="col-span-5">
+          <div class="bg-surface-card rounded-xl p-5 h-full flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-content-primary font-bold flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                </svg>
+                연습 구간 악보
+              </h3>
+              <span class="text-content-muted text-xs">Measure 3-6</span>
+            </div>
+
+            <!-- Large Tab Display -->
+            <div class="bg-surface-dark rounded-lg p-5 flex-1 overflow-auto">
+              <pre class="tab-notation text-content-primary text-base leading-loose">
+e|---<span class="text-brand-primary bg-brand-primary/20 px-1 rounded">12</span>---15---12---------------------|
+B|-12------12---12---12---<span class="text-brand-primary">15</span>b17----|
+G|---------------------------14----|
+D|---------------------------------|
+A|---------------------------------|
+E|---------------------------------|
+
+e|---12---15---12---------------------|
+B|-12------12---12---12---15b17----|
+G|---------------------------14----|
+D|---------------------------------|
+A|---------------------------------|
+E|---------------------------------|
+              </pre>
+            </div>
+
+            <!-- Current Position Indicator -->
+            <div class="mt-4 p-3 bg-brand-primary/10 rounded-lg border border-brand-primary/30">
+              <div class="flex items-center justify-between">
+                <span class="text-content-secondary text-sm">현재 위치</span>
+                <span class="text-brand-primary font-bold">Measure 3, Beat 2</span>
+              </div>
+              <p class="text-content-primary text-sm mt-2">12프렛 → 15프렛 슬라이드 후 12프렛으로 풀다운</p>
+            </div>
+
+            <!-- Practice Tips -->
+            <div class="mt-4 p-4 bg-surface-dark rounded-lg">
+              <h4 class="text-content-primary text-sm font-bold mb-2">💡 연습 팁</h4>
+              <ul class="text-content-secondary text-sm space-y-1">
+                <li>• 속도를 낮추고 정확한 운지부터 연습하세요</li>
+                <li>• 벤딩 시 음정을 정확히 맞추세요 (15→17)</li>
+                <li>• 루프 구간을 활용해 반복 연습하세요</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Navigation -->
+      <div class="flex items-center justify-between px-2 mt-6">
+        <button class="flex items-center gap-2 text-content-muted hover:text-content-secondary transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="text-sm">이전 세션</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <span class="text-content-primary font-bold">05</span>
+          <span class="text-content-muted">/</span>
+          <span class="text-content-muted">08</span>
+        </div>
+        <button class="flex items-center gap-2 text-brand-primary hover:text-orange-400 transition-colors">
+          <span class="text-sm font-medium">다음 세션</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
