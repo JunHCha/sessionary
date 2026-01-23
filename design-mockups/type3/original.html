@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Detail - Type 2: Backing Track + Tab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body { font-family: 'Pretendard', Helvetica, Arial, sans-serif; }
+    .tab-notation { font-family: 'Courier New', monospace; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { primary: '#FF5C16', tag: '#734e38' },
+            surface: { default: '#000000', card: '#1a1a1a', dark: '#0c0c0c' },
+            content: { primary: '#FFFFFF', secondary: '#848484', muted: '#656565' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-dark min-h-screen">
+  <!-- Navigation Bar -->
+  <nav class="fixed top-0 left-0 right-0 h-[50px] bg-surface-dark z-50 flex items-center px-10">
+    <div class="flex items-center gap-8">
+      <span class="text-brand-primary font-bold text-xl">Sessionary</span>
+    </div>
+    <div class="ml-auto flex items-center gap-6">
+      <span class="text-content-secondary text-sm">즐겨찾기</span>
+      <span class="text-content-secondary text-sm">나의폴더</span>
+      <button class="px-4 py-1.5 rounded-full border border-content-muted text-content-primary text-sm">로그인</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-[73px] pb-12">
+    <div class="w-[1200px] mx-auto">
+      <!-- Back Button & Session Title -->
+      <div class="flex items-center gap-4 mb-6">
+        <button class="flex items-center gap-2 text-content-secondary hover:text-content-primary transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span class="text-sm">렉처로 돌아가기</span>
+        </button>
+        <div class="h-4 w-px bg-content-muted"></div>
+        <span class="text-content-muted text-sm">Hotel California - Eagles</span>
+      </div>
+
+      <!-- Session Header -->
+      <div class="flex items-center gap-4 mb-8">
+        <span class="px-3 py-1 rounded-full text-xs font-bold text-white" style="background: #734e38;">PRACTICE</span>
+        <span class="text-brand-primary font-bold text-lg" style="font-family: Helvetica, Arial, sans-serif;">04</span>
+        <h1 class="text-2xl font-bold text-content-primary">솔로 파트 연습 - 백킹트랙</h1>
+        <span class="ml-auto text-content-secondary text-sm">3:12</span>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="flex flex-col gap-6">
+        <!-- Backing Track Player -->
+        <div class="bg-surface-card rounded-xl p-6">
+          <div class="flex items-center gap-6">
+            <!-- Album Art / Waveform -->
+            <div class="w-24 h-24 rounded-lg bg-gradient-to-br from-brand-primary/30 to-brand-tag/30 flex items-center justify-center overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Album art">
+            </div>
+
+            <!-- Player Controls & Progress -->
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-content-primary font-bold">Hotel California - Solo Section</h3>
+                  <p class="text-content-secondary text-sm">Backing Track (No Lead Guitar)</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary text-sm hover:text-content-primary transition-colors">
+                    <span class="font-bold">BPM:</span> 75
+                  </button>
+                  <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-brand-primary text-sm font-bold hover:bg-brand-primary/20 transition-colors">
+                    0.75x
+                  </button>
+                </div>
+              </div>
+
+              <!-- Waveform Progress -->
+              <div class="relative h-12 bg-surface-dark rounded-lg overflow-hidden mb-3">
+                <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                  <!-- Simplified waveform visualization -->
+                  <svg viewBox="0 0 400 40" class="w-full h-full">
+                    <path d="M0,20 Q10,5 20,20 Q30,35 40,20 Q50,8 60,20 Q70,32 80,20 Q90,10 100,20 Q110,28 120,20 Q130,5 140,20 Q150,35 160,20 Q170,12 180,20 Q190,30 200,20 Q210,8 220,20 Q230,35 240,20 Q250,10 260,20 Q270,28 280,20 Q290,5 300,20 Q310,35 320,20 Q330,12 340,20 Q350,30 360,20 Q370,8 380,20 Q390,28 400,20" fill="none" stroke="#FF5C16" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="absolute left-0 top-0 bottom-0 w-1/4 bg-brand-primary/20"></div>
+                <div class="absolute left-1/4 top-0 bottom-0 w-0.5 bg-brand-primary"></div>
+              </div>
+
+              <!-- Time & Controls -->
+              <div class="flex items-center justify-between">
+                <span class="text-content-secondary text-sm">0:48 / 3:12</span>
+                <div class="flex items-center gap-4">
+                  <button class="w-10 h-10 rounded-full bg-surface-dark flex items-center justify-center text-content-secondary hover:text-content-primary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.334 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/>
+                    </svg>
+                  </button>
+                  <button class="w-14 h-14 rounded-full bg-brand-primary flex items-center justify-center text-white hover:bg-orange-500 transition-colors">
+                    <svg class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                  <button class="w-10 h-10 rounded-full bg-surface-dark flex items-center justify-center text-content-secondary hover:text-content-primary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary hover:text-brand-primary transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span class="text-sm">루프</span>
+                  </button>
+                  <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-primary/20 text-brand-primary">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                    <span class="text-sm font-bold">메트로놈</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Notation Section -->
+        <div class="bg-surface-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-content-primary font-bold text-lg flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+              </svg>
+              타브 악보
+            </h3>
+            <div class="flex items-center gap-3">
+              <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary text-sm hover:text-content-primary transition-colors">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+                </svg>
+                확대
+              </button>
+              <button class="px-3 py-1.5 rounded-lg bg-surface-dark text-content-secondary text-sm hover:text-content-primary transition-colors">
+                전체보기
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab Display -->
+          <div class="bg-surface-dark rounded-lg p-6 overflow-x-auto">
+            <div class="tab-notation text-content-primary text-sm leading-relaxed min-w-[800px]">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="text-content-muted text-xs">Measure 1-4</span>
+                <div class="h-px flex-1 bg-content-muted/20"></div>
+              </div>
+
+              <pre class="text-content-secondary">
+e|-------------------|-------------------|-------------------|-------------------|
+B|-------------------|-------------------|-------------------|-------------------|
+G|---<span class="text-brand-primary">9</span>--9--9--9--9----|--9--9--9--9--9----|--9--9--9--9--9----|--9--9--9--9--9----|
+D|---<span class="text-brand-primary">9</span>--9--9--9--9----|--9--9--9--9--9----|--11-11-11-11-11---|--11-11-11-11-11---|
+A|---<span class="text-brand-primary">7</span>--7--7--7--7----|--7--7--7--7--7----|--9--9--9--9--9----|--9--9--9--9--9----|
+E|-------------------|-------------------|-------------------|-------------------|
+              </pre>
+
+              <div class="flex items-center gap-4 my-4">
+                <span class="text-content-muted text-xs">Measure 5-8</span>
+                <div class="h-px flex-1 bg-content-muted/20"></div>
+              </div>
+
+              <pre class="text-content-secondary">
+e|-------------------|-------------------|-------------------|-------------------|
+B|---12-12-12-12-12--|--12-12-12-12-12---|--10-10-10-10-10---|--10-10-10-10-10---|
+G|---12-12-12-12-12--|--12-12-12-12-12---|--11-11-11-11-11---|--11-11-11-11-11---|
+D|---12-12-12-12-12--|--12-12-12-12-12---|--12-12-12-12-12---|--12-12-12-12-12---|
+A|-------------------|-------------------|-------------------|-------------------|
+E|-------------------|-------------------|-------------------|-------------------|
+              </pre>
+            </div>
+          </div>
+
+          <!-- Tab Legend -->
+          <div class="flex items-center gap-6 mt-4 text-content-muted text-xs">
+            <span><span class="text-brand-primary">●</span> 현재 위치</span>
+            <span>h = 해머온</span>
+            <span>p = 풀오프</span>
+            <span>/ = 슬라이드 업</span>
+            <span>\ = 슬라이드 다운</span>
+            <span>b = 벤딩</span>
+          </div>
+        </div>
+
+        <!-- Session Navigation -->
+        <div class="flex items-center justify-between px-2">
+          <button class="flex items-center gap-2 text-content-muted hover:text-content-secondary transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span class="text-sm">이전 세션</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="text-content-primary font-bold">04</span>
+            <span class="text-content-muted">/</span>
+            <span class="text-content-muted">12</span>
+          </div>
+          <button class="flex items-center gap-2 text-brand-primary hover:text-orange-400 transition-colors">
+            <span class="text-sm font-medium">다음 세션</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

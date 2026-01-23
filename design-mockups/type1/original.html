@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Detail - Type 3: Full Tutorial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body { font-family: 'Pretendard', Helvetica, Arial, sans-serif; }
+    .tab-notation { font-family: 'Courier New', monospace; }
+    .scroll-area::-webkit-scrollbar { width: 4px; }
+    .scroll-area::-webkit-scrollbar-track { background: #1a1a1a; }
+    .scroll-area::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { primary: '#FF5C16', tag: '#734e38' },
+            surface: { default: '#000000', card: '#1a1a1a', dark: '#0c0c0c' },
+            content: { primary: '#FFFFFF', secondary: '#848484', muted: '#656565' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-dark min-h-screen">
+  <!-- Navigation Bar -->
+  <nav class="fixed top-0 left-0 right-0 h-[50px] bg-surface-dark z-50 flex items-center px-10">
+    <div class="flex items-center gap-8">
+      <span class="text-brand-primary font-bold text-xl">Sessionary</span>
+    </div>
+    <div class="ml-auto flex items-center gap-6">
+      <span class="text-content-secondary text-sm">즐겨찾기</span>
+      <span class="text-content-secondary text-sm">나의폴더</span>
+      <button class="px-4 py-1.5 rounded-full border border-content-muted text-content-primary text-sm">로그인</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-[73px] pb-12">
+    <div class="w-[1200px] mx-auto">
+      <!-- Back Button & Session Title -->
+      <div class="flex items-center gap-4 mb-6">
+        <button class="flex items-center gap-2 text-content-secondary hover:text-content-primary transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span class="text-sm">렉처로 돌아가기</span>
+        </button>
+        <div class="h-4 w-px bg-content-muted"></div>
+        <span class="text-content-muted text-sm">Stairway to Heaven - Led Zeppelin</span>
+      </div>
+
+      <!-- Session Header -->
+      <div class="flex items-center gap-4 mb-6">
+        <span class="px-3 py-1 rounded-full text-xs font-bold text-white bg-brand-primary">NEXT</span>
+        <span class="text-brand-primary font-bold text-lg" style="font-family: Helvetica, Arial, sans-serif;">02</span>
+        <h1 class="text-2xl font-bold text-content-primary">아르페지오 인트로 마스터하기</h1>
+        <span class="ml-auto text-content-secondary text-sm">2:48</span>
+      </div>
+
+      <!-- Three Column Layout -->
+      <div class="grid grid-cols-12 gap-5">
+        <!-- Left Column: Video -->
+        <div class="col-span-6">
+          <div class="relative w-full aspect-video bg-surface-card rounded-xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&h=338&fit=crop" class="w-full h-full object-cover opacity-50" alt="Video thumbnail">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+
+            <!-- Play Button -->
+            <button class="absolute inset-0 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-full bg-brand-primary/90 flex items-center justify-center hover:bg-brand-primary transition-colors">
+                <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </button>
+
+            <!-- Video Controls -->
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-white text-xs">0:00</span>
+                <div class="flex-1 h-1 bg-white/30 rounded-full">
+                  <div class="w-0 h-full bg-brand-primary rounded-full"></div>
+                </div>
+                <span class="text-white text-xs">2:48</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <button class="text-white/80 hover:text-white p-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </button>
+                  <button class="text-white/80 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded border border-white/30">0.5x</button>
+                </div>
+                <button class="text-white/80 hover:text-white p-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subtitle Section (Below Video) -->
+          <div class="bg-surface-card rounded-xl p-4 mt-4 h-[180px]">
+            <h4 class="text-content-secondary text-sm font-bold mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+              </svg>
+              자막
+            </h4>
+            <div class="scroll-area h-[120px] overflow-y-auto space-y-2 pr-2">
+              <div class="p-2 rounded bg-brand-primary/10 border-l-2 border-brand-primary">
+                <span class="text-brand-primary text-xs">0:00</span>
+                <p class="text-content-primary text-xs mt-0.5">이 파트에서는 Stairway to Heaven의 아름다운 아르페지오 인트로를 배워볼 거예요.</p>
+              </div>
+              <div class="p-2 rounded hover:bg-surface-dark/50 cursor-pointer">
+                <span class="text-content-muted text-xs">0:12</span>
+                <p class="text-content-secondary text-xs mt-0.5">Am 코드에서 시작해서 각 음을 개별적으로 뜯어볼게요.</p>
+              </div>
+              <div class="p-2 rounded hover:bg-surface-dark/50 cursor-pointer">
+                <span class="text-content-muted text-xs">0:28</span>
+                <p class="text-content-secondary text-xs mt-0.5">엄지손가락으로 베이스 노트를 치고, 나머지 손가락으로 높은 음을 연주합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Tab + Instructions -->
+        <div class="col-span-6 flex flex-col gap-4">
+          <!-- Tab Notation -->
+          <div class="bg-surface-card rounded-xl p-4">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="text-content-primary font-bold flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                </svg>
+                타브 악보
+              </h4>
+              <button class="text-content-muted text-xs hover:text-content-secondary">전체보기 →</button>
+            </div>
+
+            <div class="bg-surface-dark rounded-lg p-4 overflow-x-auto">
+              <pre class="tab-notation text-content-secondary text-xs leading-relaxed">
+e|-------<span class="text-brand-primary">5</span>--------5--------|-------5--------5--------|
+B|-----5--------5---5------|-----5--------5---5------|
+G|---5--------5-------5----|---5--------5-------5----|
+D|-7--------7-----------7--|-7--------7-----------7--|
+A|-------------------------|-------------------------|
+E|-------------------------|-------------------------|
+  Am                         Am/G#
+              </pre>
+            </div>
+          </div>
+
+          <!-- Instruction Section -->
+          <div class="bg-surface-card rounded-xl p-4 flex-1">
+            <h4 class="text-content-primary font-bold mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              연주 가이드
+            </h4>
+
+            <div class="scroll-area h-[240px] overflow-y-auto space-y-4 pr-2">
+              <div class="flex gap-3">
+                <span class="w-6 h-6 rounded-full bg-brand-primary/20 text-brand-primary text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+                <div>
+                  <h5 class="text-content-primary text-sm font-medium">코드 포지션 잡기</h5>
+                  <p class="text-content-secondary text-sm mt-1">Am 코드 형태로 손가락을 배치하세요. 5번 프렛의 높은 E 줄을 새끼손가락으로 누를 준비를 합니다.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <span class="w-6 h-6 rounded-full bg-surface-dark text-content-muted text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+                <div>
+                  <h5 class="text-content-primary text-sm font-medium">베이스 노트 연주</h5>
+                  <p class="text-content-secondary text-sm mt-1">엄지손가락으로 D 줄의 7번 프렛을 먼저 연주합니다. 이것이 베이스 노트 역할을 합니다.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <span class="w-6 h-6 rounded-full bg-surface-dark text-content-muted text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+                <div>
+                  <h5 class="text-content-primary text-sm font-medium">아르페지오 패턴</h5>
+                  <p class="text-content-secondary text-sm mt-1">G, B, e 줄을 순서대로 뜯습니다. 각 음이 겹치도록 울려야 합니다. 손가락을 너무 빨리 떼지 마세요.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <span class="w-6 h-6 rounded-full bg-surface-dark text-content-muted text-xs font-bold flex items-center justify-center flex-shrink-0">4</span>
+                <div>
+                  <h5 class="text-content-primary text-sm font-medium">하행 패턴</h5>
+                  <p class="text-content-secondary text-sm mt-1">다시 B, G 줄로 내려오면서 하행 패턴을 완성합니다. 부드럽게 연결되도록 연습하세요.</p>
+                </div>
+              </div>
+
+              <div class="p-3 bg-brand-primary/10 rounded-lg border-l-2 border-brand-primary">
+                <p class="text-content-primary text-sm font-medium">💡 팁</p>
+                <p class="text-content-secondary text-sm mt-1">처음에는 메트로놈 없이 천천히 연습하세요. 각 음의 울림이 자연스럽게 연결되는 것이 중요합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Navigation -->
+      <div class="flex items-center justify-between px-2 mt-6">
+        <button class="flex items-center gap-2 text-content-muted hover:text-content-secondary transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="text-sm">이전 세션</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <span class="text-content-primary font-bold">02</span>
+          <span class="text-content-muted">/</span>
+          <span class="text-content-muted">10</span>
+        </div>
+        <button class="flex items-center gap-2 text-brand-primary hover:text-orange-400 transition-colors">
+          <span class="text-sm font-medium">다음 세션</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
