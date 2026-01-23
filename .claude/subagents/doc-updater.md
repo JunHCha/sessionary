@@ -15,7 +15,7 @@ docs/spec 문서를 업데이트하는 전문 sub-agent.
 
 ## 프롬프트 템플릿
 
-```
+```text
 다음 문서를 업데이트하세요.
 
 ## 대상 문서
@@ -37,7 +37,7 @@ docs/spec 문서를 업데이트하는 전문 sub-agent.
 
 ## Task tool 사용 예시
 
-```
+```text
 Task tool 호출:
 - subagent_type: "general-purpose"
 - prompt: 위 템플릿에 변수 치환
