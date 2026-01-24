@@ -46,7 +46,16 @@ argument-hint: <issue-number>
 3. 작업 디렉토리 이동 및 의존성 설치:
    ```bash
    cd "$WORKTREE_PATH"
-   yarn install
+   # 패키지 매니저 자동 감지 (lockfile 기반)
+   if [ -f "yarn.lock" ]; then
+     yarn install
+   elif [ -f "pnpm-lock.yaml" ]; then
+     pnpm install
+   elif [ -f "package-lock.json" ]; then
+     npm install
+   else
+     echo "No lockfile found. Please run package manager manually."
+   fi
    ```
 
 4. 사용자에게 worktree 경로 안내
