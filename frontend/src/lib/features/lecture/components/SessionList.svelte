@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { page } from '$app/stores'
 	import type { LessonInLecture } from '$lib/api'
 	import SessionItem from './SessionItem.svelte'
-	import { LoginModal } from '$lib/features/auth'
+	import { LoginModal, savePendingAction } from '$lib/features/auth'
 	import { useAuth } from '$lib/features/auth/stores/auth.svelte'
 
 	let {
@@ -18,9 +19,12 @@
 
 	const auth = useAuth()
 	let showLoginModal = $state(false)
+	let redirectUrl = $state('/home')
 
-	function handleSessionClick() {
+	function handleSessionClick(sessionId: number) {
 		if (!auth.isAuthenticated) {
+			savePendingAction({ type: 'access-session', sessionId })
+			redirectUrl = $page.url.pathname
 			showLoginModal = true
 		}
 	}
@@ -41,13 +45,17 @@
 				index={idx}
 				isCurrent={idx === currentSessionIndex}
 				isCompleted={false}
-				onclick={handleSessionClick}
+				onclick={() => handleSessionClick(session.lesson_id)}
 			/>
 		{/each}
 	</div>
 </div>
 
-<LoginModal bind:open={showLoginModal} message="세션을 시청하려면 로그인이 필요합니다" />
+<LoginModal
+	bind:open={showLoginModal}
+	message="세션을 시청하려면 로그인이 필요합니다"
+	{redirectUrl}
+/>
 
 <style>
 	.custom-scrollbar::-webkit-scrollbar {
