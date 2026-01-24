@@ -40,14 +40,14 @@ updated: 2026-01-24
   - 루프 토글
   - 전체화면 버튼
 
-#### 1.2 Lesson 상세 페이지 통합
+#### 1.3 Lesson 상세 페이지 통합
 
 - **파일**: `frontend/src/routes/lecture/[id]/+page.svelte` 또는 관련 컴포넌트
 - VideoPlayer 컴포넌트 통합
 - 로딩 상태 및 에러 처리
 - 접근 권한 없을 때 안내 메시지
 
-#### 1.3 API 클라이언트 확장
+#### 1.4 API 클라이언트 확장
 
 - **파일**: `frontend/src/lib/api/client/` (OpenAPI 생성 또는 수동)
 - `GET /api/lesson/{id}/video` 엔드포인트 추가
