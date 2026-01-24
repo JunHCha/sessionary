@@ -40,7 +40,7 @@ Session Detail 페이지는 3가지 레이아웃 타입으로 구성됩니다:
 
 ### 엔드포인트
 
-```
+```http
 GET /session/{session_id}
 ```
 
