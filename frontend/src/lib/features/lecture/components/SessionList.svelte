@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { LessonInLecture } from '$lib/api'
 	import SessionItem from './SessionItem.svelte'
+	import { LoginModal } from '$lib/features/auth'
+	import { useAuth } from '$lib/features/auth/stores/auth.svelte'
 
 	let {
 		sessions,
@@ -13,6 +15,15 @@
 	let sortedSessions = $derived(
 		[...sessions].sort((a, b) => a.lecture_ordering - b.lecture_ordering)
 	)
+
+	const auth = useAuth()
+	let showLoginModal = $state(false)
+
+	function handleSessionClick() {
+		if (!auth.isAuthenticated) {
+			showLoginModal = true
+		}
+	}
 </script>
 
 <div class="flex flex-col gap-4 pt-5 pb-[50px]">
@@ -30,10 +41,13 @@
 				index={idx}
 				isCurrent={idx === currentSessionIndex}
 				isCompleted={false}
+				onclick={handleSessionClick}
 			/>
 		{/each}
 	</div>
 </div>
+
+<LoginModal bind:open={showLoginModal} />
 
 <style>
 	.custom-scrollbar::-webkit-scrollbar {
