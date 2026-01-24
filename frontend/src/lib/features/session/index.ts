@@ -2,3 +2,7 @@ export { default as VideoPlayerPlaceholder } from './components/VideoPlayerPlace
 export { default as SubtitlePanelPlaceholder } from './components/SubtitlePanelPlaceholder.svelte'
 export { default as TabSheetPlaceholder } from './components/TabSheetPlaceholder.svelte'
 export { default as PlayingGuidePlaceholder } from './components/PlayingGuidePlaceholder.svelte'
+export { default as VideoPlayer } from './components/VideoPlayer.svelte'
+export { default as VideoControls } from './components/VideoControls.svelte'
+export * from './types'
+export * from './utils'
