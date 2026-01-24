@@ -74,11 +74,28 @@ Task tool 사용:
 - 각 문서 + 관련 Issue 섹션만 전달
 ```
 
-### Step 5: 변경사항 커밋
+### Step 5: 별도 브랜치에서 변경사항 커밋 및 PR 생성
+
+main 브랜치 보호를 위해 별도 브랜치를 생성하여 작업한다.
 
 ```bash
+# 1. 문서 동기화 전용 브랜치 생성
+git checkout -b docs/issue-{issue_number}-sync
+
+# 2. 변경사항 커밋
 git add docs/spec/
-git commit -m "docs: Issue #{number} 기획 반영하여 spec 문서 업데이트"
+git commit -m "docs: Issue #{issue_number} 기획 반영하여 spec 문서 업데이트
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+
+# 3. 원격에 push 및 PR 생성
+git push -u origin docs/issue-{issue_number}-sync
+gh pr create --title "docs: Issue #{issue_number} spec 문서 동기화" \
+  --body "Issue #{issue_number} 기획 승인에 따른 spec 문서 자동 동기화" \
+  --base main
+
+# 4. 원래 브랜치로 복귀
+git checkout -
 ```
 
 ---
@@ -98,6 +115,7 @@ python3 .claude/skills/doc-sync/scripts/check_pr_status.py
 ### Step 3: 문서 최신화 (필요시)
 
 파이프라인 1의 Step 4와 동일한 방식으로 처리.
+변경사항이 있으면 파이프라인 1의 Step 5 방식으로 별도 브랜치 생성 후 PR 제출.
 
 ### Step 4: Git 정리 작업
 
