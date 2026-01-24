@@ -156,7 +156,7 @@
 	})
 </script>
 
-<div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden">
+<div data-testid="video-player" class="relative w-full aspect-video bg-black rounded-xl overflow-hidden">
 	{#if isLoading}
 		<div class="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
 			<div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin">
