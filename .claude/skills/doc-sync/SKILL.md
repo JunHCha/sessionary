@@ -79,7 +79,9 @@ Task tool 사용:
 main 브랜치 보호를 위해 별도 브랜치를 생성하여 작업한다.
 
 ```bash
-# 1. 문서 동기화 전용 브랜치 생성
+# 1. main 최신화 후 문서 동기화 전용 브랜치 생성
+git checkout main
+git pull origin main
 git checkout -b docs/issue-{issue_number}-sync
 
 # 2. 변경사항 커밋
