@@ -86,10 +86,19 @@ tdd-worker가 작업 완료를 보고하면:
 3. 사용자에게 self code review 안내
 
 4. **Worktree 정리 안내**:
+
+   사용자에게 실제 경로 정보 제공:
+   - 메인 레포 경로: `<메인-레포-절대경로>`
+   - Worktree 경로: `$WORKTREE_PATH`
+   - 브랜치명: `$BRANCH_NAME`
+
    ```bash
-   # 메인 레포로 돌아간 후 실행
-   cd /path/to/sessionary
-   git worktree remove "../worktrees/${BRANCH_NAME}"
+   # worktree 목록 확인
+   git worktree list
+
+   # 메인 레포로 이동 후 worktree 제거
+   cd <메인-레포-절대경로>
+   git worktree remove <worktree-절대경로>
    ```
    - PR 머지 전까지는 worktree 유지 권장
    - 머지 후 정리 명령어 제공
