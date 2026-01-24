@@ -91,7 +91,7 @@ GET /session/{session_id}
   "video": {
     "url": "https://...",
     "type": "hls",
-    "expires_at": "2024-01-01T12:00:00Z"
+    "expires_at": "2027-01-01T12:00:00Z"
   },
   "sheetmusic_url": "https://.../stairway.gp",
   "sync_offset": 0,
