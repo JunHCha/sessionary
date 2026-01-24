@@ -98,8 +98,8 @@ GET /session/{session_id}
   "subtitles": [],
   "playing_guide": [],
   "navigation": {
-    "prev_session_id": 1,
-    "next_session_id": 3
+    "prev_session_id": null,
+    "next_session_id": 2
   }
 }
 ```
