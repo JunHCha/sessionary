@@ -1,22 +1,25 @@
 """Tests for block-main-commit hook."""
 
+import json
+import os
 import subprocess
 import sys
-import json
+from pathlib import Path
 
 
 def run_hook(command: str, branch: str) -> tuple[int, str, str]:
     """Run the hook script with given command and branch."""
     env = {"CURRENT_BRANCH": branch}
     input_data = json.dumps({"tool_name": "Bash", "tool_input": {"command": command}})
+    hook_dir = Path(__file__).resolve().parent
 
     result = subprocess.run(
-        [sys.executable, "block_main_commit.py"],
+        [sys.executable, str(hook_dir / "block_main_commit.py")],
         input=input_data,
         capture_output=True,
         text=True,
-        cwd="/Users/chajunhyeong/Desktop/repo/sessionary/.claude/hooks",
-        env={**env, "PATH": "/usr/bin:/bin"}
+        cwd=hook_dir,
+        env={**os.environ, **env}
     )
     return result.returncode, result.stdout, result.stderr
 
@@ -32,12 +35,12 @@ class TestBlockMainCommit:
 
     def test_block_git_commit_on_master(self):
         """Should block git commit on master branch."""
-        code, stdout, _ = run_hook("git commit -m 'test'", "master")
+        code, _stdout, _ = run_hook("git commit -m 'test'", "master")
         assert code == 2
 
     def test_block_git_push_on_main(self):
         """Should block git push on main branch."""
-        code, stdout, _ = run_hook("git push origin main", "main")
+        code, _stdout, _ = run_hook("git push origin main", "main")
         assert code == 2
 
     def test_allow_git_commit_on_feature_branch(self):
