@@ -84,7 +84,20 @@ PR이 merged 상태로 감지되면:
 2. **미반영 도메인 문서 확인 및 업데이트**
    - `related_docs`가 있으면 Master Agent가 문서와 코드 변경 비교
    - 필요시 Sub-agent로 문서 업데이트 위임
-   - 변경된 문서가 있으면 커밋 및 push
+   - 변경된 문서가 있으면 **별도 브랜치에서 커밋 및 PR 생성**:
+     ```bash
+     git checkout main
+     git pull origin main
+     git checkout -b docs/pr-{pr_number}-sync
+     git add docs/spec/
+     git commit -m "docs: PR #{pr_number} merge 후 spec 문서 동기화
+
+     Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+     git push -u origin docs/pr-{pr_number}-sync
+     gh pr create --title "docs: PR #{pr_number} spec 문서 동기화" \
+       --body "PR #{pr_number} merge에 따른 spec 문서 자동 동기화" \
+       --base main
+     ```
 
 3. **Git 정리 작업 실행**
    ```bash

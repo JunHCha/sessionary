@@ -109,12 +109,26 @@ gh project item-add <PROJECT_NUMBER> --owner @me --url <이슈URL>
 
 3. **관련 문서가 있으면** Master Agent가 변경 필요성 판단 후 Sub-agent로 업데이트 위임
    - 각 문서별로 Task tool 사용하여 병렬 처리
-   - 변경된 문서가 있으면 커밋:
+   - 변경된 문서가 있으면 **별도 브랜치에서 커밋 및 PR 생성**:
    ```bash
+   # main 최신화 후 문서 동기화 전용 브랜치 생성
+   git checkout main
+   git pull origin main
+   git checkout -b docs/issue-{issue-number}-sync
+
    git add docs/spec/
    git commit -m "docs: Issue #{issue-number} 기획 반영하여 spec 문서 업데이트
 
    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+
+   # PR 생성
+   git push -u origin docs/issue-{issue-number}-sync
+   gh pr create --title "docs: Issue #{issue-number} spec 문서 동기화" \
+     --body "Issue #{issue-number} 기획 승인에 따른 spec 문서 자동 동기화" \
+     --base main
+
+   # 원래 브랜치로 복귀
+   git checkout -
    ```
 
 4. **연구 파일 정리** (선택적)

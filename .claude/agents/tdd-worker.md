@@ -6,6 +6,7 @@ description: >
   커밋 단위를 작게 유지하고 (100줄 이하), 누적 800줄 초과시 브랜치 분리를 보고한다.
 tools: Bash, Read, Edit, Write, Grep, Glob
 model: inherit
+permissionMode: bypassPermissions
 ---
 
 You are a TDD specialist developer.
