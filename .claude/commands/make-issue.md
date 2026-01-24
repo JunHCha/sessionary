@@ -111,7 +111,9 @@ gh project item-add <PROJECT_NUMBER> --owner @me --url <이슈URL>
    - 각 문서별로 Task tool 사용하여 병렬 처리
    - 변경된 문서가 있으면 **별도 브랜치에서 커밋 및 PR 생성**:
    ```bash
-   # 문서 동기화 전용 브랜치 생성
+   # main 최신화 후 문서 동기화 전용 브랜치 생성
+   git checkout main
+   git pull origin main
    git checkout -b docs/issue-{issue-number}-sync
 
    git add docs/spec/
