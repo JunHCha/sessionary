@@ -9,7 +9,7 @@ Exit codes:
 
 import json
 import os
-import re
+import shlex
 import subprocess
 import sys
 
@@ -37,14 +37,44 @@ def is_protected_branch(branch: str) -> bool:
     return branch in ("main", "master")
 
 
-def is_git_commit_or_push(command: str) -> bool:
-    """Check if command is git commit or git push."""
-    # Pattern to match git commit or git push commands
-    patterns = [
-        r"\bgit\s+commit\b",
-        r"\bgit\s+push\b",
-    ]
-    return any(re.search(pattern, command) for pattern in patterns)
+def parse_git_subcommand(command: str) -> tuple[str | None, list[str]]:
+    """Parse git subcommand and args, tolerating global options."""
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        return None, []
+
+    if not tokens or tokens[0] != "git":
+        return None, []
+
+    i = 1
+    # Skip global options like -C, -c, --git-dir, --work-tree
+    while i < len(tokens) and tokens[i].startswith("-"):
+        if tokens[i] in ("-C", "-c", "--git-dir", "--work-tree") and i + 1 < len(tokens):
+            i += 2
+        else:
+            i += 1
+
+    if i >= len(tokens):
+        return None, []
+
+    return tokens[i], tokens[i + 1:]
+
+
+def push_targets_protected(args: list[str]) -> bool:
+    """Check if push targets a protected branch."""
+    protected = {"main", "master", "refs/heads/main", "refs/heads/master"}
+    for arg in args:
+        if arg.startswith("-"):
+            continue
+        if ":" in arg:
+            # Handle refspec like HEAD:main or :main
+            _, dst = arg.split(":", 1)
+            if dst in protected:
+                return True
+        elif arg in protected:
+            return True
+    return False
 
 
 def main():
@@ -67,17 +97,25 @@ def main():
     if not command:
         sys.exit(0)
 
-    # Check if it's a git commit/push command
-    if not is_git_commit_or_push(command):
+    # Parse git subcommand
+    subcmd, args = parse_git_subcommand(command)
+    if subcmd not in ("commit", "push"):
         sys.exit(0)
 
     # Check current branch
     branch = get_current_branch()
-    if not is_protected_branch(branch):
-        sys.exit(0)
+
+    # For commit: block if on protected branch
+    if subcmd == "commit":
+        if not is_protected_branch(branch):
+            sys.exit(0)
+    # For push: block if on protected branch OR pushing to protected branch
+    else:
+        if not is_protected_branch(branch) and not push_targets_protected(args):
+            sys.exit(0)
 
     # Block the command
-    print(f"BLOCKED: git commit/push on protected branch '{branch}'")
+    print(f"BLOCKED: git {subcmd} on protected branch '{branch}'")
     print("")
     print("Direct commits to main/master are not allowed.")
     print("Please create a feature branch first:")

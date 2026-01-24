@@ -70,6 +70,26 @@ class TestBlockMainCommit:
         code, _, _ = run_hook("git commit --amend", "main")
         assert code == 2
 
+    def test_block_git_with_C_option_on_main(self):
+        """Should block git -C repo commit on main branch."""
+        code, _, _ = run_hook("git -C /path/to/repo commit -m 'test'", "main")
+        assert code == 2
+
+    def test_block_push_to_main_from_feature(self):
+        """Should block git push origin HEAD:main from feature branch."""
+        code, _, _ = run_hook("git push origin HEAD:main", "feature/test")
+        assert code == 2
+
+    def test_block_push_to_master_refspec(self):
+        """Should block push with refs/heads/master target."""
+        code, _, _ = run_hook("git push origin feature:refs/heads/master", "feature/test")
+        assert code == 2
+
+    def test_allow_push_to_feature_from_feature(self):
+        """Should allow push to feature branch from feature branch."""
+        code, _, _ = run_hook("git push origin HEAD:feature/my-branch", "feature/test")
+        assert code == 0
+
 
 if __name__ == "__main__":
     import pytest
