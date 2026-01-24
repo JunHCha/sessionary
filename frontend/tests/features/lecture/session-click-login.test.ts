@@ -52,4 +52,17 @@ test.describe('Session 클릭 시 로그인 유도', () => {
 		const loginModal = page.locator('text=Sign in with Google')
 		await expect(loginModal).toBeVisible({ timeout: 5000 })
 	})
+
+	test('로그인 모달에 세션 접근 안내 메시지가 표시된다', async ({ page }) => {
+		await mockApis(page)
+
+		await page.goto('/lecture/1')
+
+		const sessionItem = page.locator('[data-testid="session-item"]').first()
+		await expect(sessionItem).toBeVisible({ timeout: 10000 })
+		await sessionItem.click()
+
+		const message = page.locator('text=세션을 시청하려면 로그인이 필요합니다')
+		await expect(message).toBeVisible({ timeout: 5000 })
+	})
 })

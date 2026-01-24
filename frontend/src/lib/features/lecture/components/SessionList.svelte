@@ -47,7 +47,7 @@
 	</div>
 </div>
 
-<LoginModal bind:open={showLoginModal} />
+<LoginModal bind:open={showLoginModal} message="세션을 시청하려면 로그인이 필요합니다" />
 
 <style>
 	.custom-scrollbar::-webkit-scrollbar {
