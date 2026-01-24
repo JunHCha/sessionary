@@ -43,7 +43,15 @@ argument-hint: <issue-number>
    git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME"
    ```
 
-3. 작업 디렉토리 이동 및 의존성 설치:
+3. 환경 파일 복사:
+   ```bash
+   # 메인 레포에서 worktree로 env 파일 복사
+   MAIN_REPO_PATH="$(pwd)"
+   [ -f "$MAIN_REPO_PATH/backend/.env.dev" ] && cp "$MAIN_REPO_PATH/backend/.env.dev" "$WORKTREE_PATH/backend/.env.dev"
+   [ -f "$MAIN_REPO_PATH/frontend/.env.development" ] && cp "$MAIN_REPO_PATH/frontend/.env.development" "$WORKTREE_PATH/frontend/.env.development"
+   ```
+
+4. 작업 디렉토리 이동 및 의존성 설치:
    ```bash
    cd "$WORKTREE_PATH"
    # 패키지 매니저 자동 감지 (lockfile 기반)
@@ -58,7 +66,7 @@ argument-hint: <issue-number>
    fi
    ```
 
-4. 사용자에게 worktree 경로 안내
+5. 사용자에게 worktree 경로 안내
    - 이후 Phase 3-5는 worktree 디렉토리 내에서 실행됨
    - tdd-worker에게 worktree 절대 경로 전달 필요
 
@@ -72,6 +80,24 @@ argument-hint: <issue-number>
 - 계획서 기반 RED-GREEN-REFACTOR 사이클 반복
 - 커밋당 변경사항 100줄 이하 유지
 - edge case 위주 테스트, approval case 1개 이상
+
+### Background Task 권한 문제 대응
+
+Background에서 실행 중인 tdd-worker가 권한 요청으로 인해 hang될 경우:
+
+1. **사전 권한 허용**: Task tool 호출 시 `allowed_tools` 파라미터에 필요한 도구 명시
+   ```json
+   {
+     "allowed_tools": ["Bash(yarn *)", "Bash(npm *)", "Bash(pnpm *)", "Bash(pytest *)", "Read", "Edit", "Write"]
+   }
+   ```
+
+2. **Timeout 설정**: Bash 명령에 timeout 지정 (최대 10분)
+   ```json
+   {"command": "yarn test", "timeout": 600000}
+   ```
+
+3. **진행 상황 모니터링**: `run_in_background: true` 사용 시 주기적으로 TaskOutput 또는 Read로 출력 파일 확인
 
 ---
 
