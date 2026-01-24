@@ -50,6 +50,8 @@ argument-hint: <issue-number>
    ```
 
 4. 사용자에게 worktree 경로 안내
+   - 이후 Phase 3-5는 worktree 디렉토리 내에서 실행됨
+   - tdd-worker에게 worktree 절대 경로 전달 필요
 
 ---
 
@@ -57,7 +59,7 @@ argument-hint: <issue-number>
 
 `tdd-worker` sub-agent를 Task tool로 호출하여 개발 수행:
 
-- **worktree 경로를 명시적으로 전달**
+- **worktree 절대 경로를 명시적으로 전달** (예: `$WORKTREE_PATH`)
 - 계획서 기반 RED-GREEN-REFACTOR 사이클 반복
 - 커밋당 변경사항 100줄 이하 유지
 - edge case 위주 테스트, approval case 1개 이상
