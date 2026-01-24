@@ -72,6 +72,31 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
    ```
 4. `.pr-review-progress.yaml` 파일 삭제
 
+### 7. Merge 감지 후 처리 (사용자가 merge 완료 시)
+
+PR이 merged 상태로 감지되면:
+
+1. **PR 상태 및 관련 문서 확인**
+   ```bash
+   python3 .claude/skills/doc-sync/scripts/check_pr_status.py
+   ```
+
+2. **미반영 도메인 문서 확인 및 업데이트**
+   - `related_docs`가 있으면 Master Agent가 문서와 코드 변경 비교
+   - 필요시 Sub-agent로 문서 업데이트 위임
+   - 변경된 문서가 있으면 커밋 및 push
+
+3. **Git 정리 작업 실행**
+   ```bash
+   bash .claude/skills/doc-sync/scripts/cleanup_after_merge.sh {branch_name}
+   ```
+
+   수행 내용:
+   - `git fetch origin -p` - 원격 브랜치 삭제 상태 반영
+   - `git checkout main` - main 브랜치로 이동
+   - `git pull origin main` - main 최신화
+   - `git branch -d {branch}` - 작업 완료된 로컬 브랜치 삭제
+
 ## 주의사항
 
 - 각 커밋은 단일 코멘트에 대한 수정만 포함

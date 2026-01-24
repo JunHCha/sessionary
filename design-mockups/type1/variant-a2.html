@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Session Detail - Type 1 Variant A2: Video+Subtitle / Tab / Guide
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+      body {
+        font-family: "Pretendard", Helvetica, Arial, sans-serif;
+      }
+      .tab-notation {
+        font-family: "Courier New", monospace;
+        white-space: pre;
+      }
+      .scroll-area::-webkit-scrollbar {
+        width: 4px;
+      }
+      .scroll-area::-webkit-scrollbar-track {
+        background: #1a1a1a;
+      }
+      .scroll-area::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 2px;
+      }
+      .current-subtitle {
+        background: rgba(255, 92, 22, 0.1);
+        border-left: 3px solid #ff5c16;
+      }
+      .current-guide {
+        background: rgba(255, 92, 22, 0.05);
+        border-left: 3px solid #ff5c16;
+      }
+      /* alphaTab 스타일 재생 커서 */
+      .tab-cursor {
+        position: absolute;
+        width: 2px;
+        background: #ff5c16;
+        top: 0;
+        bottom: 0;
+        transition: left 0.1s linear;
+        box-shadow: 0 0 8px rgba(255, 92, 22, 0.5);
+      }
+      .tab-container {
+        position: relative;
+        overflow-x: auto;
+      }
+      .tab-container::-webkit-scrollbar {
+        height: 6px;
+      }
+      .tab-container::-webkit-scrollbar-track {
+        background: #1a1a1a;
+      }
+      .tab-container::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 3px;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {primary: "#FF5C16", tag: "#734e38"},
+              surface: {default: "#000000", card: "#1a1a1a", dark: "#0c0c0c"},
+              content: {
+                primary: "#FFFFFF",
+                secondary: "#848484",
+                muted: "#656565",
+              },
+              session: {play: "#22C55E", basic: "#8B5CF6"},
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-surface-dark">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 h-[50px] bg-[#0C0C0C] z-50">
+      <div
+        class="w-[1200px] ml-[40px] min-[1280px]:mx-auto h-full flex items-center"
+      >
+        <a href="#" class="h-full w-[134px] flex items-center">
+          <span class="text-brand-primary font-bold text-xl">Sessionary</span>
+        </a>
+        <div class="flex gap-0">
+          <span
+            class="h-[50px] w-[88px] flex items-center justify-center text-[13px] font-bold text-[#F5F5F5]"
+            >즐겨찾기</span
+          >
+          <span
+            class="h-[50px] w-[88px] flex items-center justify-center text-[13px] font-bold text-[#F5F5F5]"
+            >나의폴더</span
+          >
+        </div>
+        <div class="ml-auto flex items-center">
+          <button
+            class="px-4 py-1.5 rounded-full border border-content-muted text-content-primary text-sm"
+          >
+            로그인
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content (스크롤 가능) -->
+    <main class="pt-[73px] pb-20">
+      <div class="w-[1200px] ml-[40px] min-[1280px]:mx-auto">
+        <!-- Back Button -->
+        <div class="flex items-center gap-4 mb-6">
+          <button
+            class="flex items-center gap-2 text-content-secondary hover:text-content-primary transition-colors"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span class="text-sm">렉처로 돌아가기</span>
+          </button>
+          <div class="h-4 w-px bg-content-muted"></div>
+          <span class="text-content-muted text-sm"
+            >Stairway to Heaven - Led Zeppelin</span
+          >
+        </div>
+
+        <!-- Session Header (수정: PLAY 태그 작게, 제목 옆에 배치, 연동중/시간 제거) -->
+        <div class="flex items-center gap-4 mb-6">
+          <span
+            class="px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
+            style="
+              background: #ff5c16;
+              font-family: Helvetica, Arial, sans-serif;
+            "
+            >NEXT</span
+          >
+          <span
+            class="text-[20px] font-bold"
+            style="color: #ff5c16; font-family: Helvetica, Arial, sans-serif"
+            >02</span
+          >
+          <h1
+            class="text-[24px] font-bold leading-[36px] tracking-[-0.48px] text-[#f5f5f5]"
+            style="font-family: Helvetica, Arial, sans-serif"
+          >
+            아르페지오 인트로 마스터하기
+          </h1>
+          <span
+            class="px-2 py-0.5 rounded-[4px] text-[11px] font-bold text-white"
+            style="
+              background: #22c55e;
+              font-family: Helvetica, Arial, sans-serif;
+            "
+            >PLAY</span
+          >
+        </div>
+
+        <!-- ===== Section 1: Video + Subtitle (Side by Side) ===== -->
+        <div class="flex gap-5 mb-6 items-start">
+          <!-- Video Player (2/3 너비, aspect-video로 높이 고정) -->
+          <div class="flex-[2]">
+            <div
+              class="relative w-full aspect-video bg-surface-card rounded-xl overflow-hidden"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=450&fit=crop"
+                class="w-full h-full object-cover opacity-50"
+                alt="Video thumbnail"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"
+              ></div>
+
+              <!-- Play Button -->
+              <button class="absolute inset-0 flex items-center justify-center">
+                <div
+                  class="w-16 h-16 rounded-full bg-brand-primary/90 flex items-center justify-center hover:bg-brand-primary transition-colors"
+                >
+                  <svg
+                    class="w-7 h-7 text-white ml-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Video Controls -->
+              <div class="absolute bottom-0 left-0 right-0 p-4">
+                <div class="mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-white text-xs">0:00</span>
+                    <div
+                      class="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden"
+                    >
+                      <div
+                        class="w-[15%] h-full bg-brand-primary rounded-full"
+                      ></div>
+                    </div>
+                    <span class="text-white text-xs">2:48</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <button class="text-white/80 hover:text-white">
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.334 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"
+                        />
+                      </svg>
+                    </button>
+                    <button class="text-white/80 hover:text-white">
+                      <svg
+                        class="w-6 h-6"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </button>
+                    <button class="text-white/80 hover:text-white">
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <select
+                      class="bg-black/40 text-white text-xs px-2 py-1 rounded border border-white/20"
+                    >
+                      <option>0.5x</option>
+                      <option selected>0.75x</option>
+                      <option>1.0x</option>
+                    </select>
+                    <button
+                      class="text-brand-primary text-xs font-bold px-3 py-1 rounded border border-brand-primary/50 bg-brand-primary/10 hover:bg-brand-primary/20"
+                    >
+                      🔁 Loop
+                    </button>
+                    <button class="text-white/80 hover:text-white">
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subtitle Panel (1/3 너비, 비디오 높이와 동일) -->
+          <div class="flex-1 h-[450px]">
+            <div class="bg-surface-card rounded-xl p-4 h-full flex flex-col">
+              <div class="flex items-center justify-between mb-3">
+                <h4
+                  class="text-content-primary font-bold flex items-center gap-2"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                    />
+                  </svg>
+                  자막
+                </h4>
+                <span class="text-content-muted text-xs">자동 스크롤</span>
+              </div>
+              <div class="scroll-area flex-1 overflow-y-auto space-y-2 pr-2">
+                <!-- Current Subtitle (Highlighted) -->
+                <div class="current-subtitle p-3 rounded-lg">
+                  <span class="text-brand-primary text-xs font-bold">0:00</span>
+                  <p class="text-content-primary text-sm mt-1">
+                    이 파트에서는 Stairway to Heaven의 아름다운 아르페지오
+                    인트로를 배워볼 거예요.
+                  </p>
+                </div>
+
+                <div
+                  class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors"
+                >
+                  <span class="text-content-muted text-xs">0:12</span>
+                  <p class="text-content-secondary text-sm mt-1">
+                    Am 코드에서 시작해서 각 음을 개별적으로 뜯어볼게요.
+                  </p>
+                </div>
+
+                <div
+                  class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors"
+                >
+                  <span class="text-content-muted text-xs">0:28</span>
+                  <p class="text-content-secondary text-sm mt-1">
+                    엄지손가락으로 베이스 노트를 치고, 나머지 손가락으로 높은
+                    음을 연주합니다.
+                  </p>
+                </div>
+
+                <div
+                  class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors"
+                >
+                  <span class="text-content-muted text-xs">0:45</span>
+                  <p class="text-content-secondary text-sm mt-1">
+                    5번 프렛의 높은 E줄을 새끼손가락으로 누를 준비를 합니다.
+                  </p>
+                </div>
+
+                <div
+                  class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors"
+                >
+                  <span class="text-content-muted text-xs">1:02</span>
+                  <p class="text-content-secondary text-sm mt-1">
+                    G, B, e 줄을 순서대로 뜯습니다. 각 음이 겹치도록 울려야
+                    합니다.
+                  </p>
+                </div>
+
+                <div
+                  class="p-3 rounded-lg hover:bg-surface-dark/50 cursor-pointer transition-colors"
+                >
+                  <span class="text-content-muted text-xs">1:20</span>
+                  <p class="text-content-secondary text-sm mt-1">
+                    다시 B, G 줄로 내려오면서 하행 패턴을 완성합니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Section 2: Tab Notation (Full Width, alphaTab 스타일) ===== -->
+        <div class="bg-surface-card rounded-xl p-5 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4
+              class="text-content-primary font-bold text-lg flex items-center gap-2"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                />
+              </svg>
+              타브 악보
+            </h4>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2 text-xs text-content-muted">
+                <button
+                  class="hover:text-content-secondary px-2 py-1 rounded border border-white/10"
+                >
+                  −
+                </button>
+                <span>100%</span>
+                <button
+                  class="hover:text-content-secondary px-2 py-1 rounded border border-white/10"
+                >
+                  +
+                </button>
+              </div>
+              <button
+                class="text-content-muted hover:text-content-secondary text-xs px-3 py-1 rounded border border-white/10"
+              >
+                전체화면
+              </button>
+            </div>
+          </div>
+
+          <!-- alphaTab 스타일: 한 줄 TAB + 재생 커서 -->
+          <div class="tab-container bg-surface-dark rounded-lg p-4 relative">
+            <!-- 재생 커서 (15% 위치) -->
+            <div class="tab-cursor" style="left: 15%"></div>
+
+            <!-- 단일 라인 TAB (가로 스크롤) -->
+            <div class="overflow-x-auto pb-2">
+              <pre
+                class="tab-notation text-content-secondary text-sm leading-[1.4]"
+              >
+<span class="text-content-muted">Am</span>                              <span class="text-content-muted">Am</span>                              <span class="text-content-muted">Am/G#</span>                            <span class="text-content-muted">Am/G</span>
+e|-------<span class="text-brand-primary font-bold">5</span>--------5--------|-------5--------5--------|-------5--------5--------|-------5--------5--------|-------5--------5--------|-------5--------5--------|
+B|-----5--------5---5------|-----5--------5---5------|-----5--------5---5------|-----5--------5---5------|-----5--------5---5------|-----5--------5---5------|
+G|---5--------5-------5----|---5--------5-------5----|---5--------5-------5----|---6--------6-------6----|---5--------5-------5----|---5--------5-------5----|
+D|-7--------7-----------7--|-7--------7-----------7--|-7--------7-----------7--|-6--------6-----------6--|-5--------5-----------5--|-5--------5-----------5--|
+A|-------------------------|-------------------------|-------------------------|-------------------------|-------------------------|-------------------------|
+E|-------------------------|-------------------------|-------------------------|-------------------------|-------------------------|-------------------------|</pre>
+            </div>
+          </div>
+
+          <!-- Tab Footer -->
+          <div
+            class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between"
+          >
+            <span class="text-xs text-content-muted"
+              >alphaTab 렌더링 · Guitar Pro 파일 지원</span
+            >
+            <button class="text-xs text-brand-primary hover:text-orange-400">
+              전체 악보 보기 →
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== Section 3: Playing Guide (Full Width, Scrollable) ===== -->
+        <div class="bg-surface-card rounded-xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h4
+              class="text-content-primary font-bold text-lg flex items-center gap-2"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              연주 가이드
+            </h4>
+          </div>
+
+          <!-- Guide Steps (Vertical Layout) -->
+          <div class="space-y-4">
+            <!-- Step 1 (Current) -->
+            <div class="current-guide p-4 rounded-lg flex gap-4">
+              <span
+                class="w-8 h-8 rounded-full bg-brand-primary text-white text-sm font-bold flex items-center justify-center flex-shrink-0"
+                >1</span
+              >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <h5 class="text-content-primary font-bold">
+                    코드 포지션 잡기
+                  </h5>
+                  <span class="text-xs text-content-muted">0:00 - 0:28</span>
+                </div>
+                <p class="text-content-secondary text-sm leading-relaxed">
+                  Am 코드 형태로 손가락을 배치하세요. 검지로 B줄 1프렛, 중지로
+                  D줄 2프렛, 약지로 G줄 2프렛을 누릅니다. 5번 프렛의 높은 E줄을
+                  새끼손가락으로 누를 준비를 합니다. 손목이 너무 꺾이지 않도록
+                  주의하세요.
+                </p>
+                <div
+                  class="mt-3 p-3 bg-brand-primary/10 rounded-lg border-l-2 border-brand-primary"
+                >
+                  <p class="text-content-primary text-sm font-medium">💡 팁</p>
+                  <p class="text-content-secondary text-xs mt-1">
+                    처음에는 코드를 천천히 잡고, 각 손가락이 올바른 위치에
+                    있는지 확인하세요.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div
+              class="p-4 rounded-lg bg-surface-dark/30 hover:bg-white/5 transition-colors cursor-pointer flex gap-4"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-surface-dark text-content-muted text-sm font-bold flex items-center justify-center flex-shrink-0"
+                >2</span
+              >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <h5 class="text-content-primary font-bold">
+                    베이스 노트 연주
+                  </h5>
+                  <span class="text-xs text-content-muted">0:28 - 0:45</span>
+                </div>
+                <p class="text-content-secondary text-sm leading-relaxed">
+                  엄지손가락으로 D 줄의 7번 프렛을 먼저 연주합니다. 이것이
+                  베이스 노트 역할을 합니다. 베이스 노트는 전체 코드의 기초가
+                  되므로, 깔끔하고 명확하게 울려야 합니다.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+              class="p-4 rounded-lg bg-surface-dark/30 hover:bg-white/5 transition-colors cursor-pointer flex gap-4"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-surface-dark text-content-muted text-sm font-bold flex items-center justify-center flex-shrink-0"
+                >3</span
+              >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <h5 class="text-content-primary font-bold">
+                    아르페지오 패턴 (상행)
+                  </h5>
+                  <span class="text-xs text-content-muted">0:45 - 1:20</span>
+                </div>
+                <p class="text-content-secondary text-sm leading-relaxed">
+                  G, B, e 줄을 순서대로 뜯습니다. 각 음이 겹치도록 울려야
+                  합니다. 손가락을 너무 빨리 떼지 마세요. 이 부분이 이 곡의
+                  아름다운 분위기를 만드는 핵심입니다.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div
+              class="p-4 rounded-lg bg-surface-dark/30 hover:bg-white/5 transition-colors cursor-pointer flex gap-4"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-surface-dark text-content-muted text-sm font-bold flex items-center justify-center flex-shrink-0"
+                >4</span
+              >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <h5 class="text-content-primary font-bold">하행 패턴</h5>
+                  <span class="text-xs text-content-muted">1:20 - 1:45</span>
+                </div>
+                <p class="text-content-secondary text-sm leading-relaxed">
+                  다시 B, G 줄로 내려오면서 하행 패턴을 완성합니다. 부드럽게
+                  연결되도록 연습하세요. 상행과 하행이 자연스럽게 이어지면 한
+                  마디가 완성됩니다.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div
+              class="p-4 rounded-lg bg-surface-dark/30 hover:bg-white/5 transition-colors cursor-pointer flex gap-4"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-surface-dark text-content-muted text-sm font-bold flex items-center justify-center flex-shrink-0"
+                >5</span
+              >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <h5 class="text-content-primary font-bold">
+                    코드 체인지 (Am → Am/G#)
+                  </h5>
+                  <span class="text-xs text-content-muted">1:45 - 2:30</span>
+                </div>
+                <p class="text-content-secondary text-sm leading-relaxed">
+                  Am에서 Am/G#으로 이동합니다. 베이스 노트만 D줄 7프렛에서
+                  6프렛으로 한 프렛 내려가면 됩니다. 나머지 손가락은 그대로
+                  유지하세요. 코드 체인지가 부드럽게 이루어지도록 천천히
+                  연습합니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Session Navigation ===== -->
+        <div class="flex items-center justify-between px-2 mt-8 pb-8">
+          <button
+            class="flex items-center gap-2 text-content-muted hover:text-content-secondary transition-colors"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M15 19l-7-7 7-7" />
+            </svg>
+            <span class="text-sm">이전 세션</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="text-content-primary font-bold">02</span>
+            <span class="text-content-muted">/</span>
+            <span class="text-content-muted">10</span>
+          </div>
+          <button
+            class="flex items-center gap-2 text-brand-primary hover:text-orange-400 transition-colors"
+          >
+            <span class="text-sm font-medium">다음 세션</span>
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
