@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { browser } from '$app/environment'
 	import { page } from '$app/stores'
 	import {
-		VideoPlayerPlaceholder,
+		VideoPlayer,
 		SubtitlePanelPlaceholder,
 		TabSheetPlaceholder,
 		PlayingGuidePlaceholder
@@ -12,12 +13,15 @@
 		id: 1,
 		title: 'Session Title',
 		currentIndex: 1,
-		totalSessions: 10
+		totalSessions: 10,
+		// HLS 테스트 스트림 (Bitmovin Sintel)
+		videoUrl: 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8'
 	}
 
 	let sessionId = $derived(Number($page.params.id))
 	let currentIndex = $state(mockSession.currentIndex)
 	let totalSessions = $state(mockSession.totalSessions)
+	let currentTime = $state(0)
 
 	function goToPrevious() {
 		if (currentIndex > 1) {
@@ -37,7 +41,16 @@
 		<!-- Top Row: Video Player + Subtitle Panel -->
 		<div class="flex gap-4 mb-4">
 			<div class="flex-[2]">
-				<VideoPlayerPlaceholder />
+				{#if browser}
+					<VideoPlayer
+						src={mockSession.videoUrl}
+						ontimeupdate={(e) => (currentTime = e.currentTime)}
+					/>
+				{:else}
+					<div class="w-full aspect-video bg-black rounded-xl flex items-center justify-center">
+						<div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+					</div>
+				{/if}
 			</div>
 			<div class="flex-1">
 				<SubtitlePanelPlaceholder />

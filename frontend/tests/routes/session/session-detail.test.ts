@@ -10,8 +10,8 @@ test.describe('Session Detail 페이지 Type 1 레이아웃', () => {
 		await expect(mainContainer).toBeVisible()
 	})
 
-	test('VideoPlayer placeholder가 표시됩니다', async ({ page }) => {
-		const videoPlayer = page.locator('[data-testid="video-player-placeholder"]')
+	test('VideoPlayer가 표시됩니다', async ({ page }) => {
+		const videoPlayer = page.locator('[data-testid="video-player"]')
 		await expect(videoPlayer).toBeVisible()
 	})
 
