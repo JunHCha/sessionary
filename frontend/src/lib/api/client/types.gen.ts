@@ -56,6 +56,13 @@ export type HTTPValidationError = {
     errors?: Array<ValidationError>;
 };
 
+export type LectureAccessStatus = {
+    accessible: boolean;
+    reason?: 'unlimited' | 'ticket_used' | 'no_ticket' | 'ticket_expired' | null;
+    expires_at?: string | null;
+    ticket_count: number;
+};
+
 export type LectureDetail = {
     id: number;
     title: string;
@@ -135,6 +142,14 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
+
+export type VideoURLResponse = {
+    url: string;
+    type: 'hls' | 'direct';
+    expires_at: string;
+};
+
+export type type = 'hls' | 'direct';
 
 export type GetArtistsUserArtistsGetResponse = GetArtistsResponse;
 
@@ -218,6 +233,24 @@ export type GetLectureLectureLectureIdGetData = {
 };
 
 export type GetLectureLectureLectureIdGetResponse = GetLectureSchema;
+
+export type GetLessonVideoLessonLessonIdVideoGetData = {
+    lessonId: number;
+};
+
+export type GetLessonVideoLessonLessonIdVideoGetResponse = VideoURLResponse;
+
+export type GetLectureAccessStatusTicketLectureLectureIdGetData = {
+    lectureId: number;
+};
+
+export type GetLectureAccessStatusTicketLectureLectureIdGetResponse = LectureAccessStatus;
+
+export type UseTicketTicketLectureLectureIdPostData = {
+    lectureId: number;
+};
+
+export type UseTicketTicketLectureLectureIdPostResponse = LectureAccessStatus;
 
 export type PongPingGetResponse = unknown;
 
@@ -495,6 +528,49 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: GetLectureSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/lesson/{lesson_id}/video': {
+        get: {
+            req: GetLessonVideoLessonLessonIdVideoGetData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: VideoURLResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/ticket/lecture/{lecture_id}': {
+        get: {
+            req: GetLectureAccessStatusTicketLectureLectureIdGetData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LectureAccessStatus;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        post: {
+            req: UseTicketTicketLectureLectureIdPostData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LectureAccessStatus;
                 /**
                  * Validation Error
                  */

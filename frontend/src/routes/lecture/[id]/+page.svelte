@@ -44,7 +44,13 @@
 			</section>
 
 			<section class="w-[670px] flex-shrink-0">
-				<SessionList sessions={lecture.lessons} {currentSessionIndex} />
+				<SessionList
+					sessions={lecture.lessons}
+					lectureId={lecture.id}
+					lectureTitle={lecture.title}
+					lectureThumbnail={lecture.thumbnail || ''}
+					{currentSessionIndex}
+				/>
 			</section>
 		</div>
 	{:else}

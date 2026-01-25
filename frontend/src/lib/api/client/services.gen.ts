@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
+import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
 
 /**
  * Get Artists
@@ -273,6 +273,60 @@ export const createLectureLecturePost = (data: CreateLectureLecturePostData): Ca
 export const getLectureLectureLectureIdGet = (data: GetLectureLectureLectureIdGetData): CancelablePromise<GetLectureLectureLectureIdGetResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/lecture/{lecture_id}',
+    path: {
+        lecture_id: data.lectureId
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Lesson Video
+ * @param data The data for the request.
+ * @param data.lessonId
+ * @returns VideoURLResponse Successful Response
+ * @throws ApiError
+ */
+export const getLessonVideoLessonLessonIdVideoGet = (data: GetLessonVideoLessonLessonIdVideoGetData): CancelablePromise<GetLessonVideoLessonLessonIdVideoGetResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/lesson/{lesson_id}/video',
+    path: {
+        lesson_id: data.lessonId
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Lecture Access Status
+ * @param data The data for the request.
+ * @param data.lectureId
+ * @returns LectureAccessStatus Successful Response
+ * @throws ApiError
+ */
+export const getLectureAccessStatusTicketLectureLectureIdGet = (data: GetLectureAccessStatusTicketLectureLectureIdGetData): CancelablePromise<GetLectureAccessStatusTicketLectureLectureIdGetResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/ticket/lecture/{lecture_id}',
+    path: {
+        lecture_id: data.lectureId
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Use Ticket
+ * @param data The data for the request.
+ * @param data.lectureId
+ * @returns LectureAccessStatus Successful Response
+ * @throws ApiError
+ */
+export const useTicketTicketLectureLectureIdPost = (data: UseTicketTicketLectureLectureIdPostData): CancelablePromise<UseTicketTicketLectureLectureIdPostResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/ticket/lecture/{lecture_id}',
     path: {
         lecture_id: data.lectureId
     },

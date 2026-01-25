@@ -215,6 +215,46 @@ export const $HTTPValidationError = {
     title: 'HTTPValidationError'
 } as const;
 
+export const $LectureAccessStatus = {
+    properties: {
+        accessible: {
+            type: 'boolean',
+            title: 'Accessible'
+        },
+        reason: {
+            anyOf: [
+                {
+                    type: 'string',
+                    enum: ['unlimited', 'ticket_used', 'no_ticket', 'ticket_expired']
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Reason'
+        },
+        expires_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Expires At'
+        },
+        ticket_count: {
+            type: 'integer',
+            title: 'Ticket Count'
+        }
+    },
+    type: 'object',
+    required: ['accessible', 'ticket_count'],
+    title: 'LectureAccessStatus'
+} as const;
+
 export const $LectureDetail = {
     properties: {
         id: {
@@ -627,4 +667,26 @@ export const $ValidationError = {
     type: 'object',
     required: ['loc', 'msg', 'type'],
     title: 'ValidationError'
+} as const;
+
+export const $VideoURLResponse = {
+    properties: {
+        url: {
+            type: 'string',
+            title: 'Url'
+        },
+        type: {
+            type: 'string',
+            enum: ['hls', 'direct'],
+            title: 'Type'
+        },
+        expires_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Expires At'
+        }
+    },
+    type: 'object',
+    required: ['url', 'type', 'expires_at'],
+    title: 'VideoURLResponse'
 } as const;
