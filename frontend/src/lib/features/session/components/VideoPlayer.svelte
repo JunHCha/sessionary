@@ -41,7 +41,7 @@
 
 <script lang="ts">
 	import Hls from 'hls.js'
-	import { onMount, onDestroy } from 'svelte'
+	import { onDestroy } from 'svelte'
 	import type { VideoPlayerProps, TimeUpdateEvent, ErrorEvent } from '../types'
 	import VideoControls from './VideoControls.svelte'
 
@@ -136,10 +136,6 @@
 			hls = null
 		}
 	}
-
-	onMount(() => {
-		initHls()
-	})
 
 	onDestroy(() => {
 		destroyHls()
