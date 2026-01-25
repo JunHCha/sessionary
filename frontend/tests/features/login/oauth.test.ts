@@ -120,10 +120,15 @@ test.describe('Google OAuth Login', () => {
 
 		await googleButton.click()
 
-		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`)
+		const callbackPromise = page.waitForResponse('**/user/oauth/google/callback*')
+		const userMePromise = page.waitForResponse('**/user/me*')
 
-		await page.waitForResponse('**/user/oauth/google/callback*')
-		await page.waitForResponse('**/user/me*')
+		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`, {
+			waitUntil: 'commit'
+		})
+
+		await callbackPromise
+		await userMePromise
 
 		await page.waitForURL('**/home')
 		expect(page.url()).toContain('/home')

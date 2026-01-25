@@ -173,7 +173,7 @@ test.describe('미인증 사용자 세션 접근', () => {
 		await page.waitForLoadState('networkidle')
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
-		await expect(sessionItem).toBeVisible()
+		await expect(sessionItem).toBeVisible({ timeout: 10000 })
 		await sessionItem.click()
 
 		const loginModal = page.locator('text=로그인이 필요합니다')
@@ -194,6 +194,7 @@ test.describe('미인증 사용자 세션 접근', () => {
 		await page.waitForLoadState('networkidle')
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
+		await expect(sessionItem).toBeVisible({ timeout: 10000 })
 		await sessionItem.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
@@ -251,6 +252,7 @@ test.describe('미인증 사용자 세션 접근', () => {
 		await page.waitForLoadState('networkidle')
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
+		await expect(sessionItem).toBeVisible({ timeout: 10000 })
 		await sessionItem.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
