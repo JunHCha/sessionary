@@ -50,17 +50,17 @@ function createDummyLecture(): LectureDetail {
 }
 
 function mockLectureApi(page: Page) {
-	page.route('**/api/lecture/1', async (route: Route) => {
+	page.route('http://localhost:8000/lecture/1', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
 			contentType: 'application/json',
-			body: JSON.stringify(createDummyLecture())
+			body: JSON.stringify({ data: createDummyLecture() })
 		})
 	})
 }
 
 function mockTicketAccessApi(page: Page, hasAccess: boolean, ticketCount = 3) {
-	page.route('**/api/ticket/lecture/1', async (route: Route) => {
+	page.route('http://localhost:8000/ticket/lecture/1', async (route: Route) => {
 		const cookies = route.request().headers()['cookie'] || ''
 		const hasToken = cookies.includes(`${COOKIE_NAME}=`)
 
@@ -89,7 +89,7 @@ function mockTicketAccessApi(page: Page, hasAccess: boolean, ticketCount = 3) {
 }
 
 function mockUseTicketApi(page: Page) {
-	page.route('**/api/ticket/lecture/1', async (route: Route) => {
+	page.route('http://localhost:8000/ticket/lecture/1', async (route: Route) => {
 		if (route.request().method() !== 'POST') {
 			await route.fallback()
 			return
@@ -210,7 +210,7 @@ test.describe('미인증 사용자 세션 접근', () => {
 		await page.waitForResponse('**/user/me*')
 		await page.waitForURL('**/lecture/1')
 
-		await page.waitForResponse('**/api/ticket/lecture/1')
+		await page.waitForResponse('http://localhost:8000/ticket/lecture/1')
 
 		const confirmModal = page.locator('text=티켓 1개를 사용하여 이 강의에 접근합니다')
 		await expect(confirmModal).toBeVisible({ timeout: 10000 })
@@ -225,6 +225,16 @@ test.describe('미인증 사용자 세션 접근', () => {
 		mockAuthorizeApi(page)
 		mockCallbackApi(page)
 		mockUserMeApi(page)
+
+		// Google OAuth URL을 인터셉트하여 콜백으로 리다이렉트
+		page.route('**/accounts.google.com/**', async (route: Route) => {
+			await route.fulfill({
+				status: 302,
+				headers: {
+					'Location': `/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`
+				}
+			})
+		})
 
 		page.route('**/session/1', async (route: Route) => {
 			await route.fulfill({
@@ -249,12 +259,13 @@ test.describe('미인증 사용자 세션 접근', () => {
 
 		await googleButton.click()
 
-		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`)
+		// 리다이렉트 대신 직접 콜백 페이지로 이동
+		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`, { waitUntil: 'commit' })
 		await page.waitForResponse('**/user/oauth/google/callback*')
 		await page.waitForResponse('**/user/me*')
 		await page.waitForURL('**/lecture/1')
 
-		await page.waitForResponse('**/api/ticket/lecture/1')
+		await page.waitForResponse('http://localhost:8000/ticket/lecture/1')
 
 		await page.waitForURL('**/session/1', { timeout: 10000 })
 		expect(page.url()).toContain('/session/1')
