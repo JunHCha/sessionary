@@ -49,7 +49,7 @@
 	}
 </script>
 
-<Modal bind:open size="xs" autoclose={false} class="modal-dark">
+<Modal bind:open size="xs" autoclose={false} class="modal-dark" ariaLabel="로그인">
 	<div class="flex flex-col items-center gap-6 p-8">
 		<h3 class="text-xl font-bold text-[#e5e5e5]">{message}</h3>
 

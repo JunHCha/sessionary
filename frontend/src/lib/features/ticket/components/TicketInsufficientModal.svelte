@@ -24,7 +24,7 @@
 	let { open = $bindable(), daysUntilRefill, onClose }: Props = $props()
 </script>
 
-<Modal bind:open size="xs" autoclose={false} class="modal-dark">
+<Modal bind:open size="xs" autoclose={false} class="modal-dark" ariaLabel="티켓 부족 안내">
 	<div class="flex flex-col items-center gap-4 p-6">
 		<div class="text-yellow-600">
 			<svg class="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">

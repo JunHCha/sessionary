@@ -26,7 +26,7 @@
 	let { open = $bindable(), lectureTitle, ticketCount, onConfirm, onCancel }: Props = $props()
 </script>
 
-<Modal bind:open size="xs" autoclose={false} class="modal-dark">
+<Modal bind:open size="xs" autoclose={false} class="modal-dark" ariaLabel="티켓 사용 확인">
 	<article class="flex flex-col p-6 gap-6">
 		<header class="flex flex-col gap-3">
 			<h3 class="text-lg font-bold text-[#e5e5e5] text-center">{lectureTitle}</h3>

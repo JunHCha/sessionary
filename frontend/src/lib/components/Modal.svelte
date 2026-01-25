@@ -5,6 +5,8 @@
 		autoclose?: boolean
 		class?: string
 		children?: import('svelte').Snippet
+		ariaLabel?: string
+		ariaLabelledby?: string
 	}
 
 	let {
@@ -12,7 +14,9 @@
 		size = 'xs',
 		autoclose = false,
 		class: className = '',
-		children
+		children,
+		ariaLabel,
+		ariaLabelledby
 	}: Props = $props()
 
 	let modalElement: HTMLDivElement
@@ -34,7 +38,7 @@
 	}
 
 	function handleEscapeKey(event: KeyboardEvent) {
-		if (event.key === 'Escape' && open) {
+		if (event.key === 'Escape' && open && autoclose) {
 			open = false
 		}
 	}
@@ -95,7 +99,8 @@
 		onkeydown={handleBackdropKeydown}
 		role="dialog"
 		aria-modal="true"
-		aria-labelledby="modal-title"
+		aria-labelledby={ariaLabelledby}
+		aria-label={ariaLabel}
 		tabindex="-1"
 	>
 		<div
