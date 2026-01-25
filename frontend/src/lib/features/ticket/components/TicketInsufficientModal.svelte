@@ -24,22 +24,43 @@
 	let { open = $bindable(), daysUntilRefill, onClose }: Props = $props()
 </script>
 
-<Modal bind:open size="xs" autoclose={false} class="w-full">
-	<div class="flex flex-col items-center space-y-4 p-4">
-		<div class="text-5xl text-yellow-500">
+<Modal bind:open size="xs" autoclose={false} class="modal-dark">
+	<div class="flex flex-col items-center gap-4 p-6">
+		<div class="text-yellow-600">
 			<svg class="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
 				<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
 			</svg>
 		</div>
-		<h3 class="text-xl font-bold text-white">{getInsufficientTitle()}</h3>
-		<p class="text-gray-300 text-center">{getRefillMessage()}</p>
-		<p class="text-gray-400 text-sm">{formatDaysUntilRefill(daysUntilRefill)}</p>
+		<h3 class="text-xl font-bold text-[#e5e5e5]">{getInsufficientTitle()}</h3>
+		<p class="text-[#b0b0b0] text-center">{getRefillMessage()}</p>
+		<p class="text-[#707070] text-sm">{formatDaysUntilRefill(daysUntilRefill)}</p>
 		<Button
 			type="button"
-			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-white font-bold py-3 rounded-lg mt-4"
+			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-[#e5e5e5] font-bold py-3 rounded-lg mt-2"
 			onclick={onClose}
 		>
 			확인
 		</Button>
 	</div>
 </Modal>
+
+<style>
+	:global(.modal-dark) {
+		background: linear-gradient(to right, #1a1410, #0c0c0c) !important;
+		border: 1px solid #ff5c16;
+		box-shadow: 0px 20px 25px -5px rgba(255, 92, 22, 0.2), 0px 8px 10px -6px rgba(255, 92, 22, 0.2);
+		border-radius: 0.75rem;
+	}
+
+	:global(.modal-dark > div) {
+		background: linear-gradient(to right, #1a1410, #0c0c0c) !important;
+		border-radius: 0.75rem;
+	}
+
+	:global([data-modal-backdrop]),
+	:global(.fixed.inset-0.z-40),
+	:global(body > .fixed.inset-0) {
+		background-color: rgba(0, 0, 0, 0.85) !important;
+		backdrop-filter: blur(2px);
+	}
+</style>

@@ -44,13 +44,11 @@
 		sessions,
 		lectureId,
 		lectureTitle,
-		lectureThumbnail,
 		currentSessionIndex = 0
 	}: {
 		sessions: LessonInLecture[]
 		lectureId: number
 		lectureTitle: string
-		lectureThumbnail: string
 		currentSessionIndex?: number
 	} = $props()
 
@@ -187,7 +185,6 @@
 <TicketConfirmModal
 	bind:open={showConfirmModal}
 	{lectureTitle}
-	{lectureThumbnail}
 	{ticketCount}
 	onConfirm={handleConfirm}
 	onCancel={handleCancel}

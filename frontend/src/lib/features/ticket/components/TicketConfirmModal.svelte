@@ -18,38 +18,63 @@
 	interface Props {
 		open: boolean
 		lectureTitle: string
-		lectureThumbnail: string
 		ticketCount: number
 		onConfirm: () => void
 		onCancel: () => void
 	}
 
-	let { open = $bindable(), lectureTitle, lectureThumbnail, ticketCount, onConfirm, onCancel }: Props = $props()
+	let { open = $bindable(), lectureTitle, ticketCount, onConfirm, onCancel }: Props = $props()
 </script>
 
-<Modal bind:open size="sm" autoclose={false} class="w-full">
-	<div class="flex flex-col items-center space-y-4 p-4">
-		<img src={lectureThumbnail} alt={lectureTitle} class="w-full rounded-lg object-cover" />
-		<h3 class="text-lg font-bold text-white text-center">{lectureTitle}</h3>
-		<p class="text-gray-300 text-center">{getConfirmMessage()}</p>
-		<p class="text-gray-400 text-sm">{formatTicketCount(ticketCount)}</p>
-		<p class="text-gray-400 text-sm">{getAccessPeriodMessage()}</p>
-		<div class="flex gap-3 w-full mt-4">
+<Modal bind:open size="xs" autoclose={false} class="modal-dark">
+	<article class="flex flex-col p-6 gap-6">
+		<header class="flex flex-col gap-3">
+			<h3 class="text-lg font-bold text-[#e5e5e5] text-center">{lectureTitle}</h3>
+			<p class="text-sm text-[#b0b0b0] text-center">{getConfirmMessage()}</p>
+		</header>
+
+		<section class="flex flex-col gap-2">
+			<p class="text-sm text-[#707070] text-center">{formatTicketCount(ticketCount)}</p>
+			<p class="text-sm text-[#707070] text-center">{getAccessPeriodMessage()}</p>
+		</section>
+
+		<footer class="flex gap-3">
 			<Button
 				type="button"
 				outline
-				class="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+				class="flex-1 border-[#1a1a1a] text-[#b0b0b0] hover:bg-[#1a1a1a]"
 				onclick={onCancel}
 			>
 				취소
 			</Button>
 			<Button
 				type="button"
-				class="flex-1 bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-white font-bold"
+				class="flex-1 bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-[#e5e5e5] font-bold"
 				onclick={onConfirm}
 			>
 				확인
 			</Button>
-		</div>
-	</div>
+		</footer>
+	</article>
 </Modal>
+
+<style>
+	:global(.modal-dark) {
+		background: linear-gradient(to right, #1a1410, #0c0c0c) !important;
+		border: 1px solid #ff5c16;
+		box-shadow: 0px 20px 25px -5px rgba(255, 92, 22, 0.2), 0px 8px 10px -6px rgba(255, 92, 22, 0.2);
+		border-radius: 0.75rem;
+	}
+
+	:global(.modal-dark > div) {
+		background: linear-gradient(to right, #1a1410, #0c0c0c) !important;
+		border-radius: 0.75rem;
+	}
+
+	:global([data-modal-backdrop]),
+	:global(.fixed.inset-0.z-40),
+	:global(body > .fixed.inset-0) {
+		background-color: rgba(0, 0, 0, 0.85) !important;
+		backdrop-filter: blur(2px);
+	}
+</style>

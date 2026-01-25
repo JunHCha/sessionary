@@ -48,7 +48,6 @@
 					sessions={lecture.lessons}
 					lectureId={lecture.id}
 					lectureTitle={lecture.title}
-					lectureThumbnail={lecture.thumbnail || ''}
 					{currentSessionIndex}
 				/>
 			</section>
