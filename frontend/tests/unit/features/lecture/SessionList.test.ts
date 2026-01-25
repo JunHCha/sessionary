@@ -73,12 +73,12 @@ describe('SessionList - Unauthenticated User Flow', () => {
 			expect(result).toBeNull()
 		})
 
-		it('잘못된 형식의 세션 ID는 NaN으로 반환한다', () => {
+		it('잘못된 형식의 세션 ID는 null로 반환한다', () => {
 			mockSessionStorage['pendingSessionId'] = 'invalid'
 
 			const result = getPendingSessionIdFromStorage()
 
-			expect(Number.isNaN(result)).toBe(true)
+			expect(result).toBeNull()
 		})
 	})
 

@@ -10,7 +10,8 @@
 			const id = sessionStorage.getItem('pendingSessionId')
 			if (id) {
 				sessionStorage.removeItem('pendingSessionId')
-				return parseInt(id, 10)
+				const parsed = parseInt(id, 10)
+				return Number.isNaN(parsed) ? null : parsed
 			}
 		}
 		return null
