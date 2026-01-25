@@ -141,6 +141,11 @@
 			showConfirmModal = false
 			goto(`/session/${pendingSessionId}`)
 		} catch (error) {
+			if (isUnauthorizedApiError(error)) {
+				showConfirmModal = false
+				showLoginPrompt(pendingSessionId)
+				return
+			}
 			console.error('Failed to use ticket:', error)
 		}
 	}
