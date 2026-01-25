@@ -11,7 +11,7 @@ describe('SessionList - Unauthenticated User Flow', () => {
 	beforeEach(() => {
 		mockSessionStorage = {}
 
-		global.sessionStorage = {
+		vi.stubGlobal('sessionStorage', {
 			getItem: vi.fn((key: string) => mockSessionStorage[key] || null),
 			setItem: vi.fn((key: string, value: string) => {
 				mockSessionStorage[key] = value
@@ -24,10 +24,11 @@ describe('SessionList - Unauthenticated User Flow', () => {
 			}),
 			key: vi.fn(),
 			length: 0
-		} as Storage
+		} as Storage)
 	})
 
 	afterEach(() => {
+		vi.unstubAllGlobals()
 		vi.clearAllMocks()
 	})
 
