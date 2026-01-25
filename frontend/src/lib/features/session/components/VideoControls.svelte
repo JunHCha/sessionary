@@ -28,6 +28,8 @@
 </script>
 
 <script lang="ts">
+	import { onDestroy } from 'svelte'
+
 	let { videoElement }: { videoElement: HTMLVideoElement | undefined } = $props()
 
 	let isPlaying = $state(false)
@@ -40,6 +42,10 @@
 	let showControls = $state(true)
 
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null
+
+	onDestroy(() => {
+		if (hideControlsTimer) clearTimeout(hideControlsTimer)
+	})
 
 	function togglePlay() {
 		if (!videoElement) return
