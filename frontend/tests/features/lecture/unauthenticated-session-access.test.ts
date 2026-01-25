@@ -27,21 +27,23 @@ function createDummyUser(): UserRead {
 function createDummyLecture(): LectureDetail {
 	return {
 		id: 1,
-		artist_id: '123',
 		title: 'Test Lecture',
 		description: 'Test Description',
-		thumbnail_url: 'https://example.com/thumb.jpg',
-		banner_url: null,
-		is_published: true,
-		created_at: '2024-01-01T00:00:00Z',
-		updated_at: '2024-01-01T00:00:00Z',
+		thumbnail: 'https://example.com/thumb.jpg',
+		artist: null,
+		tags: null,
+		length_sec: 300,
+		lecture_count: 1,
+		time_created: '2024-01-01T00:00:00Z',
+		time_updated: '2024-01-01T00:00:00Z',
 		lessons: [
 			{
 				id: 1,
 				title: 'Session 1',
 				length_sec: 300,
 				lecture_ordering: 1,
-				is_public: true
+				time_created: '2024-01-01T00:00:00Z',
+				time_updated: '2024-01-01T00:00:00Z'
 			}
 		]
 	}
