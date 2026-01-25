@@ -13,7 +13,7 @@
 </script>
 
 <script lang="ts">
-	import { Modal, Button } from 'flowbite-svelte'
+	import { Modal } from '$lib/components'
 
 	interface Props {
 		open: boolean
@@ -34,33 +34,13 @@
 		<h3 class="text-xl font-bold text-[#e5e5e5]">{getInsufficientTitle()}</h3>
 		<p class="text-[#b0b0b0] text-center">{getRefillMessage()}</p>
 		<p class="text-[#707070] text-sm">{formatDaysUntilRefill(daysUntilRefill)}</p>
-		<Button
+		<button
 			type="button"
-			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-[#e5e5e5] font-bold py-3 rounded-lg mt-2"
+			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-[#e5e5e5] font-bold py-3 rounded-lg mt-2 transition-colors"
 			onclick={onClose}
 		>
 			확인
-		</Button>
+		</button>
 	</div>
 </Modal>
 
-<style>
-	:global(.modal-dark) {
-		background: linear-gradient(to right, #1a1410, #0c0c0c) !important;
-		border: 1px solid #ff5c16;
-		box-shadow: 0px 20px 25px -5px rgba(255, 92, 22, 0.2), 0px 8px 10px -6px rgba(255, 92, 22, 0.2);
-		border-radius: 0.75rem;
-	}
-
-	:global(.modal-dark > div) {
-		background: linear-gradient(to right, #1a1410, #0c0c0c) !important;
-		border-radius: 0.75rem;
-	}
-
-	:global([data-modal-backdrop]),
-	:global(.fixed.inset-0.z-40),
-	:global(body > .fixed.inset-0) {
-		background-color: rgba(0, 0, 0, 0.85) !important;
-		backdrop-filter: blur(2px);
-	}
-</style>
