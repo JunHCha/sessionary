@@ -18,17 +18,25 @@
 	interface Props {
 		open: boolean
 		lectureTitle: string
+		lectureThumbnail?: string | null
 		ticketCount: number
 		onConfirm: () => void
 		onCancel: () => void
 	}
 
-	let { open = $bindable(), lectureTitle, ticketCount, onConfirm, onCancel }: Props = $props()
+	let { open = $bindable(), lectureTitle, lectureThumbnail, ticketCount, onConfirm, onCancel }: Props = $props()
 </script>
 
 <Modal bind:open size="xs" autoclose={false} class="modal-dark" ariaLabel="티켓 사용 확인">
 	<article class="flex flex-col p-6 gap-6">
 		<header class="flex flex-col gap-3">
+			{#if lectureThumbnail}
+				<img
+					src={lectureThumbnail}
+					alt="{lectureTitle} 썸네일"
+					class="w-full h-32 object-cover rounded-md"
+				/>
+			{/if}
 			<h3 class="text-lg font-bold text-[#e5e5e5] text-center">{lectureTitle}</h3>
 			<p class="text-sm text-[#b0b0b0] text-center">{getConfirmMessage()}</p>
 		</header>
