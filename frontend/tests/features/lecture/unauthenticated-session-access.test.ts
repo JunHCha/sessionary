@@ -203,7 +203,10 @@ test.describe('미인증 사용자 세션 접근', () => {
 			sessionStorage.setItem('pendingSessionId', '1')
 		})
 
+		// googleButton 클릭 시 authorize API가 호출되고 redirectUrl이 저장됨
+		const authorizePromise = page.waitForResponse('**/user/oauth/google/authorize*')
 		await googleButton.click()
+		await authorizePromise
 
 		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`)
 		await page.waitForResponse('**/user/oauth/google/callback*')
@@ -257,7 +260,10 @@ test.describe('미인증 사용자 세션 접근', () => {
 			sessionStorage.setItem('pendingSessionId', '1')
 		})
 
+		// googleButton 클릭 시 authorize API가 호출되고 redirectUrl이 저장됨
+		const authorizePromise = page.waitForResponse('**/user/oauth/google/authorize*')
 		await googleButton.click()
+		await authorizePromise
 
 		// 리다이렉트 대신 직접 콜백 페이지로 이동
 		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`, { waitUntil: 'commit' })
