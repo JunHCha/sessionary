@@ -171,8 +171,14 @@
 			onclick={seek}
 			onkeydown={(e) => {
 				if (!videoElement) return
-				if (e.key === 'ArrowRight') videoElement.currentTime += 5
-				if (e.key === 'ArrowLeft') videoElement.currentTime -= 5
+				if (e.key === 'ArrowRight') {
+					e.preventDefault()
+					videoElement.currentTime += 5
+				}
+				if (e.key === 'ArrowLeft') {
+					e.preventDefault()
+					videoElement.currentTime -= 5
+				}
 			}}
 		>
 			<div
