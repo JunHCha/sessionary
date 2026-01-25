@@ -3,8 +3,8 @@ import type { Route, Page } from '@playwright/test'
 import type {
 	UserRead,
 	OAuth2AuthorizeResponse,
-	LectureTicketAccessStatus,
-	LectureRead
+	LectureAccessStatus,
+	LectureDetail
 } from '$lib/api/client/types.gen'
 
 const COOKIE_NAME = 'satk'
@@ -24,7 +24,7 @@ function createDummyUser(): UserRead {
 	}
 }
 
-function createDummyLecture(): LectureRead {
+function createDummyLecture(): LectureDetail {
 	return {
 		id: 1,
 		artist_id: '123',
@@ -71,7 +71,7 @@ function mockTicketAccessApi(page: Page, hasAccess: boolean, ticketCount = 3) {
 			return
 		}
 
-		const response: LectureTicketAccessStatus = {
+		const response: LectureAccessStatus = {
 			accessible: hasAccess,
 			ticket_count: ticketCount,
 			reason: hasAccess ? 'unlimited' : undefined,
@@ -89,10 +89,11 @@ function mockTicketAccessApi(page: Page, hasAccess: boolean, ticketCount = 3) {
 function mockUseTicketApi(page: Page) {
 	page.route('**/api/ticket/lecture/1', async (route: Route) => {
 		if (route.request().method() !== 'POST') {
+			await route.fallback()
 			return
 		}
 
-		const response: LectureTicketAccessStatus = {
+		const response: LectureAccessStatus = {
 			accessible: true,
 			ticket_count: 2,
 			reason: 'ticket_used',
