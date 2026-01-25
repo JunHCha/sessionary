@@ -25,6 +25,13 @@
 			error.status === 401
 		)
 	}
+
+	export function calculateDaysUntilNextMonday(): number {
+		const now = new Date()
+		const currentDay = now.getDay()
+		const daysUntilMonday = (8 - currentDay) % 7 || 7
+		return daysUntilMonday
+	}
 </script>
 
 <script lang="ts">
@@ -123,7 +130,7 @@
 			pendingSessionId = sessionId
 			showConfirmModal = true
 		} else {
-			daysUntilRefill = 7
+			daysUntilRefill = calculateDaysUntilNextMonday()
 			showInsufficientModal = true
 		}
 	}
