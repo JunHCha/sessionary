@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment'
 	import { page } from '$app/stores'
 	import {
 		VideoPlayer,
@@ -41,16 +40,10 @@
 		<!-- Top Row: Video Player + Subtitle Panel -->
 		<div class="flex gap-4 mb-4">
 			<div class="flex-[2]">
-				{#if browser}
-					<VideoPlayer
-						src={mockSession.videoUrl}
-						ontimeupdate={(e) => (currentTime = e.currentTime)}
-					/>
-				{:else}
-					<div class="w-full aspect-video bg-black rounded-xl flex items-center justify-center">
-						<div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-					</div>
-				{/if}
+				<VideoPlayer
+					src={mockSession.videoUrl}
+					ontimeupdate={(e) => (currentTime = e.currentTime)}
+				/>
 			</div>
 			<div class="flex-1">
 				<SubtitlePanelPlaceholder />
