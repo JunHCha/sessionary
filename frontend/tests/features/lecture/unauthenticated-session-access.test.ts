@@ -88,28 +88,6 @@ function mockTicketAccessApi(page: Page, hasAccess: boolean, ticketCount = 3) {
 	})
 }
 
-function mockUseTicketApi(page: Page) {
-	page.route('http://localhost:8000/ticket/lecture/1', async (route: Route) => {
-		if (route.request().method() !== 'POST') {
-			await route.fallback()
-			return
-		}
-
-		const response: LectureAccessStatus = {
-			accessible: true,
-			ticket_count: 2,
-			reason: 'ticket_used',
-			expires_at: '2024-01-08T00:00:00Z'
-		}
-
-		await route.fulfill({
-			status: 200,
-			contentType: 'application/json',
-			body: JSON.stringify(response)
-		})
-	})
-}
-
 function mockAuthorizeApi(page: Page) {
 	page.route('**/user/oauth/google/authorize*', async (route: Route) => {
 		const response: OAuth2AuthorizeResponse = {
@@ -160,7 +138,7 @@ function mockUserMeApi(page: Page, dummyUser: UserRead = createDummyUser()) {
 }
 
 test.describe('미인증 사용자 세션 접근', () => {
-	test.beforeEach(async ({ page, context }) => {
+	test.beforeEach(async ({ context }) => {
 		await context.clearCookies()
 	})
 
