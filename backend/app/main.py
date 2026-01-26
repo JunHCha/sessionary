@@ -12,6 +12,7 @@ from app.core.middlewares import AuthSessionMiddleware
 from app.lecture import view as lecture_view
 from app.lesson import view as lesson_view
 from app.ping import view as ping_view
+from app.session import view as session_view
 from app.ticket import view as ticket_view
 from app.user import view as user_view
 
@@ -23,6 +24,7 @@ def create_container() -> ApplicationContainer:
             "app.user.view",
             "app.lecture.view",
             "app.lesson.view",
+            "app.session.view",
             "app.ticket.view",
             "app.containers.auth",
             "app.auth.access",
@@ -69,6 +71,9 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
         lecture_view.app_router, prefix="/lecture", tags=["lecture"]
     )
     api_router.include_router(lesson_view.app_router, prefix="/lesson", tags=["lesson"])
+    api_router.include_router(
+        session_view.app_router, prefix="/session", tags=["session"]
+    )
     api_router.include_router(ticket_view.app_router, prefix="/ticket", tags=["ticket"])
     api_router.include_router(ping_view.app_router, prefix="/ping", tags=["ping"])
     application.include_router(api_router)
