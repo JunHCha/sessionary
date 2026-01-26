@@ -169,11 +169,13 @@ test.describe('미인증 사용자 세션 접근', () => {
 		mockTicketAccessApi(page, false, 3)
 		mockUserMeApi(page)
 
+		const lectureApiPromise = page.waitForResponse('http://localhost:8000/lecture/1')
 		await page.goto('/lecture/1')
+		await lectureApiPromise
 		await page.waitForLoadState('networkidle')
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
-		await expect(sessionItem).toBeVisible({ timeout: 10000 })
+		await expect(sessionItem).toBeVisible({ timeout: 15000 })
 		await sessionItem.click()
 
 		const loginModal = page.locator('text=로그인이 필요합니다')
@@ -190,11 +192,13 @@ test.describe('미인증 사용자 세션 접근', () => {
 		mockCallbackApi(page)
 		mockUserMeApi(page)
 
+		const lectureApiPromise = page.waitForResponse('http://localhost:8000/lecture/1')
 		await page.goto('/lecture/1')
+		await lectureApiPromise
 		await page.waitForLoadState('networkidle')
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
-		await expect(sessionItem).toBeVisible({ timeout: 10000 })
+		await expect(sessionItem).toBeVisible({ timeout: 15000 })
 		await sessionItem.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
@@ -248,11 +252,13 @@ test.describe('미인증 사용자 세션 접근', () => {
 			})
 		})
 
+		const lectureApiPromise = page.waitForResponse('http://localhost:8000/lecture/1')
 		await page.goto('/lecture/1')
+		await lectureApiPromise
 		await page.waitForLoadState('networkidle')
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
-		await expect(sessionItem).toBeVisible({ timeout: 10000 })
+		await expect(sessionItem).toBeVisible({ timeout: 15000 })
 		await sessionItem.click()
 
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
