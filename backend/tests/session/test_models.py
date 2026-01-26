@@ -1,6 +1,16 @@
+import datetime
+
 import pytest
 
-from app.session.models import SessionType, Subtitle, PlayingGuideStep
+from app.session.models import (
+    SessionType,
+    Subtitle,
+    PlayingGuideStep,
+    LectureInfo,
+    VideoInfo,
+    SessionNavigation,
+    SessionDetailResponse,
+)
 
 
 class TestSessionType:
@@ -62,3 +72,74 @@ class TestPlayingGuideStep:
                 start_time="0:00",
                 end_time="0:28",
             )
+
+
+class TestSessionDetailResponse:
+    def test_sut_creates_valid_response(self):
+        response = SessionDetailResponse(
+            id=1,
+            title="아르페지오 인트로 마스터하기",
+            session_type=SessionType.PLAY,
+            session_type_label="연주 강의",
+            lecture_ordering=2,
+            length_sec=168,
+            lecture=LectureInfo(id=1, title="Stairway to Heaven", total_sessions=10),
+            video=VideoInfo(
+                url="https://example.com/video.m3u8",
+                type="hls",
+                expires_at=datetime.datetime.now(datetime.timezone.utc),
+            ),
+            sheetmusic_url="https://example.com/sheet.gp",
+            sync_offset=0,
+            subtitles=[],
+            playing_guide=[],
+            navigation=SessionNavigation(prev_session_id=None, next_session_id=3),
+        )
+        assert response.id == 1
+        assert response.session_type == SessionType.PLAY
+        assert response.session_type_label == "연주 강의"
+
+    def test_sut_allows_null_video(self):
+        response = SessionDetailResponse(
+            id=1,
+            title="악보 세션",
+            session_type=SessionType.SHEET,
+            session_type_label="악보",
+            lecture_ordering=1,
+            length_sec=0,
+            lecture=LectureInfo(id=1, title="Test Lecture", total_sessions=1),
+            video=None,
+            sheetmusic_url=None,
+            sync_offset=0,
+            subtitles=[],
+            playing_guide=[],
+            navigation=SessionNavigation(prev_session_id=None, next_session_id=None),
+        )
+        assert response.video is None
+
+    def test_sut_includes_subtitles_and_playing_guide(self):
+        response = SessionDetailResponse(
+            id=1,
+            title="테스트",
+            session_type=SessionType.PLAY,
+            session_type_label="연주 강의",
+            lecture_ordering=1,
+            length_sec=100,
+            lecture=LectureInfo(id=1, title="Test", total_sessions=1),
+            video=None,
+            sheetmusic_url=None,
+            sync_offset=0,
+            subtitles=[Subtitle(timestamp_ms=0, text="시작")],
+            playing_guide=[
+                PlayingGuideStep(
+                    step=1,
+                    title="Step 1",
+                    description="Description",
+                    start_time="0:00",
+                    end_time="0:30",
+                )
+            ],
+            navigation=SessionNavigation(prev_session_id=None, next_session_id=None),
+        )
+        assert len(response.subtitles) == 1
+        assert len(response.playing_guide) == 1

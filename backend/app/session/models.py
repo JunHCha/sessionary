@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 
 from pydantic import Field
@@ -35,3 +36,40 @@ class PlayingGuideStep(BaseModel):
     start_time: str
     end_time: str
     tip: str | None = None
+
+
+class LectureInfo(BaseModel):
+    id: int
+    title: str
+    total_sessions: int
+
+
+class VideoInfo(BaseModel):
+    model_config = {"frozen": False}
+
+    url: str
+    type: str
+    expires_at: "datetime.datetime"
+
+
+class SessionNavigation(BaseModel):
+    prev_session_id: int | None
+    next_session_id: int | None
+
+
+class SessionDetailResponse(BaseModel):
+    model_config = {"frozen": False}
+
+    id: int
+    title: str
+    session_type: SessionType
+    session_type_label: str
+    lecture_ordering: int
+    length_sec: int
+    lecture: LectureInfo
+    video: VideoInfo | None
+    sheetmusic_url: str | None
+    sync_offset: int
+    subtitles: list[Subtitle]
+    playing_guide: list[PlayingGuideStep]
+    navigation: SessionNavigation
