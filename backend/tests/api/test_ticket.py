@@ -137,6 +137,24 @@ async def test_sut_returns_401_when_unauthenticated(
     assert response.status_code == 401
 
 
+async def test_openapi_spec_includes_401_response_for_get_lecture_access(client: AsyncClient):
+    response = await client.get("/openapi.json")
+    assert response.status_code == 200
+    openapi_spec = response.json()
+    path_spec = openapi_spec["paths"]["/ticket/lecture/{lecture_id}"]["get"]
+    assert "401" in path_spec["responses"]
+    assert path_spec["responses"]["401"]["description"] == "Missing token or inactive user."
+
+
+async def test_openapi_spec_includes_401_response_for_use_ticket(client: AsyncClient):
+    response = await client.get("/openapi.json")
+    assert response.status_code == 200
+    openapi_spec = response.json()
+    path_spec = openapi_spec["paths"]["/ticket/lecture/{lecture_id}"]["post"]
+    assert "401" in path_spec["responses"]
+    assert path_spec["responses"]["401"]["description"] == "Missing token or inactive user."
+
+
 async def test_sut_returns_accessible_true_for_unlimited_subscription(
     authorized_client_personal: AsyncClient, dummy_lecture: Lecture
 ):
