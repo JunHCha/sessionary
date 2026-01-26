@@ -184,11 +184,8 @@ test.describe('미인증 사용자 세션 접근', () => {
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
 		await expect(googleButton).toBeVisible({ timeout: 5000 })
 
-		await page.evaluate(() => {
-			sessionStorage.setItem('pendingSessionId', '1')
-		})
-
 		// googleButton 클릭 시 authorize API가 호출되고 redirectUrl이 저장됨
+		// pendingSessionId는 세션 클릭 시 자동으로 저장됨
 		const authorizePromise = page.waitForResponse('**/user/oauth/google/authorize*')
 		await googleButton.click()
 		await authorizePromise
@@ -245,11 +242,8 @@ test.describe('미인증 사용자 세션 접근', () => {
 		const googleButton = page.locator('button:has-text("Sign in with Google")')
 		await expect(googleButton).toBeVisible({ timeout: 5000 })
 
-		await page.evaluate(() => {
-			sessionStorage.setItem('pendingSessionId', '1')
-		})
-
 		// googleButton 클릭 시 authorize API가 호출되고 redirectUrl이 저장됨
+		// pendingSessionId는 세션 클릭 시 자동으로 저장됨
 		const authorizePromise = page.waitForResponse('**/user/oauth/google/authorize*')
 		await googleButton.click()
 		await authorizePromise
