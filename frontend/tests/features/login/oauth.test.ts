@@ -127,9 +127,12 @@ test.describe('Google OAuth Login', () => {
 		await page.waitForURL('**/home', { timeout: 15000 })
 		expect(page.url()).toContain('/home')
 
+		// user/me API 응답을 기다려 인증 상태 확인
+		await page.waitForResponse('**/user/me*')
+
 		await expect(loginButton).not.toBeVisible()
 		const logoutButton = page.locator('button:has-text("로그아웃")')
-		await expect(logoutButton).toBeVisible()
+		await expect(logoutButton).toBeVisible({ timeout: 10000 })
 	})
 
 	test('authorize API 실패를 처리합니다', async ({ page }) => {
