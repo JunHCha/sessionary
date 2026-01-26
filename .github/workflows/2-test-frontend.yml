@@ -33,7 +33,7 @@ jobs:
         env:
           PUBLIC_API_BASE_URL: ""
         working-directory: ./frontend
-        run: yarn playwright test --trace on
+        run: yarn playwright test
 
       - uses: actions/upload-artifact@v4
         if: always()
