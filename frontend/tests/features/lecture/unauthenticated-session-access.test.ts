@@ -169,10 +169,11 @@ test.describe('미인증 사용자 세션 접근', () => {
 		mockTicketAccessApi(page, false, 3)
 		mockUserMeApi(page)
 
-		const lectureApiPromise = page.waitForResponse('http://localhost:8000/lecture/1')
 		await page.goto('/lecture/1')
-		await lectureApiPromise
-		await page.waitForLoadState('networkidle')
+		await page.waitForLoadState('load')
+
+		// 세션 목록이 렌더링될 때까지 대기
+		await page.locator('h2:has-text("세션 목록")').waitFor({ timeout: 15000 })
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
 		await expect(sessionItem).toBeVisible({ timeout: 15000 })
@@ -192,10 +193,11 @@ test.describe('미인증 사용자 세션 접근', () => {
 		mockCallbackApi(page)
 		mockUserMeApi(page)
 
-		const lectureApiPromise = page.waitForResponse('http://localhost:8000/lecture/1')
 		await page.goto('/lecture/1')
-		await lectureApiPromise
-		await page.waitForLoadState('networkidle')
+		await page.waitForLoadState('load')
+
+		// 세션 목록이 렌더링될 때까지 대기
+		await page.locator('h2:has-text("세션 목록")').waitFor({ timeout: 15000 })
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
 		await expect(sessionItem).toBeVisible({ timeout: 15000 })
@@ -252,10 +254,11 @@ test.describe('미인증 사용자 세션 접근', () => {
 			})
 		})
 
-		const lectureApiPromise = page.waitForResponse('http://localhost:8000/lecture/1')
 		await page.goto('/lecture/1')
-		await lectureApiPromise
-		await page.waitForLoadState('networkidle')
+		await page.waitForLoadState('load')
+
+		// 세션 목록이 렌더링될 때까지 대기
+		await page.locator('h2:has-text("세션 목록")').waitFor({ timeout: 15000 })
 
 		const sessionItem = page.locator('button').filter({ hasText: 'Session 1' }).first()
 		await expect(sessionItem).toBeVisible({ timeout: 15000 })

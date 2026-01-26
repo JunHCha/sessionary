@@ -120,17 +120,11 @@ test.describe('Google OAuth Login', () => {
 
 		await googleButton.click()
 
-		const callbackPromise = page.waitForResponse('**/user/oauth/google/callback*')
-		const userMePromise = page.waitForResponse('**/user/me*')
+		// OAuth callback 페이지로 이동 (즉시 리다이렉트로 인한 ERR_ABORTED 무시)
+		page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`).catch(() => {})
 
-		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`, {
-			waitUntil: 'commit'
-		})
-
-		await callbackPromise
-		await userMePromise
-
-		await page.waitForURL('**/home')
+		// /home으로 리다이렉트될 때까지 대기
+		await page.waitForURL('**/home', { timeout: 15000 })
 		expect(page.url()).toContain('/home')
 
 		await expect(loginButton).not.toBeVisible()
