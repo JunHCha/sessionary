@@ -16,7 +16,7 @@
 </script>
 
 <script lang="ts">
-	import { Modal, Button } from 'flowbite-svelte'
+	import { Modal } from '$lib/components'
 	import { oauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGet } from '$lib/api/client'
 
 	interface Props {
@@ -49,26 +49,21 @@
 	}
 </script>
 
-<Modal bind:open size="xs" autoclose={false} class="w-full">
-	<div class="flex flex-col items-center space-y-6 p-4">
-		<h3 class="text-xl font-bold text-white">{message}</h3>
+<Modal bind:open size="xs" autoclose={false} class="modal-dark" ariaLabel="로그인">
+	<div class="flex flex-col items-center gap-6 p-8">
+		<h3 class="text-xl font-bold text-[#e5e5e5]">{message}</h3>
 
 		{#if errorMessage}
 			<p class="text-red-500 text-sm">{errorMessage}</p>
 		{/if}
 
-		<Button
+		<button
 			type="button"
-			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-white font-bold py-3 rounded-lg"
+			class="w-full bg-[#FF5C16] hover:bg-[#FF5C16]/90 text-[#e5e5e5] font-bold py-3 rounded-lg transition-colors"
 			onclick={handleLogin}
 		>
 			Sign in with Google
-		</Button>
+		</button>
 	</div>
 </Modal>
 
-<style>
-	:global(.modal-container) {
-		background-color: #0c0c0c !important;
-	}
-</style>

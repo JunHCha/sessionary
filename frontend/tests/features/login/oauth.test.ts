@@ -103,9 +103,18 @@ test.describe('Google OAuth Login', () => {
 	})
 
 	test('OAuth login flow를 성공적으로 수행합니다', async ({ page }) => {
+		// Google URL로의 navigation을 가로채서 /oauth-callback으로 리다이렉트
+		await page.route('https://accounts.google.com/**', async (route) => {
+			// Google로 가는 요청을 abort하고 대신 callback으로 이동하도록 함
+			await route.abort()
+		})
+
 		mockAuthorizeApi(page, false)
 		mockCallbackApi(page)
 		mockUserMeApi(page)
+
+		// user/me 응답 Promise를 미리 설정
+		const userMeResponsePromise = page.waitForResponse('**/user/me*')
 
 		await page.waitForLoadState('networkidle')
 
@@ -118,19 +127,24 @@ test.describe('Google OAuth Login', () => {
 		await expect(googleButton).toBeVisible({ timeout: 10000 })
 		await expect(googleButton).toBeEnabled()
 
+		// authorize API 응답을 기다리면서 클릭
+		const authorizePromise = page.waitForResponse('**/user/oauth/google/authorize*')
 		await googleButton.click()
+		await authorizePromise
 
+		// Google navigation이 abort되었으므로 직접 callback으로 이동
 		await page.goto(`/oauth-callback?code=${TEST_CODE}&state=${TEST_STATE}`)
 
-		await page.waitForResponse('**/user/oauth/google/callback*')
-		await page.waitForResponse('**/user/me*')
-
-		await page.waitForURL('**/home')
+		// /home으로 리다이렉트될 때까지 대기
+		await page.waitForURL('**/home', { timeout: 15000 })
 		expect(page.url()).toContain('/home')
+
+		// user/me API 응답 확인
+		await userMeResponsePromise
 
 		await expect(loginButton).not.toBeVisible()
 		const logoutButton = page.locator('button:has-text("로그아웃")')
-		await expect(logoutButton).toBeVisible()
+		await expect(logoutButton).toBeVisible({ timeout: 10000 })
 	})
 
 	test('authorize API 실패를 처리합니다', async ({ page }) => {

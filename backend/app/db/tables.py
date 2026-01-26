@@ -250,7 +250,7 @@ class TicketUsage(Base):
         Integer, ForeignKey("lecture.id"), nullable=False
     )
     used_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime, default=func.now(), nullable=False
+        DateTime(timezone=True), default=func.now(), nullable=False
     )
 
     __tablename__ = "ticket_usage"

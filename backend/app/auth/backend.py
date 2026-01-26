@@ -53,12 +53,14 @@ class AuthBackend:
 
     @property
     def oauth_router(self) -> APIRouter:
+        csrf_cookie_secure = self.app_env == AppEnv.prod
         return self.components.get_oauth_router(
             self.google_oauth_client,
             self.auth_backend,
             redirect_url=self.google_oauth_redirect_uri,
             state_secret="SECRET",  # TODO: 정확한 사용법을 확인 후 수정
             associate_by_email=True,
+            csrf_token_cookie_secure=csrf_cookie_secure,
         )
 
     @property

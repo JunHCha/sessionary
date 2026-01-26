@@ -6,12 +6,14 @@
 		session,
 		index,
 		isCurrent = false,
-		isCompleted = false
+		isCompleted = false,
+		onclick
 	}: {
 		session: LessonInLecture
 		index: number
 		isCurrent?: boolean
 		isCompleted?: boolean
+		onclick?: () => void
 	} = $props()
 
 	let displayNumber = $derived(String(index + 1).padStart(2, '0'))
@@ -28,6 +30,7 @@
 	style={isCurrent
 		? 'border: 1px solid #ff5c16; background: linear-gradient(to right, #1a1410, #0c0c0c); box-shadow: 0px 20px 25px -5px rgba(255,92,22,0.2), 0px 8px 10px -6px rgba(255,92,22,0.2);'
 		: 'border: 1px solid #1f1f1f; background: #0c0c0c;'}
+	{onclick}
 >
 	<div class="flex items-center gap-[45px]">
 		<div class="flex items-center gap-2">

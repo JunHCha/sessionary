@@ -1,6 +1,6 @@
 ---
 created: 2025-12-21T01:24
-updated: 2026-01-15T23:30
+updated: 2026-01-25T12:00
 ---
 
 # Lecture
@@ -40,8 +40,10 @@ sequenceDiagram
     User->>Frontend: Session 클릭 (Session detail view 진입 시도)
 
     alt 미인증 사용자
+        Frontend->>Frontend: sessionStorage에 sessionId 저장
         Frontend->>User: 로그인 모달 표시
         User->>Frontend: 로그인 완료
+        Frontend->>Frontend: sessionStorage에서 sessionId 복원
         Frontend->>Frontend: 모달 닫기, 아래 플로우 계속
     end
 
@@ -81,6 +83,23 @@ sequenceDiagram
         Backend-->>Frontend: 403 Forbidden
     end
 ```
+
+### 미인증 사용자 처리
+
+미인증 상태에서 Session 클릭 시:
+
+1. **Pending Session 상태 저장**
+   - `sessionStorage.setItem('pendingSessionId', sessionId)`로 클릭한 Session ID 저장
+   - 로그인 완료 후 티켓 차감 플로우를 자동으로 재개하기 위함
+
+2. **로그인 완료 후 자동 재개**
+   - 페이지 마운트 시 (`onMount`) `sessionStorage`에서 `pendingSessionId` 확인
+   - 저장된 Session ID가 있으면 티켓 차감 플로우 자동 재개
+   - 처리 완료 후 `sessionStorage`에서 해당 값 제거
+
+3. **401 에러 처리**
+   - 티켓 접근 확인 API 호출 시 401 에러 발생 시 로그인 모달 표시
+   - `sessionStorage`에 현재 Session ID 저장 후 로그인 유도
 
 ### 티켓 유효 기간
 
