@@ -9,11 +9,41 @@ Options:
     --dry-run    실제 코멘트를 작성하지 않고 출력만 함
 """
 
+import json
 import subprocess
 import sys
 from pathlib import Path
 
 import yaml
+
+
+def convert_graphql_id_to_database_id(graphql_id: str) -> int | None:
+    """GraphQL ID를 REST API database ID로 변환한다."""
+    query = f"""
+    {{
+      node(id: "{graphql_id}") {{
+        ... on PullRequestReviewComment {{
+          databaseId
+        }}
+      }}
+    }}
+    """
+    result = subprocess.run(
+        ["gh", "api", "graphql", "-f", f"query={query}"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print(f"Warning: Failed to convert GraphQL ID {graphql_id}: {result.stderr}")
+        return None
+
+    try:
+        data = json.loads(result.stdout)
+        database_id = data.get("data", {}).get("node", {}).get("databaseId")
+        return database_id
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Warning: Failed to parse response for {graphql_id}: {e}")
+        return None
 
 
 def load_progress(path: Path = Path(".pr-review-progress.yaml")) -> dict | None:
@@ -112,16 +142,30 @@ def main():
         github_comment_id = comment.get("github_comment_id")
 
         if not github_comment_id:
-            print(f"Warning: Comment #{comment.get('id')} has no github_comment_id")
+            print(f"Warning: Comment has no github_comment_id")
             continue
+
+        # GraphQL ID를 database ID로 변환
+        if github_comment_id.startswith("PRRC_"):
+            database_id = convert_graphql_id_to_database_id(github_comment_id)
+            if not database_id:
+                print(f"Warning: Failed to convert {github_comment_id} to database ID")
+                continue
+        else:
+            # 이미 숫자 ID인 경우
+            try:
+                database_id = int(github_comment_id)
+            except ValueError:
+                print(f"Warning: Invalid comment ID format: {github_comment_id}")
+                continue
 
         if status == "resolved":
             body = format_resolved_message(comment)
-            post_comment(pr_number, github_comment_id, body, dry_run)
+            post_comment(pr_number, database_id, body, dry_run)
             resolved_count += 1
         elif status == "skipped":
             body = format_skipped_message(comment)
-            post_comment(pr_number, github_comment_id, body, dry_run)
+            post_comment(pr_number, database_id, body, dry_run)
             skipped_count += 1
 
     print(f"\nSummary: {resolved_count} resolved, {skipped_count} skipped")
