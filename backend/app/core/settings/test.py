@@ -26,7 +26,7 @@ class TestAppSettings(AppSettings):
     auth_session_refresh_interval: int = 2
     auth_redis_url: str = ""
 
-    video_provider: str = "local"
+    video_provider: str = "mock"
     minio_endpoint: str = "localhost:9000"
     minio_access_key: str = "minioadmin"
     minio_secret_key: str = "minioadmin"

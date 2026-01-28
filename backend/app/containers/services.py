@@ -3,6 +3,8 @@ from dependency_injector import containers, providers
 from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
 from app.lesson.repository import LessonRepository
+from app.session.repository import SessionRepository
+from app.session.service import SessionService
 from app.ticket.repository import TicketRepository
 from app.ticket.service import TicketService
 from app.user.repository import UserRepository
@@ -11,7 +13,11 @@ from app.video.service import VideoProvider
 
 
 def _create_video_provider(settings) -> VideoProvider:
-    if settings.video_provider == "local":
+    if settings.video_provider == "mock":
+        from app.video.mock import MockVideoProvider
+
+        return MockVideoProvider()
+    elif settings.video_provider == "local":
         from app.video.minio import MinIOVideoProvider
 
         return MinIOVideoProvider(
@@ -74,4 +80,15 @@ class ServicesContainer(containers.DeclarativeContainer):
     video_provider = providers.Factory(
         _create_video_provider,
         settings=settings,
+    )
+
+    session_repository = providers.Factory(
+        SessionRepository,
+        session_manager=database.session_manager,
+    )
+
+    session_service = providers.Factory(
+        SessionService,
+        repository=session_repository,
+        video_provider=video_provider,
     )
