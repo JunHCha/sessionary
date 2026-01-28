@@ -10,7 +10,11 @@ from app.ticket.service import TicketService
 app_router = APIRouter()
 
 
-@app_router.get("/lecture/{lecture_id}", response_model=LectureAccessStatus)
+@app_router.get(
+    "/lecture/{lecture_id}",
+    response_model=LectureAccessStatus,
+    responses={401: {"description": "Missing token or inactive user."}},
+)
 @inject
 async def get_lecture_access_status(
     lecture_id: int,
@@ -25,7 +29,11 @@ async def get_lecture_access_status(
     )
 
 
-@app_router.post("/lecture/{lecture_id}", response_model=LectureAccessStatus)
+@app_router.post(
+    "/lecture/{lecture_id}",
+    response_model=LectureAccessStatus,
+    responses={401: {"description": "Missing token or inactive user."}},
+)
 @inject
 async def use_ticket(
     lecture_id: int,
