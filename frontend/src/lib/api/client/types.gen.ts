@@ -91,6 +91,12 @@ export type LectureInList = {
     time_updated: string;
 };
 
+export type LectureInfo = {
+    id: number;
+    title: string;
+    total_sessions: number;
+};
+
 export type LessonInLecture = {
     id: number;
     title: string;
@@ -109,6 +115,43 @@ export type PaginationMeta = {
     total_pages: number;
     curr_page: number;
     per_page: number;
+};
+
+export type PlayingGuideStep = {
+    step: number;
+    title: string;
+    description: string;
+    start_time: string;
+    end_time: string;
+    tip?: string | null;
+};
+
+export type SessionDetailResponse = {
+    id: number;
+    title: string;
+    session_type: SessionType;
+    session_type_label: string;
+    lecture_ordering: number;
+    length_sec: number;
+    lecture: LectureInfo;
+    video: VideoInfo | null;
+    sheetmusic_url: string | null;
+    sync_offset: number;
+    subtitles: Array<Subtitle>;
+    playing_guide: Array<PlayingGuideStep>;
+    navigation: SessionNavigation;
+};
+
+export type SessionNavigation = {
+    prev_session_id: number | null;
+    next_session_id: number | null;
+};
+
+export type SessionType = 'PLAY' | 'TALK' | 'JAM' | 'BASIC' | 'SHEET';
+
+export type Subtitle = {
+    timestamp_ms: number;
+    text: string;
 };
 
 export type UserArtistInfo = {
@@ -141,6 +184,12 @@ export type ValidationError = {
     loc: Array<(string | number)>;
     msg: string;
     type: string;
+};
+
+export type VideoInfo = {
+    url: string;
+    type: string;
+    expires_at: string;
 };
 
 export type VideoURLResponse = {
@@ -239,6 +288,12 @@ export type GetLessonVideoLessonLessonIdVideoGetData = {
 };
 
 export type GetLessonVideoLessonLessonIdVideoGetResponse = VideoURLResponse;
+
+export type GetSessionDetailSessionSessionIdGetData = {
+    sessionId: number;
+};
+
+export type GetSessionDetailSessionSessionIdGetResponse = SessionDetailResponse;
 
 export type GetLectureAccessStatusTicketLectureLectureIdGetData = {
     lectureId: number;
@@ -543,6 +598,21 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: VideoURLResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/session/{session_id}': {
+        get: {
+            req: GetSessionDetailSessionSessionIdGetData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: SessionDetailResponse;
                 /**
                  * Validation Error
                  */

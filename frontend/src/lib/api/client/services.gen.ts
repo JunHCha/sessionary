@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
+import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, GetSessionDetailSessionSessionIdGetData, GetSessionDetailSessionSessionIdGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
 
 /**
  * Get Artists
@@ -293,6 +293,24 @@ export const getLessonVideoLessonLessonIdVideoGet = (data: GetLessonVideoLessonL
     url: '/lesson/{lesson_id}/video',
     path: {
         lesson_id: data.lessonId
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Session Detail
+ * @param data The data for the request.
+ * @param data.sessionId
+ * @returns SessionDetailResponse Successful Response
+ * @throws ApiError
+ */
+export const getSessionDetailSessionSessionIdGet = (data: GetSessionDetailSessionSessionIdGetData): CancelablePromise<GetSessionDetailSessionSessionIdGetResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/session/{session_id}',
+    path: {
+        session_id: data.sessionId
     },
     errors: {
         422: 'Validation Error'
