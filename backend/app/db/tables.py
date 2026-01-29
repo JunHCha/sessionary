@@ -10,10 +10,12 @@ from fastapi_users_db_sqlalchemy import (
     SQLAlchemyBaseUserTableUUID,
 )
 from sqlalchemy import (
+    JSON,
     UUID,
     Boolean,
     Column,
     DateTime,
+    Enum,
     ForeignKey,
     Integer,
     String,
@@ -24,6 +26,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import TypeDecorator
 
 from app.db.base import Base
+from app.session.models import SessionType
 
 
 class OAuthAccount(SQLAlchemyBaseOAuthAccountTableUUID, Base):
@@ -213,6 +216,12 @@ class Lesson(Base):
     video_url: Mapped[str] = mapped_column(String)
     text: Mapped[str] = mapped_column(String)
     lecture_ordering: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    session_type: Mapped[SessionType | None] = mapped_column(
+        Enum(SessionType, name="sessiontype"), nullable=True
+    )
+    subtitles: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    playing_guide: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    sync_offset: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     time_created: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now()
     )

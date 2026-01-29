@@ -433,6 +433,26 @@ export const $LectureInList = {
     title: 'LectureInList'
 } as const;
 
+export const $LectureInfo = {
+    properties: {
+        id: {
+            type: 'integer',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        total_sessions: {
+            type: 'integer',
+            title: 'Total Sessions'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'total_sessions'],
+    title: 'LectureInfo'
+} as const;
+
 export const $LessonInLecture = {
     properties: {
         id: {
@@ -501,6 +521,175 @@ export const $PaginationMeta = {
     type: 'object',
     required: ['total_items', 'total_pages', 'curr_page', 'per_page'],
     title: 'PaginationMeta'
+} as const;
+
+export const $PlayingGuideStep = {
+    properties: {
+        step: {
+            type: 'integer',
+            exclusiveMinimum: 0,
+            title: 'Step'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        start_time: {
+            type: 'string',
+            title: 'Start Time'
+        },
+        end_time: {
+            type: 'string',
+            title: 'End Time'
+        },
+        tip: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tip'
+        }
+    },
+    type: 'object',
+    required: ['step', 'title', 'description', 'start_time', 'end_time'],
+    title: 'PlayingGuideStep'
+} as const;
+
+export const $SessionDetailResponse = {
+    properties: {
+        id: {
+            type: 'integer',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        session_type: {
+            '$ref': '#/components/schemas/SessionType'
+        },
+        session_type_label: {
+            type: 'string',
+            title: 'Session Type Label'
+        },
+        lecture_ordering: {
+            type: 'integer',
+            title: 'Lecture Ordering'
+        },
+        length_sec: {
+            type: 'integer',
+            title: 'Length Sec'
+        },
+        lecture: {
+            '$ref': '#/components/schemas/LectureInfo'
+        },
+        video: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/VideoInfo'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        sheetmusic_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sheetmusic Url'
+        },
+        sync_offset: {
+            type: 'integer',
+            title: 'Sync Offset'
+        },
+        subtitles: {
+            items: {
+                '$ref': '#/components/schemas/Subtitle'
+            },
+            type: 'array',
+            title: 'Subtitles'
+        },
+        playing_guide: {
+            items: {
+                '$ref': '#/components/schemas/PlayingGuideStep'
+            },
+            type: 'array',
+            title: 'Playing Guide'
+        },
+        navigation: {
+            '$ref': '#/components/schemas/SessionNavigation'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'session_type', 'session_type_label', 'lecture_ordering', 'length_sec', 'lecture', 'video', 'sheetmusic_url', 'sync_offset', 'subtitles', 'playing_guide', 'navigation'],
+    title: 'SessionDetailResponse'
+} as const;
+
+export const $SessionNavigation = {
+    properties: {
+        prev_session_id: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Prev Session Id'
+        },
+        next_session_id: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Next Session Id'
+        }
+    },
+    type: 'object',
+    required: ['prev_session_id', 'next_session_id'],
+    title: 'SessionNavigation'
+} as const;
+
+export const $SessionType = {
+    type: 'string',
+    enum: ['PLAY', 'TALK', 'JAM', 'BASIC', 'SHEET'],
+    title: 'SessionType'
+} as const;
+
+export const $Subtitle = {
+    properties: {
+        timestamp_ms: {
+            type: 'integer',
+            minimum: 0,
+            title: 'Timestamp Ms'
+        },
+        text: {
+            type: 'string',
+            title: 'Text'
+        }
+    },
+    type: 'object',
+    required: ['timestamp_ms', 'text'],
+    title: 'Subtitle'
 } as const;
 
 export const $UserArtistInfo = {
@@ -667,6 +856,27 @@ export const $ValidationError = {
     type: 'object',
     required: ['loc', 'msg', 'type'],
     title: 'ValidationError'
+} as const;
+
+export const $VideoInfo = {
+    properties: {
+        url: {
+            type: 'string',
+            title: 'Url'
+        },
+        type: {
+            type: 'string',
+            title: 'Type'
+        },
+        expires_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Expires At'
+        }
+    },
+    type: 'object',
+    required: ['url', 'type', 'expires_at'],
+    title: 'VideoInfo'
 } as const;
 
 export const $VideoURLResponse = {
