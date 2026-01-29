@@ -11,7 +11,15 @@ from app.ticket.service import TicketService
 app_router = APIRouter()
 
 
-@app_router.get("/{session_id}", response_model=SessionDetailResponse)
+@app_router.get(
+    "/{session_id}",
+    response_model=SessionDetailResponse,
+    responses={
+        401: {"description": "Unauthorized"},
+        403: {"description": "Access denied"},
+        404: {"description": "Session not found"},
+    },
+)
 @inject
 async def get_session_detail(
     session_id: int,

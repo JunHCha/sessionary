@@ -614,6 +614,18 @@ export type $OpenApiTs = {
                  */
                 200: SessionDetailResponse;
                 /**
+                 * Unauthorized
+                 */
+                401: unknown;
+                /**
+                 * Access denied
+                 */
+                403: unknown;
+                /**
+                 * Session not found
+                 */
+                404: unknown;
+                /**
                  * Validation Error
                  */
                 422: HTTPValidationError;

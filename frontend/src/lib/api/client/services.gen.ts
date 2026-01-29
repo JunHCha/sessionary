@@ -313,6 +313,9 @@ export const getSessionDetailSessionSessionIdGet = (data: GetSessionDetailSessio
         session_id: data.sessionId
     },
     errors: {
+        401: 'Unauthorized',
+        403: 'Access denied',
+        404: 'Session not found',
         422: 'Validation Error'
     }
 }); };
