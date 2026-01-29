@@ -41,7 +41,10 @@ class SessionRepository(BaseSessionRepository):
     ) -> tuple[int | None, int | None]:
         async with self._session_manager.async_session() as session:
             current_result = await session.execute(
-                select(tb.Lesson.lecture_ordering).where(tb.Lesson.id == session_id)
+                select(tb.Lesson.lecture_ordering).where(
+                    tb.Lesson.id == session_id,
+                    tb.Lesson.lecture_id == lecture_id,
+                )
             )
             current_ordering = current_result.scalar_one_or_none()
             if current_ordering is None:
