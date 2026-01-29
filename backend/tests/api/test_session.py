@@ -147,7 +147,6 @@ async def session_user_with_personal(
     user_manager_stub, test_session: AsyncSession, session_personal_subscription
 ) -> User:
     from fastapi_users.schemas import BaseUserCreate
-    from sqlalchemy.orm import selectinload
 
     user_create = BaseUserCreate(
         email="session_personal@test.com",
@@ -165,17 +164,7 @@ async def session_user_with_personal(
         await test_session.flush()
     await test_session.commit()
 
-    from app.db.tables import User as UserTable
-
-    async with test_session.begin():
-        result = await test_session.execute(
-            selectinload(UserTable.subscription)
-            if False
-            else test_session.get_bind()
-            .execute(
-                f"SELECT * FROM user WHERE id = '{user.id}'"
-            )
-        )
+    await test_session.refresh(user, attribute_names=["subscription"])
     return user
 
 
