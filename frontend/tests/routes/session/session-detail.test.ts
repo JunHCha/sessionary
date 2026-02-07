@@ -10,7 +10,9 @@ import {
 test.describe('Session Detail 페이지 Type 1 레이아웃', () => {
 	test.beforeEach(async ({ page }) => {
 		mockUserMeApi(page)
+		mockSessionDetailApi(page, createMockSessionDetailResponse())
 		await page.goto('/session/1')
+		await page.waitForSelector('[data-testid="session-detail-page"]:not(:has([data-testid="session-loading"]))', { timeout: 10000 })
 	})
 
 	test('페이지가 정상적으로 로드됩니다', async ({ page }) => {
