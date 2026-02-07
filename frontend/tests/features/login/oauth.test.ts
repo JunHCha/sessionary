@@ -1,99 +1,13 @@
 import { expect, test } from '@playwright/test'
-import type { Route, Page } from '@playwright/test'
-import type { UserRead, OAuth2AuthorizeResponse } from '$lib/api/client/types.gen'
-
-const COOKIE_NAME = 'satk'
-const TEST_TOKEN = 'test-auth-token-12345'
-const TEST_CODE = 'test-oauth-code'
-const TEST_STATE = 'test-oauth-state'
-
-function createDummyUser(): UserRead {
-	return {
-		id: '123e4567-e89b-12d3-a456-426614174000',
-		email: 'test@example.com',
-		nickname: 'Test User',
-		is_active: true,
-		is_superuser: false,
-		is_verified: true,
-		is_artist: false
-	}
-}
-
-function mockAuthorizeApi(page: Page, shouldFail = false) {
-	page.route('**/user/oauth/google/authorize*', async (route: Route) => {
-		if (shouldFail) {
-			await route.fulfill({
-				status: 422,
-				contentType: 'application/json',
-				body: JSON.stringify({ detail: 'Validation Error' })
-			})
-			return
-		}
-
-		const response: OAuth2AuthorizeResponse = {
-			authorization_url: 'https://accounts.google.com/o/oauth2/v2/auth?test=true'
-		}
-
-		await route.fulfill({
-			status: 200,
-			contentType: 'application/json',
-			body: JSON.stringify(response)
-		})
-	})
-}
-
-function mockCallbackApi(page: Page, shouldFail = false) {
-	page.route('**/user/oauth/google/callback*', async (route: Route) => {
-		if (shouldFail) {
-			await route.fulfill({
-				status: 400,
-				contentType: 'application/json',
-				body: JSON.stringify({ detail: 'Bad Request' })
-			})
-			return
-		}
-
-		await route.fulfill({
-			status: 200,
-			contentType: 'application/json',
-			headers: {
-				'Set-Cookie': `${COOKIE_NAME}=${TEST_TOKEN}; Path=/; HttpOnly; SameSite=Lax`
-			},
-			body: JSON.stringify({})
-		})
-	})
-}
-
-function mockUserMeApi(page: Page, dummyUser: UserRead = createDummyUser()) {
-	page.route('**/user/me*', async (route: Route) => {
-		const cookies = route.request().headers()['cookie'] || ''
-		const hasToken = cookies.includes(`${COOKIE_NAME}=`)
-
-		if (!hasToken) {
-			await route.fulfill({
-				status: 401,
-				contentType: 'application/json',
-				body: JSON.stringify({ detail: 'Missing token or inactive user.' })
-			})
-			return
-		}
-
-		await route.fulfill({
-			status: 200,
-			contentType: 'application/json',
-			body: JSON.stringify(dummyUser)
-		})
-	})
-}
-
-function mockAllOAuthApis(
-	page: Page,
-	options: { authorizeFail?: boolean; callbackFail?: boolean } = {}
-) {
-	mockAuthorizeApi(page, options.authorizeFail)
-	mockCallbackApi(page, options.callbackFail)
-	mockUserMeApi(page)
-}
+import type { Route } from '@playwright/test'
+import {
+	TEST_CODE,
+	TEST_STATE,
+	mockAuthorizeApi,
+	mockCallbackApi,
+	mockUserMeApi,
+	mockAllOAuthApis
+} from '../../helpers/api-mocks'
 
 test.describe('Google OAuth Login', () => {
 	test.beforeEach(async ({ page, context }) => {
