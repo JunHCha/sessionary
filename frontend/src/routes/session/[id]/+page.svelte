@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { waitForApiInit } from '$lib/api/config'
 	import {
@@ -18,15 +17,22 @@
 	let error = $state<string | null>(null)
 	let currentTime = $state(0)
 
-	onMount(async () => {
+	async function fetchSession(sessionId: number) {
+		loading = true
+		error = null
+		session = null
 		try {
 			await waitForApiInit()
-			session = await loadSessionDetail(data.sessionId)
+			session = await loadSessionDetail(sessionId)
 		} catch (e) {
 			error = e instanceof Error ? e.message : '세션을 불러올 수 없습니다'
 		} finally {
 			loading = false
 		}
+	}
+
+	$effect(() => {
+		fetchSession(data.sessionId)
 	})
 
 	function goToPrevious() {
