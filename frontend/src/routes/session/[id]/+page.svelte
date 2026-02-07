@@ -68,10 +68,19 @@
 			<!-- Top Row: Video Player + Subtitle Panel -->
 			<div class="flex gap-4 mb-4">
 				<div class="flex-[2]">
-					<VideoPlayer
-						src={session.videoUrl}
-						ontimeupdate={(e) => (currentTime = e.currentTime)}
-					/>
+					{#if session.videoUrl}
+						<VideoPlayer
+							src={session.videoUrl}
+							ontimeupdate={(e) => (currentTime = e.currentTime)}
+						/>
+					{:else}
+						<div
+							data-testid="video-unavailable"
+							class="w-full aspect-video bg-black rounded-xl flex items-center justify-center"
+						>
+							<p class="text-[#666] text-sm">이 세션에는 영상이 제공되지 않습니다</p>
+						</div>
+					{/if}
 				</div>
 				<div class="flex-1">
 					<SubtitlePanelPlaceholder />

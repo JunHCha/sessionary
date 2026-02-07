@@ -46,6 +46,29 @@ test.describe('Session Detail 페이지 Type 1 레이아웃', () => {
 	})
 })
 
+test.describe('Session Detail 비디오 없는 세션', () => {
+	test.beforeEach(async ({ page }) => {
+		mockUserMeApi(page)
+		mockSessionDetailApi(page, createMockSessionDetailResponse({ video: null }))
+		await page.goto('/session/1')
+		await page.waitForSelector(
+			'[data-testid="session-detail-page"]:not(:has([data-testid="session-loading"]))',
+			{ timeout: 10000 }
+		)
+	})
+
+	test('비디오가 없으면 VideoPlayer 대신 안내 메시지가 표시됩니다', async ({ page }) => {
+		const unavailable = page.locator('[data-testid="video-unavailable"]')
+		await expect(unavailable).toBeVisible()
+		await expect(unavailable).toContainText('영상이 제공되지 않습니다')
+	})
+
+	test('비디오가 없어도 VideoPlayer가 렌더링되지 않습니다', async ({ page }) => {
+		const videoPlayer = page.locator('[data-testid="video-player"]')
+		await expect(videoPlayer).not.toBeVisible()
+	})
+})
+
 test.describe('Session Detail Mock 인프라 검증', () => {
 	test.beforeEach(async ({ page }) => {
 		mockUserMeApi(page)
