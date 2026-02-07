@@ -17,17 +17,23 @@
 	let error = $state<string | null>(null)
 	let currentTime = $state(0)
 
+	let currentRequestId = 0
+
 	async function fetchSession(sessionId: number) {
+		const requestId = ++currentRequestId
 		loading = true
 		error = null
 		session = null
 		try {
 			await waitForApiInit()
-			session = await loadSessionDetail(sessionId)
+			const result = await loadSessionDetail(sessionId)
+			if (requestId !== currentRequestId) return
+			session = result
 		} catch (e) {
+			if (requestId !== currentRequestId) return
 			error = e instanceof Error ? e.message : '세션을 불러올 수 없습니다'
 		} finally {
-			loading = false
+			if (requestId === currentRequestId) loading = false
 		}
 	}
 
