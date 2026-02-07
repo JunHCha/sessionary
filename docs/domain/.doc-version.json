@@ -1,0 +1,26 @@
+{
+  "last_synced_commit": "6838dbb0db8eefcfd4c754bd05acb4a42958074b",
+  "synced_at": "2026-02-07T17:40:00+09:00",
+  "documents": {
+    "architecture.md": {
+      "description": "디렉토리 구조, 모듈 관계, 데이터 흐름, 주요 설계 결정",
+      "last_updated": "2026-02-07T17:40:00+09:00"
+    },
+    "source-index.md": {
+      "description": "핵심 파일/함수 인덱스, 엔트리포인트, 공유 유틸리티",
+      "last_updated": "2026-02-07T17:40:00+09:00"
+    },
+    "coding-style.md": {
+      "description": "기술 스택, 네이밍 컨벤션, 패턴, 린터/포매터 설정",
+      "last_updated": "2026-02-07T17:40:00+09:00"
+    },
+    "features.md": {
+      "description": "핵심 기능 6종, 도메인 개념, 사용자 플로우",
+      "last_updated": "2026-02-07T17:40:00+09:00"
+    },
+    "build-test.md": {
+      "description": "빌드/테스트 명령, 환경 설정, CI/CD, 로컬 개발",
+      "last_updated": "2026-02-07T17:40:00+09:00"
+    }
+  }
+}
