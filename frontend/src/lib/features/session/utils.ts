@@ -27,3 +27,11 @@ export function isHlsSource(src: string): boolean {
 	const url = src.split('?')[0]
 	return url.toLowerCase().endsWith('.m3u8')
 }
+
+export function parseSessionId(raw: string): number {
+	const id = Number(raw)
+	if (isNaN(id) || !Number.isInteger(id) || id <= 0) {
+		throw new Error('Invalid session ID')
+	}
+	return id
+}

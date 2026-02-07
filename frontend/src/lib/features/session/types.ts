@@ -1,3 +1,10 @@
+import type {
+	SessionDetailResponse,
+	SessionType,
+	Subtitle,
+	PlayingGuideStep
+} from '$lib/api/client/types.gen'
+
 /**
  * VideoPlayer 컴포넌트 Props
  */
@@ -50,4 +57,48 @@ export function createTimeUpdateEvent(currentTime: number, duration: number): Ti
  */
 export function createErrorEvent(message: string): ErrorEvent {
 	return { message }
+}
+
+export type { SessionType, Subtitle, PlayingGuideStep }
+
+export interface SessionDetailData {
+	id: number
+	title: string
+	sessionType: SessionType
+	sessionTypeLabel: string
+	lectureOrdering: number
+	lengthSec: number
+	lectureId: number
+	lectureTitle: string
+	totalSessions: number
+	videoUrl: string
+	videoType: string
+	sheetmusicUrl: string | null
+	syncOffset: number
+	subtitles: Array<Subtitle>
+	playingGuide: Array<PlayingGuideStep>
+	prevSessionId: number | null
+	nextSessionId: number | null
+}
+
+export function toSessionDetailData(response: SessionDetailResponse): SessionDetailData {
+	return {
+		id: response.id,
+		title: response.title,
+		sessionType: response.session_type,
+		sessionTypeLabel: response.session_type_label,
+		lectureOrdering: response.lecture_ordering,
+		lengthSec: response.length_sec,
+		lectureId: response.lecture.id,
+		lectureTitle: response.lecture.title,
+		totalSessions: response.lecture.total_sessions,
+		videoUrl: response.video?.url ?? '',
+		videoType: response.video?.type ?? '',
+		sheetmusicUrl: response.sheetmusic_url,
+		syncOffset: response.sync_offset,
+		subtitles: response.subtitles,
+		playingGuide: response.playing_guide,
+		prevSessionId: response.navigation.prev_session_id,
+		nextSessionId: response.navigation.next_session_id
+	}
 }
