@@ -3,7 +3,9 @@ sessionary.code-workspace
 .cursorrules
 .cursor/skills/rule/SKILL.md
 .cursor/worktrees/
-.claude/tmp/
+.claude*
+.omc
+.mcp.json
 
 # python
 .python-version
@@ -12,6 +14,3 @@ __pycache__/
 *.py[cod]
 *$py.class
 .mypy_cache
-
-# cc-telegram
-.cc-telegram/
