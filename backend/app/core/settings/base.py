@@ -86,6 +86,8 @@ class AppSettings(BaseAppSettings):
     minio_endpoint: str = "localhost:9000"
     minio_access_key: str = "minioadmin"
     minio_secret_key: str = "minioadmin"
+    minio_bucket_name: str = "videos"
+    minio_secure: bool = False
     cloudflare_account_id: str = ""
     cloudflare_api_token: str = ""
 

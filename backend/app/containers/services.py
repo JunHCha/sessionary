@@ -24,6 +24,8 @@ def _create_video_provider(settings) -> VideoProvider:
             endpoint=settings.minio_endpoint,
             access_key=settings.minio_access_key,
             secret_key=settings.minio_secret_key,
+            bucket_name=settings.minio_bucket_name,
+            secure=settings.minio_secure,
         )
     elif settings.video_provider == "cloudflare":
         from app.video.cloudflare import CloudflareVideoProvider
