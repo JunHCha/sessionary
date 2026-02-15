@@ -13,8 +13,8 @@ set -euo pipefail
 #   - flyctl auth login 완료
 #
 # 롤백 절차:
-#   flyctl releases -a sessionary-dawn-field-679
-#   flyctl deploy -a sessionary-dawn-field-679 --image <previous-image>
+#   flyctl releases -a sessionary-staging-backend
+#   flyctl deploy -a sessionary-staging-backend --image <previous-image>
 #
 # =============================================================================
 
@@ -33,11 +33,11 @@ if grep -q '<.*>' "$0"; then
 fi
 
 # -----------------------------------------------------------------------------
-# Backend: sessionary-dawn-field-679
+# Backend: sessionary-staging-backend
 # -----------------------------------------------------------------------------
-echo "[Backend] Setting secrets for sessionary-dawn-field-679..."
+echo "[Backend] Setting secrets for sessionary-staging-backend..."
 
-flyctl secrets set -a sessionary-dawn-field-679 \
+flyctl secrets set -a sessionary-staging-backend \
   APP_ENV="staging" \
   SECRET_KEY="<your-secret-key>" \
   DATABASE_URL="<your-database-url>" \
@@ -58,20 +58,20 @@ flyctl secrets set -a sessionary-dawn-field-679 \
   VIDEO_STORAGE_SECURE="true"
 
 echo "[Backend] Done. Verifying..."
-flyctl secrets list -a sessionary-dawn-field-679
+flyctl secrets list -a sessionary-staging-backend
 
 echo ""
 
 # -----------------------------------------------------------------------------
-# Frontend: staging-sessionary
+# Frontend: sessionary-staging-frontend
 # -----------------------------------------------------------------------------
-echo "[Frontend] Setting secrets for staging-sessionary..."
+echo "[Frontend] Setting secrets for sessionary-staging-frontend..."
 
-flyctl secrets set -a staging-sessionary \
+flyctl secrets set -a sessionary-staging-frontend \
   PUBLIC_API_BASE_URL="https://staging-api.sessionary.n-e.kr"
 
 echo "[Frontend] Done. Verifying..."
-flyctl secrets list -a staging-sessionary
+flyctl secrets list -a sessionary-staging-frontend
 
 echo ""
 echo "============================================"

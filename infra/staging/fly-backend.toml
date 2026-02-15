@@ -1,4 +1,4 @@
-app = 'sessionary-dawn-field-679'
+app = 'sessionary-staging-backend'
 primary_region = 'nrt'
 
 [build]

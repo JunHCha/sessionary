@@ -34,8 +34,8 @@ infra/
 
 | 앱 | Fly.io 이름 | 리전 | 사양 |
 |----|-------------|------|------|
-| Backend | `sessionary-dawn-field-679` | NRT (도쿄) | shared-cpu-1x, 1GB RAM, 싱글 인스턴스 |
-| Frontend | `staging-sessionary` | NRT (도쿄) | shared-cpu-1x, 1GB RAM, 싱글 인스턴스 |
+| Backend | `sessionary-staging-backend` | NRT (도쿄) | shared-cpu-1x, 1GB RAM, 싱글 인스턴스 |
+| Frontend | `sessionary-staging-frontend` | NRT (도쿄) | shared-cpu-1x, 1GB RAM, 싱글 인스턴스 |
 
 ### 외부 서비스
 
@@ -51,8 +51,8 @@ Staging 시크릿은 `flyctl secrets`로 관리됩니다.
 
 ```bash
 # 시크릿 목록 확인
-flyctl secrets list -a sessionary-dawn-field-679
-flyctl secrets list -a staging-sessionary
+flyctl secrets list -a sessionary-staging-backend
+flyctl secrets list -a sessionary-staging-frontend
 
 # 시크릿 설정 (runbook 참조)
 ./infra/scripts/setup-staging-secrets.sh
@@ -73,20 +73,20 @@ GitHub Actions가 `main` 브랜치 push 시 자동 배포합니다:
 
 ```bash
 # Backend
-flyctl deploy -a sessionary-dawn-field-679 --config infra/staging/fly-backend.toml --dockerfile backend/Dockerfile
+flyctl deploy -a sessionary-staging-backend --config infra/staging/fly-backend.toml --dockerfile backend/Dockerfile
 
 # Frontend
-flyctl deploy -a staging-sessionary --config infra/staging/fly-frontend.toml --dockerfile frontend/Dockerfile
+flyctl deploy -a sessionary-staging-frontend --config infra/staging/fly-frontend.toml --dockerfile frontend/Dockerfile
 ```
 
 ### 롤백
 
 ```bash
 # 릴리스 목록 확인
-flyctl releases -a sessionary-dawn-field-679
+flyctl releases -a sessionary-staging-backend
 
 # 특정 이미지로 롤백
-flyctl deploy -a sessionary-dawn-field-679 --image <previous-image>
+flyctl deploy -a sessionary-staging-backend --image <previous-image>
 ```
 
 ## Tigris Object Storage
@@ -99,7 +99,7 @@ Staging 비디오 스토리지로 Tigris (Fly.io 통합)를 사용합니다.
 
 ```bash
 # 스토리지 상태 확인
-flyctl storage list -a sessionary-dawn-field-679
+flyctl storage list -a sessionary-staging-backend
 ```
 
 ## Production 확장 계획

@@ -1,4 +1,4 @@
-app = "staging-sessionary"
+app = "sessionary-staging-frontend"
 primary_region = "nrt"
 
 [build]
