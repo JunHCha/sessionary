@@ -12,7 +12,7 @@ Sessionary 프로젝트의 인프라 구성 및 관리 가이드입니다.
 
 ## 디렉토리 구조
 
-```
+```text
 infra/
 ├── dev/
 │   └── docker-compose.yml      # 로컬 개발 환경 (DB, Redis, MinIO)
