@@ -13,9 +13,9 @@ services:
       REDIS_URL: redis://auth-redis:6379
       VIDEO_PROVIDER: local
       VIDEO_BASE_URL: http://localhost:9000/videos
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
+      VIDEO_STORAGE_ENDPOINT: minio:9000
+      VIDEO_STORAGE_ACCESS_KEY: minioadmin
+      VIDEO_STORAGE_SECRET_KEY: minioadmin
     depends_on:
       - db
       - auth-redis

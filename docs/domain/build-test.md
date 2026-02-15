@@ -19,7 +19,7 @@
 - `AUTH_REDIS_URL` - Redis 세션 저장소 URL
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_OAUTH_REDIRECT_URI` - OAuth
 - `VIDEO_PROVIDER` - 비디오 제공자 (local/cloudflare)
-- `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` - MinIO (로컬)
+- `VIDEO_STORAGE_ENDPOINT`, `VIDEO_STORAGE_ACCESS_KEY`, `VIDEO_STORAGE_SECRET_KEY` - S3 호환 Object Storage (로컬: MinIO, Staging: Tigris)
 
 #### Frontend (`.env.development`)
 - `PUBLIC_API_BASE_URL` - 백엔드 API 베이스 URL (기본: `http://localhost:8000`)
