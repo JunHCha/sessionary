@@ -38,7 +38,7 @@ flyctl secrets set -a sessionary-dawn-field-679 \
   GOOGLE_CLIENT_ID="<your-google-client-id>" \
   GOOGLE_CLIENT_SECRET="<your-google-client-secret>" \
   GOOGLE_OAUTH_REDIRECT_URI="https://staging.sessionary.n-e.kr/oauth-callback" \
-  ALLOWED_HOSTS_STR="localhost,127.0.0.1,0.0.0.0,https://staging.sessionary.n-e.kr" \
+  ALLOWED_HOSTS_STR="http://localhost,http://localhost:5173,http://127.0.0.1,https://staging.sessionary.n-e.kr" \
   COOKIE_NAME="satk" \
   COOKIE_DOMAIN=".sessionary.n-e.kr" \
   AUTH_SESSION_EXPIRE_SECONDS="36000" \
