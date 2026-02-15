@@ -28,7 +28,7 @@ jobs:
         run: |
           sleep 30
           for i in 1 2 3 4 5; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sessionary-dawn-field-679.fly.dev/docs)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sessionary-staging-backend.fly.dev/docs)
             if [ "$STATUS" = "200" ]; then
               echo "Health check passed"
               exit 0

@@ -5,16 +5,18 @@ set -euo pipefail
 # Sessionary Staging Secrets Management Runbook
 # =============================================================================
 #
-# 이 스크립트는 Staging 환경의 시크릿 관리를 위한 참조 문서(runbook)입니다.
-# 실행 전 placeholder 값(<...>)을 실제 값으로 교체하세요.
+# 사용법:
+#   1. 이 파일을 복사: cp setup-staging-secrets.example.sh setup-staging-secrets.sh
+#   2. setup-staging-secrets.sh의 placeholder(<...>)를 실제 값으로 교체
+#   3. 실행: bash setup-staging-secrets.sh
 #
 # 사전 요구사항:
 #   - flyctl CLI 설치 (https://fly.io/docs/flyctl/install/)
 #   - flyctl auth login 완료
 #
 # 롤백 절차:
-#   flyctl releases -a sessionary-dawn-field-679
-#   flyctl deploy -a sessionary-dawn-field-679 --image <previous-image>
+#   flyctl releases -a sessionary-staging-backend
+#   flyctl deploy -a sessionary-staging-backend --image <previous-image>
 #
 # =============================================================================
 
@@ -26,18 +28,18 @@ echo "WARNING: placeholder 값(<...>)을 실제 값으로 교체한 후 실행�
 echo ""
 
 # 플레이스홀더 잔존 검사
-if grep -q '<.*>' "$0"; then
+if grep -v '^\s*#' "$0" | grep -v 'echo' | grep -q '<.*>'; then
   echo "ERROR: 스크립트에 교체되지 않은 placeholder(<...>)가 남아 있습니다."
   echo "placeholder를 실제 값으로 교체한 후 다시 실행하세요."
   exit 1
 fi
 
 # -----------------------------------------------------------------------------
-# Backend: sessionary-dawn-field-679
+# Backend: sessionary-staging-backend
 # -----------------------------------------------------------------------------
-echo "[Backend] Setting secrets for sessionary-dawn-field-679..."
+echo "[Backend] Setting secrets for sessionary-staging-backend..."
 
-flyctl secrets set -a sessionary-dawn-field-679 \
+flyctl secrets set -a sessionary-staging-backend \
   APP_ENV="staging" \
   SECRET_KEY="<your-secret-key>" \
   DATABASE_URL="<your-database-url>" \
@@ -58,20 +60,20 @@ flyctl secrets set -a sessionary-dawn-field-679 \
   VIDEO_STORAGE_SECURE="true"
 
 echo "[Backend] Done. Verifying..."
-flyctl secrets list -a sessionary-dawn-field-679
+flyctl secrets list -a sessionary-staging-backend
 
 echo ""
 
 # -----------------------------------------------------------------------------
-# Frontend: staging-sessionary
+# Frontend: sessionary-staging-frontend
 # -----------------------------------------------------------------------------
-echo "[Frontend] Setting secrets for staging-sessionary..."
+echo "[Frontend] Setting secrets for sessionary-staging-frontend..."
 
-flyctl secrets set -a staging-sessionary \
+flyctl secrets set -a sessionary-staging-frontend \
   PUBLIC_API_BASE_URL="https://staging-api.sessionary.n-e.kr"
 
 echo "[Frontend] Done. Verifying..."
-flyctl secrets list -a staging-sessionary
+flyctl secrets list -a sessionary-staging-frontend
 
 echo ""
 echo "============================================"

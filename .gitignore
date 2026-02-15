@@ -1,5 +1,6 @@
 .env*
 !.env.example
+infra/scripts/setup-staging-secrets.sh
 
 backend/dev-scripts/*.sql
 sessionary.code-workspace
