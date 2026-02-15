@@ -44,11 +44,11 @@ flyctl secrets set -a sessionary-dawn-field-679 \
   AUTH_SESSION_EXPIRE_SECONDS="36000" \
   AUTH_SESSION_REFRESH_INTERVAL="1800" \
   VIDEO_PROVIDER="local" \
-  MINIO_ENDPOINT="<tigris-endpoint>" \
-  MINIO_ACCESS_KEY="<tigris-access-key>" \
-  MINIO_SECRET_KEY="<tigris-secret-key>" \
-  MINIO_BUCKET_NAME="<tigris-bucket-name>" \
-  MINIO_SECURE="true"
+  VIDEO_STORAGE_ENDPOINT="<tigris-endpoint>" \
+  VIDEO_STORAGE_ACCESS_KEY="<tigris-access-key>" \
+  VIDEO_STORAGE_SECRET_KEY="<tigris-secret-key>" \
+  VIDEO_STORAGE_BUCKET_NAME="<tigris-bucket-name>" \
+  VIDEO_STORAGE_SECURE="true"
 
 echo "[Backend] Done. Verifying..."
 flyctl secrets list -a sessionary-dawn-field-679

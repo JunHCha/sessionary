@@ -27,9 +27,9 @@ class TestAppSettings(AppSettings):
     auth_redis_url: str = ""
 
     video_provider: str = "mock"
-    minio_endpoint: str = "localhost:9000"
-    minio_access_key: str = "minioadmin"
-    minio_secret_key: str = "minioadmin"
+    video_storage_endpoint: str = "localhost:9000"
+    video_storage_access_key: str = "minioadmin"
+    video_storage_secret_key: str = "minioadmin"
     cloudflare_account_id: str = ""
     cloudflare_api_token: str = ""
 
