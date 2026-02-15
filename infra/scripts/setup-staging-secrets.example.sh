@@ -5,8 +5,10 @@ set -euo pipefail
 # Sessionary Staging Secrets Management Runbook
 # =============================================================================
 #
-# 이 스크립트는 Staging 환경의 시크릿 관리를 위한 참조 문서(runbook)입니다.
-# 실행 전 placeholder 값(<...>)을 실제 값으로 교체하세요.
+# 사용법:
+#   1. 이 파일을 복사: cp setup-staging-secrets.example.sh setup-staging-secrets.sh
+#   2. setup-staging-secrets.sh의 placeholder(<...>)를 실제 값으로 교체
+#   3. 실행: bash setup-staging-secrets.sh
 #
 # 사전 요구사항:
 #   - flyctl CLI 설치 (https://fly.io/docs/flyctl/install/)
@@ -26,7 +28,7 @@ echo "WARNING: placeholder 값(<...>)을 실제 값으로 교체한 후 실행�
 echo ""
 
 # 플레이스홀더 잔존 검사
-if grep -q '<.*>' "$0"; then
+if grep -v '^\s*#' "$0" | grep -v 'echo' | grep -q '<.*>'; then
   echo "ERROR: 스크립트에 교체되지 않은 placeholder(<...>)가 남아 있습니다."
   echo "placeholder를 실제 값으로 교체한 후 다시 실행하세요."
   exit 1

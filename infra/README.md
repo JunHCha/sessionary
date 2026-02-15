@@ -25,7 +25,7 @@ infra/
 └── scripts/
     ├── deploy-staging-backend.sh    # Backend 배포 스크립트
     ├── deploy-staging-frontend.sh   # Frontend 배포 스크립트
-    └── setup-staging-secrets.sh     # 시크릿 관리 runbook
+    └── setup-staging-secrets.example.sh     # 시크릿 관리 runbook
 ```
 
 ## Staging 인프라
@@ -55,10 +55,13 @@ flyctl secrets list -a sessionary-staging-backend
 flyctl secrets list -a sessionary-staging-frontend
 
 # 시크릿 설정 (runbook 참조)
-./infra/scripts/setup-staging-secrets.sh
+cp infra/scripts/setup-staging-secrets.example.sh infra/scripts/setup-staging-secrets.sh
+# setup-staging-secrets.sh의 placeholder를 실제 값으로 교체 후 실행
+bash infra/scripts/setup-staging-secrets.sh
 ```
 
-자세한 시크릿 목록과 설정 방법은 `infra/scripts/setup-staging-secrets.sh`를 참조하세요.
+자세한 시크릿 목록과 설정 방법은 `infra/scripts/setup-staging-secrets.example.sh`를 참조하세요.
+`setup-staging-secrets.sh`는 `.gitignore`에 포함되어 있으므로 실제 시크릿이 커밋되지 않습니다.
 
 ## 배포
 
