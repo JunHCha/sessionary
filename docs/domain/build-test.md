@@ -5,7 +5,7 @@
 ### 필수 요구사항
 - **Python**: >=3.11
 - **Node.js**: 20
-- **Package Managers**: Poetry (backend), Yarn (frontend)
+- **Package Managers**: uv (backend), Yarn (frontend)
 - **Docker**: 로컬 개발 인프라용 (PostgreSQL, Redis, MinIO)
 
 ### 환경 변수
@@ -30,8 +30,8 @@
 
 | 명령 | 설명 |
 |------|------|
-| `poetry install` | 의존성 설치 |
-| `alembic upgrade head` | DB 마이그레이션 실행 |
+| `uv sync` | 의존성 설치 |
+| `uv run alembic upgrade head` | DB 마이그레이션 실행 |
 | `docker build -f backend/Dockerfile .` | Docker 이미지 빌드 |
 
 ### Frontend
@@ -49,10 +49,9 @@
 
 | 명령 | 설명 | 대상 |
 |------|------|------|
-| `pytest -v tests` | 전체 테스트 | 전체 |
-| `pytest -v tests/api/` | API 테스트 | 엔드포인트 |
-| `pytest -v tests/session/` | 세션 도메인 테스트 | 세션 로직 |
-| `poetry run pytest -v tests` | Poetry 환경에서 실행 | 전체 |
+| `uv run pytest -v tests` | 전체 테스트 | 전체 |
+| `uv run pytest -v tests/api/` | API 테스트 | 엔드포인트 |
+| `uv run pytest -v tests/session/` | 세션 도메인 테스트 | 세션 로직 |
 
 - **DB**: SQLite + aiosqlite (테스트용)
 - **설정**: `pyproject.toml` → `[tool.pytest.ini_options]`
@@ -78,14 +77,29 @@
 
 | 워크플로 | 트리거 | 내용 |
 |----------|--------|------|
-| `2-test-backend.yml` | PR → `backend/**` | Python 3.11, Poetry, pytest |
+| `2-test-backend.yml` | PR → `backend/**` | Python 3.11, uv, pytest |
 | `2-test-frontend.yml` | PR → `frontend/**` | Node 20, Yarn, Playwright + Vitest |
-| `deploy-staging-backend.yml` | main 머지 | Fly.io 스테이징 배포 |
-| `deploy-staging-frontend.yml` | main 머지 | Fly.io 스테이징 배포 |
+| `deploy-staging-backend.yml` | main 머지 → `backend/**` 또는 `infra/**` | flyctl로 스테이징 배포 후 헬스체크 |
+| `deploy-staging-frontend.yml` | main 머지 → `frontend/**` 또는 `infra/**` | flyctl로 스테이징 배포 후 헬스체크 |
 
 ### 배포 플랫폼
 - **Fly.io**: 스테이징/프로덕션 컨테이너 배포
-- **설정**: `backend/fly.toml`, `frontend/fly.toml`
+- **스테이징 앱**: `sessionary-staging-backend`, `sessionary-staging-frontend`
+- **배포 스크립트**: `infra/scripts/deploy-staging-backend.sh`, `infra/scripts/deploy-staging-frontend.sh`
+- **설정**: `infra/staging/fly-backend.toml`, `infra/staging/fly-frontend.toml`
+
+### 스테이징 시크릿 설정
+
+```bash
+# 런북 복사 후 placeholder를 실제 값으로 치환
+cp infra/scripts/setup-staging-secrets.example.sh infra/scripts/setup-staging-secrets.sh
+# placeholder(<...>) 교체 후 실행
+bash infra/scripts/setup-staging-secrets.sh
+```
+
+- GitHub Actions 시크릿: `FLY_API_TOKEN_BACKEND`, `FLY_API_TOKEN_FRONTEND`
+- 필수 환경변수: `DATABASE_URL`, `AUTH_REDIS_URL`, `SECRET_KEY`, `GOOGLE_CLIENT_ID/SECRET` 등
+- 스테이징 Object Storage: Tigris (`VIDEO_STORAGE_ENDPOINT` 등)
 
 ## 로컬 개발
 
@@ -98,9 +112,9 @@ docker compose up -d  # PostgreSQL, Redis, MinIO
 ### Backend 개발 서버
 ```bash
 cd backend
-poetry install
-alembic upgrade head
-uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
+uv sync
+uv run alembic upgrade head
+uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend 개발 서버

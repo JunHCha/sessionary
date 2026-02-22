@@ -40,6 +40,8 @@
 | `frontend/src/lib/features/auth/stores/` | 인증 스토어 | 로그인 상태 관리 |
 | `frontend/src/lib/features/session/services.ts` | 세션 서비스 | `loadSessionDetail()` |
 | `frontend/src/lib/features/session/types.ts` | 세션 타입 | `SessionDetailData`, `toSessionDetailData()` |
+| `frontend/src/lib/features/session/utils.ts` | 세션 유틸리티 | `formatTime()`, `isHlsSource()`, `parseSessionId()` |
+| `frontend/src/lib/features/session/index.ts` | 세션 모듈 배럴 | 타입·유틸·서비스·컴포넌트 re-export |
 | `frontend/src/lib/features/session/components/VideoPlayer.svelte` | 비디오 플레이어 | HLS.js 기반 플레이어 |
 | `frontend/src/lib/features/lecture/components/SessionList.svelte` | 세션 목록 | 렉처 내 세션 리스트 |
 | `frontend/src/lib/features/ticket/` | 티켓 모달 | 확인/부족 모달 |
