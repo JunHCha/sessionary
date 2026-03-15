@@ -17,6 +17,7 @@
 		"start": "node build"
 	},
 	"dependencies": {
+		"@coderline/alphatab": "^1.8.1",
 		"@sveltejs/adapter-node": "^5.5.1",
 		"@sveltejs/kit": "^2.50.0",
 		"axios": "^1.12.0",
@@ -35,6 +36,7 @@
 		"cookie": "^0.7.0"
 	},
 	"devDependencies": {
+		"@coderline/alphatab-vite": "^1.8.1",
 		"@hey-api/openapi-ts": "^0.46.3",
 		"@playwright/test": "^1.44.1",
 		"@sveltejs/adapter-auto": "^3.0.0",
