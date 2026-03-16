@@ -49,12 +49,14 @@
 		src,
 		poster = undefined,
 		autoplay = false,
+		seekTo = undefined,
 		ontimeupdate,
 		onplay,
 		onpause,
 		onended,
 		onerror
 	}: VideoPlayerProps & {
+		seekTo?: number
 		ontimeupdate?: (event: TimeUpdateEvent) => void
 		onplay?: () => void
 		onpause?: () => void
@@ -148,6 +150,12 @@
 			isLoading = true
 			errorMessage = null
 			initHls()
+		}
+	})
+
+	$effect(() => {
+		if (seekTo !== undefined && videoElement) {
+			videoElement.currentTime = seekTo
 		}
 	})
 </script>
