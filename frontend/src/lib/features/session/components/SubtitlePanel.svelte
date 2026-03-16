@@ -1,7 +1,3 @@
-<script lang="ts" module>
-	export { findActiveSubtitleIndex, formatSubtitleTimestamp } from '../utils'
-</script>
-
 <script lang="ts">
 	import type { Subtitle } from '$lib/api/client/types.gen'
 	import { findActiveSubtitleIndex, formatSubtitleTimestamp } from '../utils'
@@ -18,13 +14,14 @@
 
 	let scrollContainer: HTMLDivElement
 	let activeIndex = $derived(findActiveSubtitleIndex(subtitles, currentTime * 1000))
+	let previousActiveIndex = -1
 
 	$effect(() => {
+		if (activeIndex === previousActiveIndex) return
+		previousActiveIndex = activeIndex
 		if (activeIndex >= 0 && scrollContainer) {
-			const activeElement = scrollContainer.querySelector('[data-active="true"]')
-			if (activeElement) {
-				activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-			}
+			const activeElement = scrollContainer.querySelector('[data-active]')
+			activeElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
 		}
 	})
 
@@ -63,7 +60,7 @@
 				<button
 					type="button"
 					data-testid="subtitle-item-{index}"
-					data-active={index === activeIndex ? 'true' : 'false'}
+					data-active={index === activeIndex ? '' : undefined}
 					onclick={() => handleSubtitleClick(subtitle.timestamp_ms)}
 					class="w-full text-left px-3 py-2.5 rounded-md transition-colors cursor-pointer
 						{index === activeIndex

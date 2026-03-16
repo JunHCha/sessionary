@@ -7,7 +7,8 @@
 		TabSheetPlaceholder,
 		PlayingGuidePlaceholder,
 		loadSessionDetail,
-		type SessionDetailData
+		type SessionDetailData,
+		type SeekRequest
 	} from '$lib/features/session'
 
 	let { data } = $props()
@@ -16,10 +17,10 @@
 	let loading = $state(true)
 	let error = $state<string | null>(null)
 	let currentTime = $state(0)
-	let seekTime = $state<number | undefined>(undefined)
+	let seekRequest = $state<SeekRequest | undefined>(undefined)
 
 	function handleSeekRequest(timeSec: number) {
-		seekTime = timeSec
+		seekRequest = { time: timeSec, version: (seekRequest?.version ?? 0) + 1 }
 	}
 
 	let currentRequestId = 0
@@ -76,7 +77,7 @@
 					{#if session.videoUrl}
 						<VideoPlayer
 							src={session.videoUrl}
-							seekTo={seekTime}
+							seekTo={seekRequest}
 							ontimeupdate={(e) => (currentTime = e.currentTime)}
 						/>
 					{:else}

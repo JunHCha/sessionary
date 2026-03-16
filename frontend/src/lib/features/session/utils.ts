@@ -39,8 +39,10 @@ export function parseSessionId(raw: string): number {
 import type { Subtitle } from '$lib/api/client/types.gen'
 
 /**
- * 현재 시간(ms)에 해당하는 활성 자막 인덱스를 반환
- * 자막이 없거나 첫 자막 이전이면 -1
+ * 현재 시간(ms)에 해당하는 활성 자막 인덱스를 반환.
+ * 자막이 없거나 첫 자막 이전이면 -1.
+ *
+ * @precondition subtitles는 timestamp_ms 기준 오름차순 정렬이어야 함
  */
 export function findActiveSubtitleIndex(subtitles: Array<Subtitle>, currentTimeMs: number): number {
 	if (subtitles.length === 0) return -1
@@ -59,8 +61,5 @@ export function findActiveSubtitleIndex(subtitles: Array<Subtitle>, currentTimeM
  * timestamp_ms를 "분:초" 형식으로 변환
  */
 export function formatSubtitleTimestamp(timestampMs: number): string {
-	const totalSeconds = Math.floor(timestampMs / 1000)
-	const minutes = Math.floor(totalSeconds / 60)
-	const seconds = totalSeconds % 60
-	return `${minutes}:${seconds.toString().padStart(2, '0')}`
+	return formatTime(timestampMs / 1000)
 }

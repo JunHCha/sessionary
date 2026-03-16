@@ -42,7 +42,7 @@
 <script lang="ts">
 	import Hls from 'hls.js'
 	import { onDestroy } from 'svelte'
-	import type { VideoPlayerProps, TimeUpdateEvent, ErrorEvent } from '../types'
+	import type { VideoPlayerProps, TimeUpdateEvent, ErrorEvent, SeekRequest } from '../types'
 	import VideoControls from './VideoControls.svelte'
 
 	let {
@@ -56,7 +56,7 @@
 		onended,
 		onerror
 	}: VideoPlayerProps & {
-		seekTo?: number
+		seekTo?: SeekRequest
 		ontimeupdate?: (event: TimeUpdateEvent) => void
 		onplay?: () => void
 		onpause?: () => void
@@ -153,9 +153,12 @@
 		}
 	})
 
+	let lastSeekVersion = -1
+
 	$effect(() => {
-		if (seekTo !== undefined && videoElement) {
-			videoElement.currentTime = seekTo
+		if (seekTo && seekTo.version !== lastSeekVersion && videoElement) {
+			videoElement.currentTime = seekTo.time
+			lastSeekVersion = seekTo.version
 		}
 	})
 </script>
