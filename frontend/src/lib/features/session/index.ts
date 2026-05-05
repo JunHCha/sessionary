@@ -1,5 +1,6 @@
 export { default as VideoPlayerPlaceholder } from './components/VideoPlayerPlaceholder.svelte'
 export { default as SubtitlePanelPlaceholder } from './components/SubtitlePanelPlaceholder.svelte'
+export { default as SubtitlePanel } from './components/SubtitlePanel.svelte'
 export { default as TabSheet } from './components/TabSheet.svelte'
 export { default as TabSheetPlaceholder } from './components/TabSheetPlaceholder.svelte'
 export { default as PlayingGuidePlaceholder } from './components/PlayingGuidePlaceholder.svelte'

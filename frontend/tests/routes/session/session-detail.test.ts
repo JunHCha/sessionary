@@ -25,8 +25,8 @@ test.describe('Session Detail 페이지 Type 1 레이아웃', () => {
 		await expect(videoPlayer).toBeVisible()
 	})
 
-	test('SubtitlePanel placeholder가 표시됩니다', async ({ page }) => {
-		const subtitlePanel = page.locator('[data-testid="subtitle-panel-placeholder"]')
+	test('SubtitlePanel이 표시됩니다', async ({ page }) => {
+		const subtitlePanel = page.locator('[data-testid="subtitle-panel"]')
 		await expect(subtitlePanel).toBeVisible()
 	})
 

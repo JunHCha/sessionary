@@ -35,3 +35,31 @@ export function parseSessionId(raw: string): number {
 	}
 	return id
 }
+
+import type { Subtitle } from '$lib/api/client/types.gen'
+
+/**
+ * 현재 시간(ms)에 해당하는 활성 자막 인덱스를 반환.
+ * 자막이 없거나 첫 자막 이전이면 -1.
+ *
+ * @precondition subtitles는 timestamp_ms 기준 오름차순 정렬이어야 함
+ */
+export function findActiveSubtitleIndex(subtitles: Array<Subtitle>, currentTimeMs: number): number {
+	if (subtitles.length === 0) return -1
+	let activeIndex = -1
+	for (let i = 0; i < subtitles.length; i++) {
+		if (subtitles[i].timestamp_ms <= currentTimeMs) {
+			activeIndex = i
+		} else {
+			break
+		}
+	}
+	return activeIndex
+}
+
+/**
+ * timestamp_ms를 "분:초" 형식으로 변환
+ */
+export function formatSubtitleTimestamp(timestampMs: number): string {
+	return formatTime(timestampMs / 1000)
+}

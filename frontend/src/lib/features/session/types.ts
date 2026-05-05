@@ -59,6 +59,14 @@ export function createErrorEvent(message: string): ErrorEvent {
 	return { message }
 }
 
+/**
+ * 외부 seek 요청 (version으로 동일 시간 재요청 구분)
+ */
+export interface SeekRequest {
+	time: number
+	version: number
+}
+
 export type { SessionType, Subtitle, PlayingGuideStep }
 
 export interface SessionDetailData {

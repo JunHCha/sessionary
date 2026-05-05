@@ -3,11 +3,12 @@
 	import { waitForApiInit } from '$lib/api/config'
 	import {
 		VideoPlayer,
-		SubtitlePanelPlaceholder,
+		SubtitlePanel,
 		TabSheet,
 		PlayingGuidePlaceholder,
 		loadSessionDetail,
-		type SessionDetailData
+		type SessionDetailData,
+		type SeekRequest
 	} from '$lib/features/session'
 
 	let { data } = $props()
@@ -16,6 +17,11 @@
 	let loading = $state(true)
 	let error = $state<string | null>(null)
 	let currentTime = $state(0)
+	let seekRequest = $state<SeekRequest | undefined>(undefined)
+
+	function handleSeekRequest(timeSec: number) {
+		seekRequest = { time: timeSec, version: (seekRequest?.version ?? 0) + 1 }
+	}
 
 	let currentRequestId = 0
 
@@ -71,6 +77,7 @@
 					{#if session.videoUrl}
 						<VideoPlayer
 							src={session.videoUrl}
+							seekTo={seekRequest}
 							ontimeupdate={(e) => (currentTime = e.currentTime)}
 						/>
 					{:else}
@@ -83,7 +90,11 @@
 					{/if}
 				</div>
 				<div class="flex-1">
-					<SubtitlePanelPlaceholder />
+					<SubtitlePanel
+						subtitles={session.subtitles}
+						currentTime={currentTime}
+						onseekrequest={handleSeekRequest}
+					/>
 				</div>
 			</div>
 
