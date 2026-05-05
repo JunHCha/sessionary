@@ -40,12 +40,6 @@ class BaseTicketRepository(abc.ABC):
     ) -> tuple[tb.TicketUsage, tb.User]:
         raise NotImplementedError
 
-    @abc.abstractmethod
-    async def get_any_ticket_usage(
-        self, user_id: uuid.UUID, lecture_id: int
-    ) -> tb.TicketUsage | None:
-        raise NotImplementedError
-
 
 class TicketRepository(BaseTicketRepository):
     async def get_ticket_usage(
@@ -139,15 +133,3 @@ class TicketRepository(BaseTicketRepository):
                 await session.refresh(user)
 
                 return ticket_usage, user
-
-    async def get_any_ticket_usage(
-        self, user_id: uuid.UUID, lecture_id: int
-    ) -> tb.TicketUsage | None:
-        async with self._session_manager.async_session() as session:
-            result = await session.execute(
-                select(tb.TicketUsage).where(
-                    tb.TicketUsage.user_id == user_id,
-                    tb.TicketUsage.lecture_id == lecture_id,
-                )
-            )
-            return result.scalar_one_or_none()

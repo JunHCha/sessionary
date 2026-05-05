@@ -98,24 +98,14 @@ class TicketService:
                 ticket_count=user.ticket_count,
             )
 
-        any_usage = await self.repository.get_any_ticket_usage(user.id, lecture_id)
-        if any_usage:
-            expires_at = any_usage.used_at + datetime.timedelta(
+        existing_usage = await self.repository.get_ticket_usage(user.id, lecture_id)
+        if existing_usage:
+            expires_at = existing_usage.used_at + datetime.timedelta(
                 weeks=self.TICKET_VALIDITY_WEEKS
             )
-            now = datetime.datetime.now(datetime.timezone.utc)
-            if expires_at.tzinfo is None:
-                now = now.replace(tzinfo=None)
-            if now <= expires_at:
-                return LectureAccessStatus(
-                    accessible=True,
-                    reason="ticket_used",
-                    expires_at=expires_at,
-                    ticket_count=user.ticket_count,
-                )
             return LectureAccessStatus(
-                accessible=False,
-                reason="ticket_expired",
+                accessible=True,
+                reason="ticket_used",
                 expires_at=expires_at,
                 ticket_count=user.ticket_count,
             )
