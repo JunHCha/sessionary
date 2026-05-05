@@ -91,6 +91,14 @@ class AppSettings(BaseAppSettings):
     cloudflare_account_id: str = ""
     cloudflare_api_token: str = ""
 
+    # Sheetmusic
+    sheetmusic_provider: str = "local"
+    sheetmusic_storage_endpoint: str = "localhost:9000"
+    sheetmusic_storage_access_key: str = "minioadmin"
+    sheetmusic_storage_secret_key: str = "minioadmin"
+    sheetmusic_storage_bucket_name: str = "sheetmusic"
+    sheetmusic_storage_secure: bool = False
+
     # Logging
     logging_level: int = logging.INFO
     loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")

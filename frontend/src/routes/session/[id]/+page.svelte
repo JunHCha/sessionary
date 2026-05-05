@@ -4,7 +4,7 @@
 	import {
 		VideoPlayer,
 		SubtitlePanelPlaceholder,
-		TabSheetPlaceholder,
+		TabSheet,
 		PlayingGuidePlaceholder,
 		loadSessionDetail,
 		type SessionDetailData
@@ -89,7 +89,11 @@
 
 			<!-- Tab Sheet -->
 			<div class="mb-4">
-				<TabSheetPlaceholder />
+				<TabSheet
+					sheetmusicUrl={session.sheetmusicUrl}
+					{currentTime}
+					syncOffset={session.syncOffset}
+				/>
 			</div>
 
 			<!-- Playing Guide -->

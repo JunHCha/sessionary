@@ -27,6 +27,7 @@ class TestAppSettings(AppSettings):
     auth_redis_url: str = ""
 
     video_provider: str = "mock"
+    sheetmusic_provider: str = "mock"
     video_storage_endpoint: str = "localhost:9000"
     video_storage_access_key: str = "minioadmin"
     video_storage_secret_key: str = "minioadmin"

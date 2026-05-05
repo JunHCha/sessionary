@@ -8,15 +8,20 @@ from app.session.models import (
     VideoInfo,
 )
 from app.session.repository import BaseSessionRepository
+from app.sheetmusic.service import SheetmusicProvider
 from app.video.service import VideoProvider
 
 
 class SessionService:
     def __init__(
-        self, repository: BaseSessionRepository, video_provider: VideoProvider
+        self,
+        repository: BaseSessionRepository,
+        video_provider: VideoProvider,
+        sheetmusic_provider: SheetmusicProvider,
     ) -> None:
         self.repository = repository
         self.video_provider = video_provider
+        self.sheetmusic_provider = sheetmusic_provider
 
     async def get_session_detail(self, session_id: int) -> SessionDetailResponse | None:
         lesson = await self.repository.get_session_detail(session_id)
@@ -41,6 +46,13 @@ class SessionService:
             lesson.lecture_id
         )
 
+        sheetmusic_url = None
+        if lesson.sheetmusic_url:
+            sheetmusic_response = await self.sheetmusic_provider.get_url(
+                lesson.sheetmusic_url
+            )
+            sheetmusic_url = sheetmusic_response.url
+
         subtitles_data = lesson.subtitles or []
         subtitles = [Subtitle(**s) for s in subtitles_data]
 
@@ -60,7 +72,7 @@ class SessionService:
                 total_sessions=total_sessions,
             ),
             video=video_info,
-            sheetmusic_url=lesson.sheetmusic_url or None,
+            sheetmusic_url=sheetmusic_url,
             sync_offset=lesson.sync_offset,
             subtitles=subtitles,
             playing_guide=playing_guide,
