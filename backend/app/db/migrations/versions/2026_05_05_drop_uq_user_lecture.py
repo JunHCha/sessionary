@@ -22,4 +22,16 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    # upgrade 이후 중복 (user_id, lecture_id) 행이 존재할 수 있으므로
+    # 각 쌍에서 가장 최근 행(used_at DESC)만 남기고 나머지를 삭제한다.
+    op.execute(
+        """
+        DELETE FROM ticket_usage
+        WHERE id NOT IN (
+            SELECT DISTINCT ON (user_id, lecture_id) id
+            FROM ticket_usage
+            ORDER BY user_id, lecture_id, used_at DESC
+        )
+        """
+    )
     op.create_unique_constraint("uq_user_lecture", "ticket_usage", ["user_id", "lecture_id"])
