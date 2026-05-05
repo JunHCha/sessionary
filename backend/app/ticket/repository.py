@@ -3,7 +3,7 @@ import datetime
 import uuid
 
 from fastapi import HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import desc, select, update
 from sqlalchemy.orm import selectinload
 
 from app.db import tables as tb
@@ -49,11 +49,14 @@ class TicketRepository(BaseTicketRepository):
             now = datetime.datetime.now(datetime.timezone.utc)
             one_week_ago = now - datetime.timedelta(weeks=1)
             result = await session.execute(
-                select(tb.TicketUsage).where(
+                select(tb.TicketUsage)
+                .where(
                     tb.TicketUsage.user_id == user_id,
                     tb.TicketUsage.lecture_id == lecture_id,
                     tb.TicketUsage.used_at > one_week_ago,
                 )
+                .order_by(desc(tb.TicketUsage.used_at))
+                .limit(1)
             )
             return result.scalar_one_or_none()
 
