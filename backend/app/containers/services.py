@@ -9,7 +9,27 @@ from app.ticket.repository import TicketRepository
 from app.ticket.service import TicketService
 from app.user.repository import UserRepository
 from app.user.service import UserService
+from app.sheetmusic.service import SheetmusicProvider
 from app.video.service import VideoProvider
+
+
+def _create_sheetmusic_provider(settings) -> SheetmusicProvider:
+    if settings.sheetmusic_provider == "mock":
+        from app.sheetmusic.mock import MockSheetmusicProvider
+
+        return MockSheetmusicProvider()
+    elif settings.sheetmusic_provider == "local":
+        from app.sheetmusic.minio import MinIOSheetmusicProvider
+
+        return MinIOSheetmusicProvider(
+            endpoint=settings.sheetmusic_storage_endpoint,
+            access_key=settings.sheetmusic_storage_access_key,
+            secret_key=settings.sheetmusic_storage_secret_key,
+            bucket_name=settings.sheetmusic_storage_bucket_name,
+            secure=settings.sheetmusic_storage_secure,
+        )
+    else:
+        raise ValueError(f"Unknown sheetmusic provider: {settings.sheetmusic_provider}")
 
 
 def _create_video_provider(settings) -> VideoProvider:
@@ -84,6 +104,11 @@ class ServicesContainer(containers.DeclarativeContainer):
         settings=settings,
     )
 
+    sheetmusic_provider = providers.Factory(
+        _create_sheetmusic_provider,
+        settings=settings,
+    )
+
     session_repository = providers.Factory(
         SessionRepository,
         session_manager=database.session_manager,
@@ -93,4 +118,5 @@ class ServicesContainer(containers.DeclarativeContainer):
         SessionService,
         repository=session_repository,
         video_provider=video_provider,
+        sheetmusic_provider=sheetmusic_provider,
     )

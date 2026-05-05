@@ -6,6 +6,7 @@ import pytest
 from app.db import tables as tb
 from app.session.models import SessionType, SessionDetailResponse
 from app.session.service import SessionService
+from app.sheetmusic.models import SheetmusicURLResponse
 from app.video.models import VideoURLResponse
 
 
@@ -20,10 +21,21 @@ def mock_video_provider():
 
 
 @pytest.fixture
-def session_service(mock_session_repository, mock_video_provider):
+def mock_sheetmusic_provider():
+    mock = AsyncMock()
+    mock.get_url.return_value = SheetmusicURLResponse(
+        url="https://signed.url/sheet.gp",
+        expires_at=datetime.datetime.now(datetime.timezone.utc),
+    )
+    return mock
+
+
+@pytest.fixture
+def session_service(mock_session_repository, mock_video_provider, mock_sheetmusic_provider):
     return SessionService(
         repository=mock_session_repository,
         video_provider=mock_video_provider,
+        sheetmusic_provider=mock_sheetmusic_provider,
     )
 
 
@@ -177,3 +189,61 @@ class TestSessionService:
 
         assert result.navigation.prev_session_id == 5
         assert result.navigation.next_session_id == 7
+
+    async def test_sut_get_session_detail_returns_sheetmusic_presigned_url(
+        self, session_service, mock_session_repository, mock_video_provider, mock_sheetmusic_provider
+    ):
+        lesson = create_mock_lesson(sheetmusic_url="sheet.gp")
+        mock_session_repository.get_session_detail.return_value = lesson
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.count_sessions_in_lecture.return_value = 1
+        mock_video_provider.get_video_url.return_value = VideoURLResponse(
+            url="https://signed.url/video.m3u8",
+            type="hls",
+            expires_at=datetime.datetime.now(datetime.timezone.utc),
+        )
+        mock_sheetmusic_provider.get_url.return_value = SheetmusicURLResponse(
+            url="https://signed.url/sheet.gp?sig=abc",
+            expires_at=datetime.datetime.now(datetime.timezone.utc),
+        )
+
+        result = await session_service.get_session_detail(1)
+
+        assert result.sheetmusic_url == "https://signed.url/sheet.gp?sig=abc"
+        mock_sheetmusic_provider.get_url.assert_called_once_with("sheet.gp")
+
+    async def test_sut_get_session_detail_returns_none_sheetmusic_when_empty(
+        self, session_service, mock_session_repository, mock_video_provider, mock_sheetmusic_provider
+    ):
+        lesson = create_mock_lesson(sheetmusic_url="")
+        mock_session_repository.get_session_detail.return_value = lesson
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.count_sessions_in_lecture.return_value = 1
+        mock_video_provider.get_video_url.return_value = VideoURLResponse(
+            url="https://signed.url/video.m3u8",
+            type="hls",
+            expires_at=datetime.datetime.now(datetime.timezone.utc),
+        )
+
+        result = await session_service.get_session_detail(1)
+
+        assert result.sheetmusic_url is None
+        mock_sheetmusic_provider.get_url.assert_not_called()
+
+    async def test_sut_get_session_detail_returns_none_sheetmusic_when_none(
+        self, session_service, mock_session_repository, mock_video_provider, mock_sheetmusic_provider
+    ):
+        lesson = create_mock_lesson(sheetmusic_url=None)
+        mock_session_repository.get_session_detail.return_value = lesson
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.count_sessions_in_lecture.return_value = 1
+        mock_video_provider.get_video_url.return_value = VideoURLResponse(
+            url="https://signed.url/video.m3u8",
+            type="hls",
+            expires_at=datetime.datetime.now(datetime.timezone.utc),
+        )
+
+        result = await session_service.get_session_detail(1)
+
+        assert result.sheetmusic_url is None
+        mock_sheetmusic_provider.get_url.assert_not_called()
