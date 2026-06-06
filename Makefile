@@ -53,8 +53,12 @@ gen-client: export-spec ## 스냅샷 생성 + 프론트 client 재생성
 
 check-spec: ## 계약 drift 검증 (CI 와 동일)
 	cd backend && uv run python dev-scripts/export_openapi.py --check
-	cd frontend && yarn generate-client && git diff --exit-code src/lib/api/client \
-		|| (echo "API client 가 backend/openapi.json 과 다릅니다. 'make gen-client' 후 커밋하세요." && exit 1)
+	cd frontend && yarn generate-client
+	@if [ -n "$$(git status --porcelain frontend/src/lib/api/client)" ]; then \
+		echo "API client 가 backend/openapi.json 과 다릅니다. 'make gen-client' 후 커밋하세요."; \
+		git status --porcelain frontend/src/lib/api/client; \
+		exit 1; \
+	fi
 
 # --- 품질 -------------------------------------------------------------------
 

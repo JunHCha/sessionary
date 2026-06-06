@@ -1,10 +1,10 @@
 # Sessionary
 
-## Description
-Sessionary is an online lecture service focusing on worship/band sessions.
-Our platform provides a unique learning experience for musicians and worship leaders, offering a variety of courses and resources to enhance musical skills and knowledge.
+## 소개
+Sessionary는 워십/밴드 세션에 초점을 맞춘 온라인 강의 서비스입니다.
+음악가와 워십 리더에게 차별화된 학습 경험을 제공하며, 음악 실력과 지식을 키울 수 있는 다양한 강의와 리소스를 제공합니다.
 
-## Monorepo
+## 모노레포
 
 - `frontend/` — SvelteKit (yarn)
 - `backend/` — FastAPI (uv)

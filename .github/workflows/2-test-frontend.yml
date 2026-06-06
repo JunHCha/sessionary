@@ -27,8 +27,12 @@ jobs:
         working-directory: ./frontend
         run: |
           yarn generate-client
-          git diff --exit-code src/lib/api/client \
-            || (echo "::error::API client out of sync with backend/openapi.json. Run 'yarn generate-client' and commit." && exit 1)
+          # --porcelain 은 수정(M)뿐 아니라 신규 생성된 untracked(??) 파일도 감지한다.
+          if [ -n "$(git status --porcelain src/lib/api/client)" ]; then
+            echo "::error::API client out of sync with backend/openapi.json. Run 'yarn generate-client' and commit."
+            git status --porcelain src/lib/api/client
+            exit 1
+          fi
 
       - name: Sync SvelteKit
         working-directory: ./frontend
