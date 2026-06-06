@@ -40,10 +40,13 @@
 |------|------|
 | `yarn install` | 의존성 설치 |
 | `yarn build` | 프로덕션 빌드 |
-| `yarn generate-client` | OpenAPI 클라이언트 재생성 |
+| `yarn generate-client` | OpenAPI 클라이언트 재생성 (`backend/openapi.json` 스냅샷 기반) |
 | `docker build -f frontend/Dockerfile .` | Docker 이미지 빌드 |
 
 ## 테스트 명령
+
+> 계층별 책임(유닛 / E2E+mock / 백엔드 계약)과 mock 전략은 [../testing.md](../testing.md) 참고.
+> 루트에서 통합 실행하려면 `make test` / `make test-be` / `make test-e2e` 등을 쓴다.
 
 ### Backend
 
@@ -77,8 +80,8 @@
 
 | 워크플로 | 트리거 | 내용 |
 |----------|--------|------|
-| `2-test-backend.yml` | PR → `backend/**` | Python 3.11, uv, pytest |
-| `2-test-frontend.yml` | PR → `frontend/**` | Node 20, Yarn, Playwright + Vitest |
+| `2-test-backend.yml` | PR → `backend/**` | Python 3.11, uv, OpenAPI 스냅샷 검증, pytest |
+| `2-test-frontend.yml` | PR → `frontend/**` 또는 `backend/openapi.json` | Node 20, Yarn, API client 동기화 검증, Playwright + Vitest |
 | `deploy-staging-backend.yml` | main 머지 → `backend/**` 또는 `infra/**` | flyctl로 스테이징 배포 후 헬스체크 |
 | `deploy-staging-frontend.yml` | main 머지 → `frontend/**` 또는 `infra/**` | flyctl로 스테이징 배포 후 헬스체크 |
 
@@ -125,7 +128,17 @@ yarn dev  # http://localhost:5173
 ```
 
 ### API 클라이언트 재생성
+프론트 client 는 라이브 백엔드가 아니라 커밋된 스냅파일 `backend/openapi.json`
+에서 생성된다. 백엔드 응답 계약을 바꿨다면 스냅샷부터 재생성한다.
+
 ```bash
-cd frontend
-yarn generate-client  # 백엔드 서버가 실행 중이어야 함
+# 루트에서 한 번에 (스냅샷 + client 재생성)
+make gen-client
+make check-spec   # drift 없는지 검증 (CI 와 동일)
+
+# 개별 실행
+cd backend && uv run python dev-scripts/export_openapi.py  # 스냅샷 갱신
+cd frontend && yarn generate-client                        # 백엔드 불필요
 ```
+
+`backend/openapi.json` 과 `frontend/src/lib/api/client` 를 함께 커밋한다.
