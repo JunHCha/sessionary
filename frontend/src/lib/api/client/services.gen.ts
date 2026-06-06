@@ -334,6 +334,7 @@ export const getLectureAccessStatusTicketLectureLectureIdGet = (data: GetLecture
         lecture_id: data.lectureId
     },
     errors: {
+        401: 'Missing token or inactive user.',
         422: 'Validation Error'
     }
 }); };
@@ -352,6 +353,7 @@ export const useTicketTicketLectureLectureIdPost = (data: UseTicketTicketLecture
         lecture_id: data.lectureId
     },
     errors: {
+        401: 'Missing token or inactive user.',
         422: 'Validation Error'
     }
 }); };

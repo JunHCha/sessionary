@@ -4,6 +4,8 @@ on:
     types: [ready_for_review, synchronize]
     paths:
       - "frontend/**"
+      # 백엔드 OpenAPI 계약(스냅샷)이 바뀌면 client 동기화 검증을 위해 실행
+      - "backend/openapi.json"
 jobs:
   fe-test:
     timeout-minutes: 60
@@ -20,6 +22,17 @@ jobs:
       - name: Install dependencies
         working-directory: ./frontend
         run: npm i -g yarn &&  yarn install --frozen-lockfile
+
+      - name: Verify API client matches backend OpenAPI snapshot
+        working-directory: ./frontend
+        run: |
+          yarn generate-client
+          # --porcelain 은 수정(M)뿐 아니라 신규 생성된 untracked(??) 파일도 감지한다.
+          if [ -n "$(git status --porcelain src/lib/api/client)" ]; then
+            echo "::error::API client out of sync with backend/openapi.json. Run 'yarn generate-client' and commit."
+            git status --porcelain src/lib/api/client
+            exit 1
+          fi
 
       - name: Sync SvelteKit
         working-directory: ./frontend

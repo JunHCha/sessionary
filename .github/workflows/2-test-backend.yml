@@ -21,6 +21,10 @@ jobs:
         working-directory: ./backend
         run: uv sync --frozen
 
+      - name: Verify OpenAPI snapshot matches code
+        working-directory: ./backend
+        run: uv run python dev-scripts/export_openapi.py --check
+
       - name: Run the tests
         working-directory: ./backend
         run: uv run pytest -v tests

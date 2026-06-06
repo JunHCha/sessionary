@@ -641,6 +641,10 @@ export type $OpenApiTs = {
                  */
                 200: LectureAccessStatus;
                 /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+                /**
                  * Validation Error
                  */
                 422: HTTPValidationError;
@@ -653,6 +657,10 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: LectureAccessStatus;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
                 /**
                  * Validation Error
                  */
