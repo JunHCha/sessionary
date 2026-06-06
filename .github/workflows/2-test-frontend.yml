@@ -4,6 +4,8 @@ on:
     types: [ready_for_review, synchronize]
     paths:
       - "frontend/**"
+      # 백엔드 OpenAPI 계약(스냅샷)이 바뀌면 client 동기화 검증을 위해 실행
+      - "backend/openapi.json"
 jobs:
   fe-test:
     timeout-minutes: 60
@@ -20,6 +22,13 @@ jobs:
       - name: Install dependencies
         working-directory: ./frontend
         run: npm i -g yarn &&  yarn install --frozen-lockfile
+
+      - name: Verify API client matches backend OpenAPI snapshot
+        working-directory: ./frontend
+        run: |
+          yarn generate-client
+          git diff --exit-code src/lib/api/client \
+            || (echo "::error::API client out of sync with backend/openapi.json. Run 'yarn generate-client' and commit." && exit 1)
 
       - name: Sync SvelteKit
         working-directory: ./frontend
