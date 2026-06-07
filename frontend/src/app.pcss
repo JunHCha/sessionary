@@ -1,3 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'flowbite/plugin';
+
+/* Class-based dark mode (was darkMode: 'selector' in tailwind.config.ts) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Theme tokens — migrated from tailwind.config.ts / src/lib/styles/tokens.ts */
+@theme {
+	/* brand */
+	--color-brand-primary: #ff5c16;
+	--color-brand-tag: #734e38;
+
+	/* surface (background) */
+	--color-surface-default: #000000;
+	--color-surface-card: #1a1a1a;
+
+	/* content (text) */
+	--color-content-primary: #ffffff;
+	--color-content-secondary: #848484;
+	--color-content-muted: #656565;
+
+	/* primary scale */
+	--color-primary-50: #fff5f2;
+	--color-primary-100: #fff1ee;
+	--color-primary-200: #ffe4de;
+	--color-primary-300: #ffd5cc;
+	--color-primary-400: #ffbcad;
+	--color-primary-500: #fe795d;
+	--color-primary-600: #ef562f;
+	--color-primary-700: #eb4f27;
+	--color-primary-800: #cc4522;
+	--color-primary-900: #a5371b;
+}
+
+@source '../node_modules/flowbite-svelte/dist';
+@source '../node_modules/flowbite-svelte-icons/dist';
