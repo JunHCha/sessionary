@@ -157,9 +157,7 @@
 
 	<!-- Controls bar -->
 	<div
-		class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 {!showControls
-			? 'opacity-0 pointer-events-none'
-			: ''}"
+		class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 {!showControls ? 'opacity-0 pointer-events-none' : ''}"
 	>
 		<!-- Progress bar -->
 		<div
@@ -211,11 +209,7 @@
 
 				<!-- Volume -->
 				<div class="flex items-center gap-2">
-					<button
-						onclick={toggleMute}
-						aria-label={isMuted ? 'Unmute' : 'Mute'}
-						class="p-1"
-					>
+					<button onclick={toggleMute} aria-label={isMuted ? 'Unmute' : 'Mute'} class="p-1">
 						{#if isMuted || volume === 0}
 							<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
 								<path
@@ -237,8 +231,7 @@
 						step="0.1"
 						value={isMuted ? 0 : volume}
 						oninput={changeVolume}
-						class="volume-slider w-16 h-1 rounded-full appearance-none cursor-pointer"
-						style="--volume-fill: {(isMuted ? 0 : volume) * 100}%"
+						class="w-16 h-1 bg-white/30 rounded-full appearance-none cursor-pointer"
 						aria-label="Volume"
 					/>
 				</div>
@@ -285,42 +278,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	/* Volume slider: fill the track up to the thumb with the main theme color. */
-	.volume-slider {
-		background: linear-gradient(
-			to right,
-			#ff5c16 0%,
-			#ff5c16 var(--volume-fill, 100%),
-			rgba(255, 255, 255, 0.3) var(--volume-fill, 100%),
-			rgba(255, 255, 255, 0.3) 100%
-		);
-	}
-
-	.volume-slider::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		appearance: none;
-		width: 12px;
-		height: 12px;
-		border-radius: 9999px;
-		background: #fff;
-		border: none;
-		cursor: pointer;
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
-	}
-
-	.volume-slider::-moz-range-thumb {
-		width: 12px;
-		height: 12px;
-		border-radius: 9999px;
-		background: #fff;
-		border: none;
-		cursor: pointer;
-	}
-
-	/* Firefox renders its own track; keep it transparent so the gradient shows. */
-	.volume-slider::-moz-range-track {
-		background: transparent;
-	}
-</style>
