@@ -19,7 +19,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
-    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -263,6 +262,3 @@ class TicketUsage(Base):
     )
 
     __tablename__ = "ticket_usage"
-    __table_args__ = (
-        UniqueConstraint("user_id", "lecture_id", name="uq_user_lecture"),
-    )

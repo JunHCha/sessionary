@@ -3,6 +3,7 @@
 infra/scripts/setup-staging-secrets.sh
 
 backend/dev-scripts/*.sql
+scripts/
 sessionary.code-workspace
 .cursorrules
 .cursor/skills/rule/SKILL.md

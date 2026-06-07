@@ -255,3 +255,54 @@ async def test_sut_use_ticket_returns_existing_when_already_used(
         )
         refreshed_user = result.scalar_one()
         assert refreshed_user.ticket_count == initial_count
+
+
+@pytest.fixture
+async def expired_ticket(
+    test_user: User, dummy_lecture: Lecture, test_session: AsyncSession
+) -> TicketUsage:
+    ticket_usage = TicketUsage(
+        user_id=test_user.id,
+        lecture_id=dummy_lecture.id,
+        used_at=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(weeks=2),
+    )
+    async with test_session.begin():
+        test_session.add(ticket_usage)
+        await test_session.flush()
+    await test_session.commit()
+    return ticket_usage
+
+
+async def test_sut_use_ticket_succeeds_when_old_ticket_expired(
+    authorized_client: AsyncClient,
+    dummy_lecture: Lecture,
+    expired_ticket: TicketUsage,
+    test_user: User,
+    test_session: AsyncSession,
+):
+    """만료된 ticket_usage(>1주)가 있을 때 재사용 시도 → 새 ticket 소비 후 accessible=True"""
+    from app.db.tables import User as UserTable, TicketUsage as TicketUsageTable
+
+    initial_count = test_user.ticket_count
+    response = await authorized_client.post(f"/ticket/lecture/{dummy_lecture.id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["accessible"] is True
+    assert data["reason"] == "ticket_used"
+    assert data["expires_at"] is not None
+
+    async with test_session.begin():
+        result = await test_session.execute(
+            select(UserTable).where(UserTable.id == test_user.id)
+        )
+        refreshed_user = result.scalar_one()
+        assert refreshed_user.ticket_count == initial_count - 1
+
+        usage_result = await test_session.execute(
+            select(TicketUsageTable).where(
+                TicketUsageTable.user_id == test_user.id,
+                TicketUsageTable.lecture_id == dummy_lecture.id,
+            )
+        )
+        usages = usage_result.scalars().all()
+        assert len(usages) == 2
