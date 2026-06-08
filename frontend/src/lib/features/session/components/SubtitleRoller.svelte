@@ -11,6 +11,8 @@
 		transformOrigin: string
 		opacity: number
 		isActive: boolean
+		/** 정면 라인만 클릭 가능. 겹쳐 있는 비정면(투명) 라인이 클릭을 가로채지 않게 한다. */
+		pointerEvents: 'auto' | 'none'
 	}
 
 	/**
@@ -26,7 +28,8 @@
 				transform: 'translateY(0)',
 				transformOrigin: 'center center',
 				opacity,
-				isActive: true
+				isActive: true,
+				pointerEvents: 'auto'
 			}
 		}
 		if (offset < 0) {
@@ -34,14 +37,16 @@
 				transform: `translateY(${offset * GAP}px) rotateX(${distance * BEND}deg)`,
 				transformOrigin: 'center bottom',
 				opacity,
-				isActive: false
+				isActive: false,
+				pointerEvents: 'none'
 			}
 		}
 		return {
 			transform: `translateY(${offset * GAP}px) rotateX(${-distance * BEND}deg)`,
 			transformOrigin: 'center top',
 			opacity,
-			isActive: false
+			isActive: false,
+			pointerEvents: 'none'
 		}
 	}
 
@@ -113,6 +118,8 @@
 
 	function toggleExpanded() {
 		expanded = !expanded
+		// 펼치면 전체 탐색 모드 → 휠 탐색 상태를 해제해 재생 위치에 다시 동기화한다.
+		if (expanded) manualIndex = null
 	}
 </script>
 
@@ -174,6 +181,9 @@
 							style:transform={style.transform}
 							style:transform-origin={style.transformOrigin}
 							style:opacity={style.opacity}
+							style:pointer-events={style.pointerEvents}
+							tabindex={style.isActive ? 0 : -1}
+							aria-hidden={style.isActive ? undefined : true}
 							onclick={() => handleClick(subtitle.timestamp_ms)}
 						>
 							<span class="ts">{formatSubtitleTimestamp(subtitle.timestamp_ms)}</span>

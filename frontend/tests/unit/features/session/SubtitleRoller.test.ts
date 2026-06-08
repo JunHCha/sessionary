@@ -42,6 +42,15 @@ describe('SubtitleRoller', () => {
 			expect(computeLineStyle(3).opacity).toBe(0)
 			expect(computeLineStyle(-4).opacity).toBe(0)
 		})
+
+		it('정면 라인만 클릭 가능하고 비정면 라인은 클릭을 가로채지 않는다', async () => {
+			const { computeLineStyle } =
+				await import('$lib/features/session/components/SubtitleRoller.svelte')
+			expect(computeLineStyle(0).pointerEvents).toBe('auto')
+			expect(computeLineStyle(-1).pointerEvents).toBe('none')
+			expect(computeLineStyle(1).pointerEvents).toBe('none')
+			expect(computeLineStyle(2).pointerEvents).toBe('none')
+		})
 	})
 
 	describe('computeWheelIndex', () => {
