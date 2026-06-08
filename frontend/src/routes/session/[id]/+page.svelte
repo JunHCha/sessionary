@@ -3,9 +3,8 @@
 	import { waitForApiInit } from '$lib/api/config'
 	import {
 		VideoPlayer,
-		SubtitlePanel,
+		SubtitleRoller,
 		TabSheet,
-		PlayingGuidePlaceholder,
 		loadSessionDetail,
 		type SessionDetailData,
 		type SeekRequest
@@ -60,8 +59,8 @@
 	}
 </script>
 
-<main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px]">
-	<div class="max-w-[1400px] mx-auto px-6 py-6">
+<main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px] flex flex-col">
+	<div class="w-full max-w-[1280px] min-w-[390px] mx-auto px-[40px] py-6 flex-1 flex flex-col">
 		{#if loading}
 			<div data-testid="session-loading" class="flex items-center justify-center h-[60vh]">
 				<div class="text-[#999] text-lg">로딩 중...</div>
@@ -71,45 +70,54 @@
 				<div class="text-red-400 text-lg">{error}</div>
 			</div>
 		{:else if session}
-			<!-- Top Row: Video Player + Subtitle Panel -->
-			<div class="flex gap-4 mb-4">
-				<div class="flex-[2]">
-					{#if session.videoUrl}
-						<VideoPlayer
-							src={session.videoUrl}
-							seekTo={seekRequest}
-							ontimeupdate={(e) => (currentTime = e.currentTime)}
-						/>
-					{:else}
-						<div
-							data-testid="video-unavailable"
-							class="w-full aspect-video bg-black rounded-xl flex items-center justify-center"
-						>
-							<p class="text-[#666] text-sm">이 세션에는 영상이 제공되지 않습니다</p>
-						</div>
-					{/if}
+			<!-- 심플 헤더 -->
+			<div class="flex items-end justify-between gap-4 mb-5">
+				<h1 data-testid="session-title" class="text-2xl font-bold leading-tight text-white">
+					{session.title}
+				</h1>
+				<div data-testid="session-progress" class="text-sm font-medium shrink-0">
+					<span class="text-brand-primary"
+						>{String(session.lectureOrdering).padStart(2, '0')}</span
+					>
+					<span class="text-[#666] mx-1.5">/</span>
+					<span class="text-[#ddd]">{String(session.totalSessions).padStart(2, '0')}</span
+					>
 				</div>
-				<div class="flex-1">
-					<SubtitlePanel
+			</div>
+
+			<!-- Video + Subtitle Roller (세로 스택, 컨테이너 전체 너비) -->
+			<div class="mb-4">
+				{#if session.videoUrl}
+					<VideoPlayer
+						src={session.videoUrl}
+						seekTo={seekRequest}
+						ontimeupdate={(e) => (currentTime = e.currentTime)}
+					/>
+				{:else}
+					<div
+						data-testid="video-unavailable"
+						class="w-full aspect-video bg-black rounded-xl flex items-center justify-center"
+					>
+						<p class="text-[#666] text-sm">이 세션에는 영상이 제공되지 않습니다</p>
+					</div>
+				{/if}
+
+				<div class="mt-3">
+					<SubtitleRoller
 						subtitles={session.subtitles}
-						currentTime={currentTime}
+						{currentTime}
 						onseekrequest={handleSeekRequest}
 					/>
 				</div>
 			</div>
 
-			<!-- Tab Sheet -->
-			<div class="mb-4">
+			<!-- Tab Sheet (남은 높이를 채워 페이지 height full) -->
+			<div class="mb-4 flex-1 flex">
 				<TabSheet
 					sheetmusicUrl={session.sheetmusicUrl}
 					{currentTime}
 					syncOffset={session.syncOffset}
 				/>
-			</div>
-
-			<!-- Playing Guide -->
-			<div class="mb-4">
-				<PlayingGuidePlaceholder />
 			</div>
 
 			<!-- Session Navigation -->

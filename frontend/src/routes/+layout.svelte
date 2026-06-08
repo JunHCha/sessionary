@@ -42,6 +42,8 @@
 			'Noto Color Emoji';
 		background-color: #0c0c0c;
 		color: #ffffff;
+		/* 전역 min-width: 모바일(휴대폰) 폭 하한 */
+		min-width: 390px;
 	}
 
 	main {
