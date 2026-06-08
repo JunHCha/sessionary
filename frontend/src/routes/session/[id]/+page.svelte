@@ -60,7 +60,7 @@
 </script>
 
 <main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px]">
-	<div class="max-w-[1400px] mx-auto px-6 py-6">
+	<div class="max-w-[1400px] min-w-[960px] mx-auto px-6 py-6">
 		{#if loading}
 			<div data-testid="session-loading" class="flex items-center justify-center h-[60vh]">
 				<div class="text-[#999] text-lg">로딩 중...</div>
@@ -85,8 +85,8 @@
 				</div>
 			</div>
 
-			<!-- Video + Subtitle Roller (세로 스택) -->
-			<div class="mx-auto mb-4" style="max-width: 960px;">
+			<!-- Video + Subtitle Roller (세로 스택, 컨테이너 전체 너비) -->
+			<div class="mb-4">
 				{#if session.videoUrl}
 					<VideoPlayer
 						src={session.videoUrl}

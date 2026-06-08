@@ -144,7 +144,7 @@
 			</div>
 		</div>
 	{:else}
-		<div class="flex items-center justify-between px-4 pt-2.5 pb-1">
+		<div class="flex items-center justify-between px-4 pt-2 pb-0.5">
 			<h3 class="text-[11px] font-medium text-[#848484] tracking-wide">자막</h3>
 			<button
 				type="button"
@@ -211,7 +211,7 @@
 <style>
 	.roller {
 		position: relative;
-		height: 108px;
+		height: 84px;
 		perspective: 340px;
 		overflow: hidden;
 		transition:
