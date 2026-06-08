@@ -3,9 +3,8 @@
 	import { waitForApiInit } from '$lib/api/config'
 	import {
 		VideoPlayer,
-		SubtitlePanel,
+		SubtitleRoller,
 		TabSheet,
-		PlayingGuidePlaceholder,
 		loadSessionDetail,
 		type SessionDetailData,
 		type SeekRequest
@@ -71,28 +70,42 @@
 				<div class="text-red-400 text-lg">{error}</div>
 			</div>
 		{:else if session}
-			<!-- Top Row: Video Player + Subtitle Panel -->
-			<div class="flex gap-4 mb-4">
-				<div class="flex-[2]">
-					{#if session.videoUrl}
-						<VideoPlayer
-							src={session.videoUrl}
-							seekTo={seekRequest}
-							ontimeupdate={(e) => (currentTime = e.currentTime)}
-						/>
-					{:else}
-						<div
-							data-testid="video-unavailable"
-							class="w-full aspect-video bg-black rounded-xl flex items-center justify-center"
-						>
-							<p class="text-[#666] text-sm">이 세션에는 영상이 제공되지 않습니다</p>
-						</div>
-					{/if}
+			<!-- 심플 헤더 -->
+			<div class="flex items-end justify-between gap-4 mb-5">
+				<h1 data-testid="session-title" class="text-2xl font-bold leading-tight text-white">
+					{session.title}
+				</h1>
+				<div data-testid="session-progress" class="text-sm font-medium shrink-0">
+					<span class="text-brand-primary"
+						>{String(session.lectureOrdering).padStart(2, '0')}</span
+					>
+					<span class="text-[#666] mx-1.5">/</span>
+					<span class="text-[#ddd]">{String(session.totalSessions).padStart(2, '0')}</span
+					>
 				</div>
-				<div class="flex-1">
-					<SubtitlePanel
+			</div>
+
+			<!-- Video + Subtitle Roller (세로 스택) -->
+			<div class="mx-auto mb-4" style="max-width: 960px;">
+				{#if session.videoUrl}
+					<VideoPlayer
+						src={session.videoUrl}
+						seekTo={seekRequest}
+						ontimeupdate={(e) => (currentTime = e.currentTime)}
+					/>
+				{:else}
+					<div
+						data-testid="video-unavailable"
+						class="w-full aspect-video bg-black rounded-xl flex items-center justify-center"
+					>
+						<p class="text-[#666] text-sm">이 세션에는 영상이 제공되지 않습니다</p>
+					</div>
+				{/if}
+
+				<div class="mt-3">
+					<SubtitleRoller
 						subtitles={session.subtitles}
-						currentTime={currentTime}
+						{currentTime}
 						onseekrequest={handleSeekRequest}
 					/>
 				</div>
@@ -105,11 +118,6 @@
 					{currentTime}
 					syncOffset={session.syncOffset}
 				/>
-			</div>
-
-			<!-- Playing Guide -->
-			<div class="mb-4">
-				<PlayingGuidePlaceholder />
 			</div>
 
 			<!-- Session Navigation -->
