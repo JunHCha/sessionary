@@ -145,10 +145,7 @@
 		</div>
 	{:else}
 		<div class="flex items-center justify-between px-4 pt-2.5 pb-1">
-			<h3 class="text-[11px] font-medium text-[#848484] tracking-wide">
-				자막
-				<span class="text-[#555]">· 휠로 굴려 탐색 · 클릭 시 이동</span>
-			</h3>
+			<h3 class="text-[11px] font-medium text-[#848484] tracking-wide">자막</h3>
 			<button
 				type="button"
 				data-testid="subtitle-roller-toggle"
