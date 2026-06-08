@@ -4,6 +4,7 @@
 
 	let isScrolled = $state(false)
 	let isVisible = $state(true)
+	let menuOpen = $state(false)
 	let lastScrollY = $state(0)
 	let hideTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -86,7 +87,8 @@
 				alt="Sessionary Logo"
 			/>
 		</a>
-		<div class="flex gap-0">
+		<!-- 데스크탑 메뉴 (md 이상) -->
+		<div class="hidden md:flex gap-0">
 			<a
 				href="/favorites"
 				class="h-[50px] w-[88px] flex items-center justify-center text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#F5F5F5] whitespace-nowrap transition-opacity duration-300"
@@ -100,7 +102,7 @@
 				나의폴더
 			</a>
 		</div>
-		<div class="ml-auto flex items-center">
+		<div class="ml-auto hidden md:flex items-center">
 			<div class="h-[50px] flex items-center justify-end transition-opacity duration-300">
 				<LoginButton />
 			</div>
@@ -116,7 +118,54 @@
 				/>
 			</button>
 		</div>
+
+		<!-- 햄버거 (md 미만) -->
+		<button
+			type="button"
+			aria-label="메뉴"
+			aria-expanded={menuOpen}
+			onclick={() => (menuOpen = !menuOpen)}
+			class="ml-auto md:hidden h-[50px] w-[50px] flex items-center justify-center text-[#F5F5F5]"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				{#if menuOpen}
+					<path stroke-width="2" stroke-linecap="round" d="M6 6l12 12M6 18 18 6" />
+				{:else}
+					<path stroke-width="2" stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+				{/if}
+			</svg>
+		</button>
 	</div>
+
+	<!-- 모바일 드롭다운 메뉴 (md 미만, 햄버거 토글) -->
+	{#if menuOpen}
+		<div
+			class="md:hidden absolute top-full inset-x-0 bg-[#0C0C0C] border-t border-[#1a1a1a] flex flex-col py-1"
+		>
+			<a
+				href="/favorites"
+				onclick={() => (menuOpen = false)}
+				class="px-[40px] py-3 text-[14px] font-pretendard font-bold text-[#F5F5F5]"
+				>즐겨찾기</a
+			>
+			<a
+				href="/folder"
+				onclick={() => (menuOpen = false)}
+				class="px-[40px] py-3 text-[14px] font-pretendard font-bold text-[#F5F5F5]"
+				>나의폴더</a
+			>
+			<div class="px-[40px] py-3 border-t border-[#1a1a1a] flex items-center justify-between">
+				<LoginButton />
+				<button aria-label="검색" type="button" class="flex items-center">
+					<img
+						src="/images/iconamoon_search-bold.png"
+						alt="search"
+						class="h-[19px] w-[19px]"
+					/>
+				</button>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
