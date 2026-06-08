@@ -1,4 +1,4 @@
-<footer class="relative w-full">
+<footer class="relative w-full min-w-[390px]">
 	<div class="absolute top-0 left-0 right-0 h-px bg-[#454545]"></div>
 	<div class="w-[1200px] ml-[40px] min-[1280px]:mx-auto h-[5rem] py-4 flex items-start">
 		<div class="h-[67px] w-[350px] flex items-center">

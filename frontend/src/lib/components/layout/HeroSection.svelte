@@ -1,4 +1,6 @@
-<section class="h-screen snap-start snap-always flex items-center justify-center bg-[#0c0c0c]">
+<section
+	class="h-screen min-w-[390px] snap-start snap-always flex items-center justify-center bg-[#0c0c0c]"
+>
 	<div class="relative hero-section w-full h-full">
 		<img src="/images/main.png" alt="main" class="w-full h-full object-cover object-center" />
 		<!-- Bottom gradient -->

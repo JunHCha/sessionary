@@ -59,8 +59,8 @@
 	}
 </script>
 
-<main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px]">
-	<div class="max-w-[1400px] min-w-[960px] mx-auto px-6 py-6">
+<main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px] flex flex-col">
+	<div class="w-[1200px] min-w-[390px] ml-[40px] min-[1280px]:mx-auto py-6 flex-1 flex flex-col">
 		{#if loading}
 			<div data-testid="session-loading" class="flex items-center justify-center h-[60vh]">
 				<div class="text-[#999] text-lg">로딩 중...</div>
@@ -111,8 +111,8 @@
 				</div>
 			</div>
 
-			<!-- Tab Sheet -->
-			<div class="mb-4">
+			<!-- Tab Sheet (남은 높이를 채워 페이지 height full) -->
+			<div class="mb-4 flex-1 flex">
 				<TabSheet
 					sheetmusicUrl={session.sheetmusicUrl}
 					{currentTime}

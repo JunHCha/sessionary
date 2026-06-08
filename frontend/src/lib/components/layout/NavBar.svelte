@@ -69,7 +69,7 @@
 </script>
 
 <div
-	class="w-full h-[50px] bg-[#0C0C0C] fixed z-50 transition-all duration-300"
+	class="w-full min-w-[390px] h-[50px] bg-[#0C0C0C] fixed z-50 transition-all duration-300"
 	class:minimal={isScrolled}
 	class:opacity-95={isVisible}
 	class:opacity-0={!isVisible}
