@@ -55,11 +55,11 @@
 				type="button"
 				onclick={goToPrevious}
 				disabled={!canGoPrevious}
-				class="absolute left-[32px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
+				class="absolute left-[8px] min-[1280px]:left-[32px] top-1/2 -translate-y-1/2 w-[40px] h-[40px] min-[1280px]:w-[64px] min-[1280px]:h-[64px] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
 				aria-label="이전 슬라이드"
 			>
 				<svg
-					class="w-[32px] h-[32px]"
+					class="w-[20px] h-[20px] min-[1280px]:w-[32px] min-[1280px]:h-[32px]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -78,11 +78,11 @@
 				type="button"
 				onclick={goToNext}
 				disabled={!canGoNext}
-				class="absolute right-[32px] top-1/2 -translate-y-1/2 w-[64px] h-[64px] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
+				class="absolute right-[8px] min-[1280px]:right-[32px] top-1/2 -translate-y-1/2 w-[40px] h-[40px] min-[1280px]:w-[64px] min-[1280px]:h-[64px] bg-[#0C0C0C] bg-opacity-60 hover:bg-opacity-80 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
 				aria-label="다음 슬라이드"
 			>
 				<svg
-					class="w-[32px] h-[32px]"
+					class="w-[20px] h-[20px] min-[1280px]:w-[32px] min-[1280px]:h-[32px]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
