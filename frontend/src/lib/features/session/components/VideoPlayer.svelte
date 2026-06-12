@@ -129,6 +129,7 @@
 	function handleLoadedMetadata() {
 		if (shouldClearLoading('loadedmetadata')) {
 			isLoading = false
+			errorMessage = null
 		}
 	}
 
