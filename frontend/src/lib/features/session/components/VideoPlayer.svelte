@@ -37,6 +37,22 @@
 		}
 		return src
 	}
+
+	/**
+	 * 로딩 스피너 해제 여부 판단
+	 * iOS Safari는 사용자 제스처 전까지 canplay를 발생시키지 않으므로
+	 * loadedmetadata 시점에도 로딩을 해제한다
+	 */
+	export function shouldClearLoading(eventType: 'canplay' | 'loadedmetadata'): boolean {
+		return eventType === 'canplay' || eventType === 'loadedmetadata'
+	}
+
+	/**
+	 * 스피너 오버레이 클래스
+	 * pointer-events-none: 스피너가 떠 있어도 아래 VideoControls 탭이 가능해야 함 (iOS 데드락 방지)
+	 */
+	export const SPINNER_OVERLAY_CLASS =
+		'absolute inset-0 flex items-center justify-center bg-black/50 z-10 pointer-events-none'
 </script>
 
 <script lang="ts">
@@ -104,8 +120,17 @@
 	}
 
 	function handleCanPlay() {
-		isLoading = false
-		errorMessage = null
+		if (shouldClearLoading('canplay')) {
+			isLoading = false
+			errorMessage = null
+		}
+	}
+
+	function handleLoadedMetadata() {
+		if (shouldClearLoading('loadedmetadata')) {
+			isLoading = false
+			errorMessage = null
+		}
 	}
 
 	function initHls() {
@@ -165,7 +190,7 @@
 
 <div data-testid="video-player" class="relative w-full aspect-video bg-black rounded-xl overflow-hidden">
 	{#if isLoading}
-		<div class="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+		<div class={SPINNER_OVERLAY_CLASS}>
 			<div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin">
 			</div>
 		</div>
@@ -186,11 +211,13 @@
 		{poster}
 		src={getVideoSource(src, nativeHlsSupport)}
 		playsinline
+		preload="metadata"
 		ontimeupdate={handleTimeUpdate}
 		onplay={handlePlay}
 		onpause={handlePause}
 		onended={handleEnded}
 		oncanplay={handleCanPlay}
+		onloadedmetadata={handleLoadedMetadata}
 		onerror={() => handleError('Failed to load video')}
 	>
 		<track kind="captions" />

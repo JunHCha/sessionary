@@ -72,4 +72,37 @@ describe('VideoPlayer', () => {
 			expect(src).toBe('')
 		})
 	})
+
+	describe('shouldClearLoading', () => {
+		it('canplay 이벤트 시 로딩을 해제한다', async () => {
+			const { shouldClearLoading } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(shouldClearLoading('canplay')).toBe(true)
+		})
+
+		it('loadedmetadata 이벤트 시에도 로딩을 해제한다 (iOS Safari 대응)', async () => {
+			const { shouldClearLoading } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(shouldClearLoading('loadedmetadata')).toBe(true)
+		})
+	})
+
+	describe('SPINNER_OVERLAY_CLASS', () => {
+		it('pointer-events-none을 포함해 아래 컨트롤 탭을 막지 않는다', async () => {
+			const { SPINNER_OVERLAY_CLASS } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(SPINNER_OVERLAY_CLASS).toContain('pointer-events-none')
+		})
+
+		it('기존 오버레이 레이아웃 클래스를 유지한다', async () => {
+			const { SPINNER_OVERLAY_CLASS } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(SPINNER_OVERLAY_CLASS).toContain('absolute inset-0')
+			expect(SPINNER_OVERLAY_CLASS).toContain('z-10')
+		})
+	})
 })
