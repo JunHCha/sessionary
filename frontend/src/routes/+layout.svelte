@@ -25,7 +25,9 @@
 	}
 </script>
 
-<NavBar />
+{#if !$page.url.pathname.startsWith('/admin')}
+	<NavBar />
+{/if}
 
 <main>
 	<div class="flex-1">
