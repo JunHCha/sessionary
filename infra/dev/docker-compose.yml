@@ -8,14 +8,23 @@ services:
     ports:
       - 8000:8000
     environment:
+      # 앱 시크릿(SECRET_KEY, COOKIE_*, GOOGLE_*, ALLOWED_HOSTS_STR 등)은
+      # backend/.env.dev 에서 로드된다. 아래는 컨테이너 네트워크 기준 오버라이드.
       APP_ENV: dev
       DATABASE_URL: postgresql+asyncpg://user:password@db:5432/sessionary
-      REDIS_URL: redis://auth-redis:6379
+      AUTH_REDIS_URL: redis://auth-redis:6379
+      # 스토리지: 서버→MinIO 는 내부 호스트(minio:9000),
+      # presigned URL 은 브라우저가 접근하므로 PUBLIC_ENDPOINT(localhost:9000) 로 서명.
       VIDEO_PROVIDER: local
-      VIDEO_BASE_URL: http://localhost:9000/videos
       VIDEO_STORAGE_ENDPOINT: minio:9000
+      VIDEO_STORAGE_PUBLIC_ENDPOINT: localhost:9000
       VIDEO_STORAGE_ACCESS_KEY: minioadmin
       VIDEO_STORAGE_SECRET_KEY: minioadmin
+      SHEETMUSIC_PROVIDER: local
+      SHEETMUSIC_STORAGE_ENDPOINT: minio:9000
+      SHEETMUSIC_STORAGE_PUBLIC_ENDPOINT: localhost:9000
+      SHEETMUSIC_STORAGE_ACCESS_KEY: minioadmin
+      SHEETMUSIC_STORAGE_SECRET_KEY: minioadmin
     depends_on:
       - db
       - auth-redis
@@ -87,6 +96,8 @@ services:
       mc alias set local http://minio:9000 minioadmin minioadmin;
       mc mb local/videos --ignore-existing;
       mc anonymous set download local/videos;
+      mc mb local/sheetmusic --ignore-existing;
+      mc anonymous set download local/sheetmusic;
       exit 0;
       "
 

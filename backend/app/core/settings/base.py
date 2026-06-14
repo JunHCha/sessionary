@@ -1,7 +1,7 @@
+from enum import Enum
 import json
 import logging
 import sys
-from enum import Enum
 from typing import Any, Dict, List, Tuple
 
 from loguru import logger
@@ -84,6 +84,9 @@ class AppSettings(BaseAppSettings):
     # Video
     video_provider: str = "local"
     video_storage_endpoint: str = "localhost:9000"
+    # presigned URL은 브라우저(외부)에서 접근하므로 별도 public endpoint로 서명 생성한다.
+    # 비워두면 video_storage_endpoint를 그대로 사용한다.
+    video_storage_public_endpoint: str = ""
     video_storage_access_key: str = "minioadmin"
     video_storage_secret_key: str = "minioadmin"
     video_storage_bucket_name: str = "videos"
@@ -94,6 +97,7 @@ class AppSettings(BaseAppSettings):
     # Sheetmusic
     sheetmusic_provider: str = "local"
     sheetmusic_storage_endpoint: str = "localhost:9000"
+    sheetmusic_storage_public_endpoint: str = ""
     sheetmusic_storage_access_key: str = "minioadmin"
     sheetmusic_storage_secret_key: str = "minioadmin"
     sheetmusic_storage_bucket_name: str = "sheetmusic"
