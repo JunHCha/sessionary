@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { LoginButton } from '$lib/features/auth'
+	import { LoginButton, useAuth } from '$lib/features/auth'
 	import { onMount } from 'svelte'
+
+	const auth = useAuth()
 
 	let isScrolled = $state(false)
 	let isVisible = $state(true)
@@ -101,6 +103,15 @@
 			>
 				나의폴더
 			</a>
+			{#if auth.isAdmin}
+				<a
+					href="/admin"
+					data-testid="nav-admin"
+					class="h-[50px] w-[88px] flex items-center justify-center text-[13px] font-pretendard font-bold leading-[20px] tracking-[-0.02em] text-[#FF5C16] whitespace-nowrap transition-opacity duration-300"
+				>
+					관리자
+				</a>
+			{/if}
 		</div>
 		<div class="ml-auto hidden md:flex items-center">
 			<div class="h-[50px] flex items-center justify-end transition-opacity duration-300">
@@ -154,6 +165,15 @@
 				class="px-[40px] py-3 text-[14px] font-pretendard font-bold text-[#F5F5F5]"
 				>나의폴더</a
 			>
+			{#if auth.isAdmin}
+				<a
+					href="/admin"
+					data-testid="nav-admin-mobile"
+					onclick={() => (menuOpen = false)}
+					class="px-[40px] py-3 text-[14px] font-pretendard font-bold text-[#FF5C16]"
+					>관리자</a
+				>
+			{/if}
 			<div class="px-[40px] py-3 border-t border-[#1a1a1a] flex items-center justify-between">
 				<LoginButton />
 				<button aria-label="검색" type="button" class="flex items-center">
