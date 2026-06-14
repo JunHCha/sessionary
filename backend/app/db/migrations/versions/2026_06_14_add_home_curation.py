@@ -23,7 +23,7 @@ def upgrade() -> None:
         "TRENDING",
         "NEW",
         name="curationsection",
-        create_type=True,
+        create_type=False,
     )
     curationsection_enum.create(op.get_bind(), checkfirst=True)
 
