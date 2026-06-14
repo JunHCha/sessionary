@@ -12,7 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 
 revision = "add_lesson_progress_001"
-down_revision = "drop_uq_user_lecture_001"
+down_revision = "add_home_curation_001"
 branch_labels = None
 depends_on = None
 
