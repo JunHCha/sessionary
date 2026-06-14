@@ -6,11 +6,11 @@ from app.lesson.repository import LessonRepository
 from app.lesson.service import LessonService
 from app.session.repository import SessionRepository
 from app.session.service import SessionService
+from app.sheetmusic.service import SheetmusicProvider
 from app.ticket.repository import TicketRepository
 from app.ticket.service import TicketService
 from app.user.repository import UserRepository
 from app.user.service import UserService
-from app.sheetmusic.service import SheetmusicProvider
 from app.video.service import VideoProvider
 
 

@@ -90,3 +90,43 @@ async def update_lesson(
     if lesson is None:
         raise HTTPException(status_code=404, detail="Lesson not found")
     return LessonAdminSchema(data=lesson)
+
+
+@app_router.post("/{lesson_id}/video", response_model=LessonAdminSchema)
+@inject
+async def upload_lesson_video(
+    lesson_id: int,
+    file: UploadFile = File(...),
+    user: User = Depends(superuser),
+    lesson_service: LessonService = Depends(
+        Provide[ApplicationContainer.services.lesson_service]
+    ),
+):
+    data = await file.read()
+    object_name = f"lesson-{lesson_id}/{file.filename}"
+    lesson = await lesson_service.set_video(
+        lesson_id, object_name, data, file.content_type or "application/octet-stream"
+    )
+    if lesson is None:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    return LessonAdminSchema(data=lesson)
+
+
+@app_router.post("/{lesson_id}/sheetmusic", response_model=LessonAdminSchema)
+@inject
+async def upload_lesson_sheetmusic(
+    lesson_id: int,
+    file: UploadFile = File(...),
+    user: User = Depends(superuser),
+    lesson_service: LessonService = Depends(
+        Provide[ApplicationContainer.services.lesson_service]
+    ),
+):
+    data = await file.read()
+    object_name = f"lesson-{lesson_id}/{file.filename}"
+    lesson = await lesson_service.set_sheetmusic(
+        lesson_id, object_name, data, file.content_type or "application/octet-stream"
+    )
+    if lesson is None:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    return LessonAdminSchema(data=lesson)

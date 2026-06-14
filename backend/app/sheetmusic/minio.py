@@ -1,6 +1,6 @@
 import datetime
-import io
 from datetime import timedelta, timezone
+import io
 
 from minio import Minio
 from minio.error import S3Error
