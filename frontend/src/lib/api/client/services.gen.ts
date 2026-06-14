@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, GetSessionDetailSessionSessionIdGetData, GetSessionDetailSessionSessionIdGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
+import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, UpdateLectureLectureLectureIdPatchData, UpdateLectureLectureLectureIdPatchResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, UploadLessonVideoLessonLessonIdVideoPostData, UploadLessonVideoLessonLessonIdVideoPostResponse, CreateLessonLessonPostData, CreateLessonLessonPostResponse, UpdateLessonLessonLessonIdPatchData, UpdateLessonLessonLessonIdPatchResponse, UploadLessonSheetmusicLessonLessonIdSheetmusicPostData, UploadLessonSheetmusicLessonLessonIdSheetmusicPostResponse, GetSessionDetailSessionSessionIdGetData, GetSessionDetailSessionSessionIdGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, GetCurationCurationGetResponse, SetCurationCurationSectionPutData, SetCurationCurationSectionPutResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
 
 /**
  * Get Artists
@@ -282,6 +282,27 @@ export const getLectureLectureLectureIdGet = (data: GetLectureLectureLectureIdGe
 }); };
 
 /**
+ * Update Lecture
+ * @param data The data for the request.
+ * @param data.lectureId
+ * @param data.requestBody
+ * @returns GetLectureSchema Successful Response
+ * @throws ApiError
+ */
+export const updateLectureLectureLectureIdPatch = (data: UpdateLectureLectureLectureIdPatchData): CancelablePromise<UpdateLectureLectureLectureIdPatchResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/lecture/{lecture_id}',
+    path: {
+        lecture_id: data.lectureId
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
  * Get Lesson Video
  * @param data The data for the request.
  * @param data.lessonId
@@ -294,6 +315,86 @@ export const getLessonVideoLessonLessonIdVideoGet = (data: GetLessonVideoLessonL
     path: {
         lesson_id: data.lessonId
     },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Upload Lesson Video
+ * @param data The data for the request.
+ * @param data.lessonId
+ * @param data.formData
+ * @returns LessonAdminSchema Successful Response
+ * @throws ApiError
+ */
+export const uploadLessonVideoLessonLessonIdVideoPost = (data: UploadLessonVideoLessonLessonIdVideoPostData): CancelablePromise<UploadLessonVideoLessonLessonIdVideoPostResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/lesson/{lesson_id}/video',
+    path: {
+        lesson_id: data.lessonId
+    },
+    formData: data.formData,
+    mediaType: 'multipart/form-data',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Create Lesson
+ * @param data The data for the request.
+ * @param data.requestBody
+ * @returns LessonAdminSchema Successful Response
+ * @throws ApiError
+ */
+export const createLessonLessonPost = (data: CreateLessonLessonPostData): CancelablePromise<CreateLessonLessonPostResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/lesson',
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Update Lesson
+ * @param data The data for the request.
+ * @param data.lessonId
+ * @param data.requestBody
+ * @returns LessonAdminSchema Successful Response
+ * @throws ApiError
+ */
+export const updateLessonLessonLessonIdPatch = (data: UpdateLessonLessonLessonIdPatchData): CancelablePromise<UpdateLessonLessonLessonIdPatchResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/lesson/{lesson_id}',
+    path: {
+        lesson_id: data.lessonId
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Upload Lesson Sheetmusic
+ * @param data The data for the request.
+ * @param data.lessonId
+ * @param data.formData
+ * @returns LessonAdminSchema Successful Response
+ * @throws ApiError
+ */
+export const uploadLessonSheetmusicLessonLessonIdSheetmusicPost = (data: UploadLessonSheetmusicLessonLessonIdSheetmusicPostData): CancelablePromise<UploadLessonSheetmusicLessonLessonIdSheetmusicPostResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/lesson/{lesson_id}/sheetmusic',
+    path: {
+        lesson_id: data.lessonId
+    },
+    formData: data.formData,
+    mediaType: 'multipart/form-data',
     errors: {
         422: 'Validation Error'
     }
@@ -354,6 +455,37 @@ export const useTicketTicketLectureLectureIdPost = (data: UseTicketTicketLecture
     },
     errors: {
         401: 'Missing token or inactive user.',
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Curation
+ * @returns GetCurationSchema Successful Response
+ * @throws ApiError
+ */
+export const getCurationCurationGet = (): CancelablePromise<GetCurationCurationGetResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/curation'
+}); };
+
+/**
+ * Set Curation
+ * @param data The data for the request.
+ * @param data.section
+ * @param data.requestBody
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const setCurationCurationSectionPut = (data: SetCurationCurationSectionPutData): CancelablePromise<SetCurationCurationSectionPutResponse> => { return __request(OpenAPI, {
+    method: 'PUT',
+    url: '/curation/{section}',
+    path: {
+        section: data.section
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
         422: 'Validation Error'
     }
 }); };

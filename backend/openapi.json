@@ -832,6 +832,56 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "lecture"
+        ],
+        "summary": "Update Lecture",
+        "operationId": "update_lecture_lecture__lecture_id__patch",
+        "parameters": [
+          {
+            "name": "lecture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lecture Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLectureBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLectureSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/lesson/{lesson_id}/video": {
@@ -859,6 +909,201 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/VideoURLResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "lesson"
+        ],
+        "summary": "Upload Lesson Video",
+        "operationId": "upload_lesson_video_lesson__lesson_id__video_post",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_lesson_video_lesson__lesson_id__video_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonAdminSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lesson": {
+      "post": {
+        "tags": [
+          "lesson"
+        ],
+        "summary": "Create Lesson",
+        "operationId": "create_lesson_lesson_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLessonBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonAdminSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lesson/{lesson_id}": {
+      "patch": {
+        "tags": [
+          "lesson"
+        ],
+        "summary": "Update Lesson",
+        "operationId": "update_lesson_lesson__lesson_id__patch",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLessonBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonAdminSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lesson/{lesson_id}/sheetmusic": {
+      "post": {
+        "tags": [
+          "lesson"
+        ],
+        "summary": "Upload Lesson Sheetmusic",
+        "operationId": "upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonAdminSchema"
                 }
               }
             }
@@ -1001,6 +1246,76 @@
           },
           "401": {
             "description": "Missing token or inactive user."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/curation": {
+      "get": {
+        "tags": [
+          "curation"
+        ],
+        "summary": "Get Curation",
+        "operationId": "get_curation_curation_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCurationSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/curation/{section}": {
+      "put": {
+        "tags": [
+          "curation"
+        ],
+        "summary": "Set Curation",
+        "operationId": "set_curation_curation__section__put",
+        "parameters": [
+          {
+            "name": "section",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CurationSection"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCurationBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -1171,6 +1486,34 @@
         ],
         "title": "Body_reset_reset_password_user_auth_reset_password_post"
       },
+      "Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post"
+      },
+      "Body_upload_lesson_video_lesson__lesson_id__video_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_lesson_video_lesson__lesson_id__video_post"
+      },
       "CreateLectureBody": {
         "properties": {
           "title": {
@@ -1200,6 +1543,102 @@
           "data"
         ],
         "title": "CreateLectureResponseSchema"
+      },
+      "CreateLessonBody": {
+        "properties": {
+          "lecture_id": {
+            "type": "integer",
+            "title": "Lecture Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "length_sec": {
+            "type": "integer",
+            "title": "Length Sec",
+            "default": 0
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "default": ""
+          },
+          "lecture_ordering": {
+            "type": "integer",
+            "title": "Lecture Ordering",
+            "default": 0
+          },
+          "session_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SessionType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sync_offset": {
+            "type": "integer",
+            "title": "Sync Offset",
+            "default": 0
+          },
+          "subtitles": {
+            "items": {
+              "$ref": "#/components/schemas/Subtitle"
+            },
+            "type": "array",
+            "title": "Subtitles",
+            "default": []
+          },
+          "playing_guide": {
+            "items": {
+              "$ref": "#/components/schemas/PlayingGuideStep"
+            },
+            "type": "array",
+            "title": "Playing Guide",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "lecture_id",
+          "title"
+        ],
+        "title": "CreateLessonBody"
+      },
+      "CurationData": {
+        "properties": {
+          "TRENDING": {
+            "items": {
+              "$ref": "#/components/schemas/LectureInList"
+            },
+            "type": "array",
+            "title": "Trending"
+          },
+          "NEW": {
+            "items": {
+              "$ref": "#/components/schemas/LectureInList"
+            },
+            "type": "array",
+            "title": "New"
+          }
+        },
+        "type": "object",
+        "required": [
+          "TRENDING",
+          "NEW"
+        ],
+        "title": "CurationData"
+      },
+      "CurationSection": {
+        "type": "string",
+        "enum": [
+          "TRENDING",
+          "NEW"
+        ],
+        "title": "CurationSection"
       },
       "ErrorModel": {
         "properties": {
@@ -1259,6 +1698,18 @@
           "data"
         ],
         "title": "GetArtistsResponse"
+      },
+      "GetCurationSchema": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CurationData"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "GetCurationSchema"
       },
       "GetLectureSchema": {
         "properties": {
@@ -1571,6 +2022,119 @@
         ],
         "title": "LectureInfo"
       },
+      "LessonAdminDetail": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "lecture_id": {
+            "type": "integer",
+            "title": "Lecture Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "length_sec": {
+            "type": "integer",
+            "title": "Length Sec"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "lecture_ordering": {
+            "type": "integer",
+            "title": "Lecture Ordering"
+          },
+          "session_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SessionType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sheetmusic_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sheetmusic Url"
+          },
+          "video_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Url"
+          },
+          "sync_offset": {
+            "type": "integer",
+            "title": "Sync Offset"
+          },
+          "subtitles": {
+            "items": {
+              "$ref": "#/components/schemas/Subtitle"
+            },
+            "type": "array",
+            "title": "Subtitles"
+          },
+          "playing_guide": {
+            "items": {
+              "$ref": "#/components/schemas/PlayingGuideStep"
+            },
+            "type": "array",
+            "title": "Playing Guide"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "lecture_id",
+          "title",
+          "length_sec",
+          "text",
+          "lecture_ordering",
+          "session_type",
+          "sheetmusic_url",
+          "video_url",
+          "sync_offset",
+          "subtitles",
+          "playing_guide"
+        ],
+        "title": "LessonAdminDetail"
+      },
+      "LessonAdminSchema": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/LessonAdminDetail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "LessonAdminSchema"
+      },
       "LessonInLecture": {
         "properties": {
           "id": {
@@ -1829,6 +2393,22 @@
         ],
         "title": "SessionType"
       },
+      "SetCurationBody": {
+        "properties": {
+          "lecture_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lecture Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lecture_ids"
+        ],
+        "title": "SetCurationBody"
+      },
       "Subtitle": {
         "properties": {
           "timestamp_ms": {
@@ -1847,6 +2427,175 @@
           "text"
         ],
         "title": "Subtitle"
+      },
+      "UpdateLectureBody": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "prefixItems": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "원곡카피",
+                      "해석버전",
+                      "기본기"
+                    ]
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "Easy",
+                      "Intermediate",
+                      "Advanced"
+                    ]
+                  }
+                ],
+                "type": "array",
+                "maxItems": 2,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          },
+          "thumbnail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail"
+          }
+        },
+        "type": "object",
+        "title": "UpdateLectureBody"
+      },
+      "UpdateLessonBody": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "length_sec": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length Sec"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "lecture_ordering": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lecture Ordering"
+          },
+          "session_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SessionType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sync_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sync Offset"
+          },
+          "subtitles": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Subtitle"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtitles"
+          },
+          "playing_guide": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PlayingGuideStep"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Playing Guide"
+          }
+        },
+        "type": "object",
+        "title": "UpdateLessonBody"
       },
       "UserArtistInfo": {
         "properties": {
