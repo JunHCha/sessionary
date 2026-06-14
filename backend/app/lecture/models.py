@@ -9,6 +9,7 @@ from pydantic import field_validator
 
 from app.core.models import BaseModel, BaseSchema
 from app.lesson.models import LessonInLecture
+from app.progress.models import LectureProgressData
 
 
 class LectureDetail(BaseModel):
@@ -23,6 +24,7 @@ class LectureDetail(BaseModel):
     lecture_count: int
     time_created: datetime.datetime
     time_updated: datetime.datetime
+    progress: LectureProgressData | None = None
 
 
 class ArtistInfoInLecture(BaseModel):

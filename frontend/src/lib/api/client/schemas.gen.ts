@@ -464,6 +464,16 @@ export const $LectureDetail = {
             type: 'string',
             format: 'date-time',
             title: 'Time Updated'
+        },
+        progress: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/LectureProgressData'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         }
     },
     type: 'object',
@@ -578,6 +588,44 @@ export const $LectureInfo = {
     type: 'object',
     required: ['id', 'title', 'total_sessions'],
     title: 'LectureInfo'
+} as const;
+
+export const $LectureProgressData = {
+    properties: {
+        completed_count: {
+            type: 'integer',
+            title: 'Completed Count'
+        },
+        total_count: {
+            type: 'integer',
+            title: 'Total Count'
+        },
+        percent: {
+            type: 'integer',
+            title: 'Percent'
+        },
+        next_lesson_id: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Next Lesson Id'
+        },
+        completed_lesson_ids: {
+            items: {
+                type: 'integer'
+            },
+            type: 'array',
+            title: 'Completed Lesson Ids'
+        }
+    },
+    type: 'object',
+    required: ['completed_count', 'total_count', 'percent', 'next_lesson_id', 'completed_lesson_ids'],
+    title: 'LectureProgressData'
 } as const;
 
 export const $LessonAdminDetail = {

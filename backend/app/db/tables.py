@@ -20,6 +20,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -284,3 +285,24 @@ class HomeCuration(Base):
     lecture: Mapped["Lecture"] = relationship("Lecture", lazy="selectin")
 
     __tablename__ = "home_curation"
+
+
+class LessonProgress(Base):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("user.id"), nullable=False
+    )
+    lesson_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("lesson.id"), nullable=False
+    )
+    lecture_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("lecture.id"), nullable=False
+    )
+    completed_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now(), nullable=False
+    )
+
+    __tablename__ = "lesson_progress"
+    __table_args__ = (
+        UniqueConstraint("user_id", "lesson_id", name="uq_user_lesson_progress"),
+    )

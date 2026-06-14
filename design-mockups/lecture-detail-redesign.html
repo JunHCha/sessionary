@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lecture Detail — 리디자인 시안</title>
+<style>
+  :root {
+    --bg: #0c0c0c;
+    --surface: #141414;
+    --surface-2: #1a1a1a;
+    --line: #242424;
+    --line-strong: #333;
+    --brand: #ff5c16;
+    --brand-soft: rgba(255, 92, 22, 0.12);
+    --text: #f5f5f5;
+    --text-2: #c9c9c9;
+    --text-3: #848484;
+    --text-4: #656565;
+    --radius: 14px;
+    --radius-sm: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #050505;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 24px 80px;
+    line-height: 1.5;
+  }
+
+  /* ---- showcase chrome ---- */
+  .page-head { max-width: 1240px; margin: 0 auto 36px; }
+  .page-head h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .page-head p { color: var(--text-3); margin-top: 8px; font-size: 15px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 18px; }
+  .legend span { font-size: 13px; color: var(--text-3); display: flex; align-items: center; gap: 7px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  .section-label {
+    max-width: 1240px; margin: 56px auto 18px; display: flex; align-items: baseline; gap: 12px;
+  }
+  .section-label .tag {
+    background: var(--brand); color: #fff; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px; letter-spacing: 0.3px;
+  }
+  .section-label h2 { font-size: 18px; font-weight: 600; }
+  .section-label small { color: var(--text-4); font-size: 13px; }
+
+  .frame {
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: 18px; overflow: hidden; margin: 0 auto;
+  }
+  .frame.desktop { max-width: 1240px; }
+  .browserbar {
+    height: 38px; background: #101010; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 7px; padding: 0 16px;
+  }
+  .browserbar i { width: 11px; height: 11px; border-radius: 50%; background: #2a2a2a; }
+  .browserbar .url {
+    margin-left: 14px; font-size: 12px; color: var(--text-4);
+    background: #1a1a1a; padding: 4px 14px; border-radius: 6px;
+  }
+
+  /* ================= NAVBAR (mock) ================= */
+  .nav {
+    height: 64px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; border-bottom: 1px solid var(--line); background: rgba(12,12,12,0.9);
+  }
+  .nav .brand { font-weight: 800; font-size: 19px; letter-spacing: -0.5px; }
+  .nav .brand b { color: var(--brand); }
+  .nav .links { display: flex; gap: 26px; font-size: 14px; color: var(--text-3); }
+  .nav .avatar { width: 32px; height: 32px; border-radius: 50%; background: #2a2a2a; }
+
+  /* ================= DESKTOP CONTENT ================= */
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 40px 60px; }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-4); margin-bottom: 22px; }
+  .breadcrumb a { color: var(--text-3); text-decoration: none; }
+  .breadcrumb svg { width: 14px; height: 14px; }
+
+  /* HERO */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+  .hero-main { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr); }
+  .hero-main .hero-panel { aspect-ratio: auto; min-height: 296px; }
+  .hero-media { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16/10; background: linear-gradient(135deg, #2a1c12, #14100c); cursor: pointer; }
+  .hero-media .thumb {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #6b5444; font-size: 13px; letter-spacing: 1px;
+    background:
+      repeating-linear-gradient(45deg, rgba(255,92,22,0.04) 0 12px, transparent 12px 24px);
+  }
+  .hero-media .resume-label {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 18px 15px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.78)); font-size: 14px; font-weight: 600;
+    color: #fff; display: flex; align-items: baseline; gap: 7px;
+  }
+  .hero-media .resume-label .sub { color: #bdbdbd; font-weight: 400; font-size: 13px; }
+  .hero-media .play {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    width: 64px; height: 64px; border-radius: 50%; background: rgba(255,92,22,0.92);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-media .play svg { width: 26px; height: 26px; fill: #fff; margin-left: 3px; }
+  .hero-media .media-top {
+    position: absolute; top: 14px; left: 14px; right: 14px; display: flex; justify-content: space-between;
+  }
+  .pill-dark { background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); border-radius: 8px; padding: 6px 11px; font-size: 12px; color: #eee; display: flex; align-items: center; gap: 6px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 10px; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .hero-info { display: flex; flex-direction: column; min-width: 0; }
+  .tags { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tag-chip { font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 7px; color: #fff; }
+  .hero-info h1 { font-size: 30px; line-height: 1.3; font-weight: 700; letter-spacing: -0.6px; }
+  .artist { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+  .artist .ava { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,#ff7a3c,#b2400f); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+  .artist .name { font-weight: 600; font-size: 15px; }
+  .artist .role { font-size: 12px; color: var(--text-4); }
+  .desc { margin-top: 18px; color: var(--text-2); font-size: 15px; line-height: 1.75; }
+
+  /* meta stat strip */
+  .stats { display: flex; gap: 0; margin-top: auto; padding-top: 24px; }
+  .stats .cell { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .stats .cell + .cell { border-left: 1px solid var(--line); padding-left: 20px; }
+  .stats .cell:not(:last-child) { padding-right: 20px; }
+  .stats .k { font-size: 12px; color: var(--text-4); display: flex; align-items: center; gap: 5px; }
+  .stats .k svg { width: 14px; height: 14px; }
+  .stats .v { font-size: 19px; font-weight: 700; }
+  .stats .v small { font-size: 13px; font-weight: 500; color: var(--text-3); }
+
+  /* CTA row */
+  .cta-row { display: flex; gap: 12px; margin-top: 26px; }
+  .btn-primary {
+    flex: 1; height: 54px; border: none; border-radius: 12px; background: var(--brand);
+    color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  .btn-primary svg { width: 19px; height: 19px; fill: #fff; }
+  .btn-ghost {
+    height: 54px; padding: 0 22px; border: 1px solid var(--line-strong); border-radius: 12px;
+    background: transparent; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .btn-ghost svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+
+  /* progress (in-progress state) */
+  .progress { margin-top: 18px; }
+  .progress .bar { height: 6px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+  .progress .bar i { display: block; height: 100%; width: 32%; background: var(--brand); border-radius: 4px; }
+  .progress .lbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); margin-top: 8px; }
+
+  /* ===== lower section: tabs + 2 col ===== */
+  .lower { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; margin-top: 52px; align-items: start; }
+
+  .list-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .list-head h2 { font-size: 19px; font-weight: 700; }
+  .list-head .list-sub { font-size: 13px; color: var(--text-4); }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+  .tabs button {
+    background: none; border: none; color: var(--text-3); font-size: 15px; font-weight: 600;
+    padding: 12px 16px; cursor: pointer; position: relative;
+  }
+  .tabs button.active { color: var(--text); }
+  .tabs button.active::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: -1px; height: 2px; background: var(--brand); border-radius: 2px; }
+  .tabs .count { font-size: 12px; color: var(--text-4); margin-left: 5px; }
+
+  .session-list { display: flex; flex-direction: column; gap: 10px; }
+  .s-item {
+    display: flex; align-items: center; gap: 18px; padding: 16px 20px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface);
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .s-item:hover { border-color: var(--line-strong); background: var(--surface-2); }
+  .s-item.current {
+    border-color: var(--brand);
+    background: linear-gradient(to right, #1d1410, #0e0b09);
+    box-shadow: 0 10px 30px -12px rgba(255,92,22,0.35);
+  }
+  .s-num { font-size: 18px; font-weight: 700; color: var(--text-4); min-width: 30px; }
+  .s-item.current .s-num { color: var(--brand); }
+  .s-body { flex: 1; min-width: 0; }
+  .s-title { font-size: 15px; font-weight: 600; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .s-item.current .s-title { color: #fff; }
+  .s-meta { font-size: 12px; color: var(--text-4); margin-top: 4px; display: flex; align-items: center; gap: 10px; }
+  .s-meta .typebadge { background: var(--surface-2); border-radius: 5px; padding: 2px 8px; color: var(--text-3); }
+  .s-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .s-dur { font-size: 13px; color: var(--text-3); }
+  .next-badge { background: var(--brand); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+  .lock { width: 32px; height: 32px; border-radius: 8px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; }
+  .lock svg { width: 15px; height: 15px; stroke: var(--text-4); fill: none; }
+  .check { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,92,22,0.15); display: flex; align-items: center; justify-content: center; }
+  .check svg { width: 13px; height: 13px; stroke: var(--brand); fill: none; }
+  .s-item.done .s-title { color: var(--text-4); }
+  .s-item.done .s-num { color: #3a3a3a; }
+
+  /* aside */
+  .aside { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 20px; }
+  .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 20px; }
+  .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+  .sheet-preview { position: relative; border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 16/10; background: #f4f1ea; cursor: pointer; }
+  .sheet-preview .lines { position: absolute; inset: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+  .sheet-preview .lines i { height: 1px; background: #c9c2b3; box-shadow: 0 3px 0 #c9c2b3, 0 6px 0 #c9c2b3, 0 9px 0 #c9c2b3, 0 12px 0 #c9c2b3; }
+  .sheet-preview .ov { position: absolute; inset: 0; background: rgba(12,12,12,0.55); opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity .15s; }
+  .sheet-preview:hover .ov { opacity: 1; }
+  .dl-btn { background: var(--brand); color: #fff; font-weight: 700; font-size: 14px; padding: 11px 20px; border-radius: 30px; display: flex; align-items: center; gap: 8px; }
+  .dl-btn svg { width: 16px; height: 16px; stroke: #fff; fill: none; }
+  .meta-list { display: flex; flex-direction: column; gap: 12px; }
+  .meta-list .row { display: flex; justify-content: space-between; font-size: 14px; }
+  .meta-list .row span:first-child { color: var(--text-4); }
+  .meta-list .row span:last-child { color: var(--text-2); font-weight: 600; }
+  .artist-card { display: flex; align-items: center; gap: 13px; }
+  .artist-card .ava { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg,#ff7a3c,#b2400f); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+  .artist-card .name { font-weight: 600; font-size: 15px; }
+  .artist-card .sub { font-size: 12px; color: var(--text-4); margin-top: 2px; }
+
+  /* ================= MOBILE ================= */
+  .mobile-stage { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; max-width: 1240px; margin: 0 auto; }
+  .phone {
+    width: 390px; background: var(--bg); border: 10px solid #1c1c1c; border-radius: 42px;
+    overflow: hidden; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7);
+  }
+  .phone-cap { position: relative; height: 40px; background: var(--bg); }
+  .phone-cap::after { content: ""; position: absolute; left: 50%; top: 12px; transform: translateX(-50%); width: 120px; height: 26px; background: #000; border-radius: 16px; }
+  .m-scroll { height: 760px; overflow: hidden; position: relative; }
+  .m-label { text-align: center; color: var(--text-3); font-size: 13px; margin-top: 16px; }
+
+  .m-hero { position: relative; aspect-ratio: 16/10; background: linear-gradient(135deg, #2a1c12, #14100c); }
+  .m-hero .thumb { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,92,22,0.05) 0 12px, transparent 12px 24px); }
+  .m-hero .top { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; justify-content: space-between; }
+  .m-hero .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 56px; height: 56px; border-radius: 50%; background: rgba(255,92,22,0.92); display: flex; align-items: center; justify-content: center; }
+  .m-hero .play svg { width: 22px; height: 22px; fill: #fff; margin-left: 2px; }
+  .m-hero .fade { position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, var(--bg)); }
+  .m-hero .resume-label { position: absolute; left: 0; right: 0; bottom: 14px; padding: 0 18px; z-index: 1; display: flex; align-items: baseline; gap: 7px; font-size: 13px; font-weight: 600; color: #fff; }
+  .m-hero .resume-label .sub { color: #bdbdbd; font-weight: 400; font-size: 12px; }
+
+  .m-body { padding: 18px 20px 0; }
+  .m-tags { display: flex; gap: 7px; margin-bottom: 13px; }
+  .m-body h1 { font-size: 21px; line-height: 1.35; font-weight: 700; letter-spacing: -0.4px; }
+  .m-artist { display: flex; align-items: center; gap: 9px; margin-top: 14px; }
+  .m-artist .ava { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#ff7a3c,#b2400f); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+  .m-artist .name { font-weight: 600; font-size: 14px; }
+  .m-artist .role { font-size: 11px; color: var(--text-4); }
+
+  .m-stats { display: flex; margin-top: 18px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .m-stats .cell { flex: 1; text-align: center; }
+  .m-stats .cell + .cell { border-left: 1px solid var(--line); }
+  .m-stats .v { font-size: 16px; font-weight: 700; }
+  .m-stats .k { font-size: 11px; color: var(--text-4); margin-top: 3px; }
+
+  .m-desc { font-size: 14px; line-height: 1.7; color: var(--text-2); margin-top: 16px; }
+  .m-desc .more { color: var(--brand); font-weight: 600; }
+
+  .m-tabbar { display: flex; gap: 2px; margin-top: 22px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); z-index: 2; }
+  .m-tabbar button { flex: 1; background: none; border: none; color: var(--text-3); font-size: 14px; font-weight: 600; padding: 13px 0; position: relative; }
+  .m-tabbar button.active { color: var(--text); }
+  .m-tabbar button.active::after { content: ""; position: absolute; left: 25%; right: 25%; bottom: -1px; height: 2px; background: var(--brand); border-radius: 2px; }
+
+  .m-sessions { padding: 16px 20px 110px; display: flex; flex-direction: column; gap: 9px; }
+  .ms-item { display: flex; align-items: center; gap: 14px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .ms-item.current { border-color: var(--brand); background: linear-gradient(to right,#1d1410,#0e0b09); }
+  .ms-num { font-size: 15px; font-weight: 700; color: var(--text-4); min-width: 24px; }
+  .ms-item.current .ms-num { color: var(--brand); }
+  .ms-body { flex: 1; min-width: 0; }
+  .ms-title { font-size: 14px; font-weight: 600; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms-item.current .ms-title { color: #fff; }
+  .ms-meta { font-size: 11px; color: var(--text-4); margin-top: 3px; }
+  .ms-right { font-size: 12px; color: var(--text-3); flex-shrink: 0; }
+  .ms-lock svg { width: 14px; height: 14px; stroke: var(--text-4); fill: none; }
+
+  .m-cta {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 20px 22px;
+    background: linear-gradient(transparent, var(--bg) 22%); display: flex; gap: 10px;
+  }
+  .m-cta .btn { flex: 1; height: 52px; border-radius: 12px; background: var(--brand); color: #fff; font-size: 16px; font-weight: 700; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .m-cta .btn svg { width: 18px; height: 18px; fill: #fff; }
+  .m-cta .ib { width: 52px; height: 52px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--surface); display: flex; align-items: center; justify-content: center; }
+  .m-cta .ib svg { width: 20px; height: 20px; stroke: var(--text); fill: none; }
+  .m-cover { position: relative; height: 128px; background: linear-gradient(135deg, #2a1c12, #14100c); overflow: hidden; }
+  .m-cover .thumb { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,92,22,0.05) 0 12px, transparent 12px 24px); }
+  .m-cover .ov { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.15), var(--bg)); }
+  .m-cover .top { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; justify-content: space-between; z-index: 1; }
+  .m-progress { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 15px 16px; }
+  .mp-top { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-bottom: 13px; }
+  .mp-top .l { color: var(--text-2); font-weight: 600; }
+  .mp-top .r { color: var(--text-4); }
+  .mp-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; margin-bottom: 14px; }
+  .mp-grid i { height: 7px; border-radius: 2px; background: var(--surface-2); }
+  .mp-grid i.done { background: var(--brand); }
+  .mp-grid i.cur { background: transparent; border: 1.5px solid var(--brand); }
+  .mp-next .now { font-size: 11px; font-weight: 700; color: var(--brand); letter-spacing: .3px; }
+  .mp-next .now-t { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .mp-next .now-m { font-size: 12px; color: var(--text-4); margin-top: 3px; }
+
+  /* ===== Hero 패널 (커리큘럼 / 진도 — 데스크탑 우측 · 상태 적응) ===== */
+  .hero-panel { position: relative; aspect-ratio: 16/10; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); padding: 26px 28px; display: flex; flex-direction: column; }
+  .cur-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .cur-top .t { font-size: 15px; font-weight: 600; color: var(--text-2); }
+  .cur-top .p { font-size: 13px; color: var(--text-4); }
+  .cur-main { display: flex; align-items: center; gap: 26px; }
+  .ring { width: 126px; height: 126px; flex-shrink: 0; }
+  .cur-info .now { font-size: 12px; color: var(--brand); font-weight: 700; letter-spacing: .3px; }
+  .cur-info .now-t { font-size: 17px; font-weight: 700; margin-top: 5px; line-height: 1.35; }
+  .cur-info .now-meta { font-size: 13px; color: var(--text-4); margin-top: 6px; }
+  .cur-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 18px; }
+  .cur-grid i { height: 9px; border-radius: 3px; background: var(--surface-2); }
+  .cur-grid i.done { background: var(--brand); }
+  .cur-grid i.cur { background: transparent; border: 1.5px solid var(--brand); }
+  .cur-resume { margin-top: auto; height: 48px; border: none; border-radius: 11px; background: var(--brand); color: #fff; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+  .cur-resume svg { width: 17px; height: 17px; fill: #fff; }
+  .meta-top { font-size: 12px; color: var(--text-4); letter-spacing: .4px; margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+  .meta-top svg { width: 15px; height: 15px; stroke: var(--brand); fill: none; }
+  .song-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+  .song-cell { background: var(--surface-2); border-radius: 10px; padding: 13px 15px; }
+  .song-cell .k { font-size: 12px; color: var(--text-4); }
+  .song-cell .v { font-size: 21px; font-weight: 700; margin-top: 3px; }
+  .preview-btn { margin-top: auto; height: 48px; border: 1px solid var(--line-strong); border-radius: 11px; background: transparent; color: var(--text); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+  .preview-btn svg { width: 16px; height: 16px; fill: var(--brand); }
+
+  /* ===== 상태별 Hero 패널 (비로그인 / 미수강 / 수강중) ===== */
+  .state-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .state-panel { position: relative; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 22px; min-height: 330px; display: flex; flex-direction: column; overflow: hidden; }
+  .state-panel.locked .cur-grid, .state-panel.locked .summary { opacity: .35; }
+  .state-badge { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 20px; margin-bottom: 18px; }
+  .sb-gray { background: var(--surface-2); color: var(--text-3); }
+  .sb-soft { background: var(--brand-soft); color: var(--brand); }
+  .sb-brand { background: var(--brand); color: #fff; }
+  .summary .row { display: flex; justify-content: space-between; font-size: 14px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .summary .row span:first-child { color: var(--text-4); }
+  .summary .row span:last-child { font-weight: 600; color: var(--text-2); }
+  .lock-note { position: absolute; left: 22px; right: 22px; top: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .lock-note .ic { width: 44px; height: 44px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; }
+  .lock-note .ic svg { width: 20px; height: 20px; stroke: var(--text-3); fill: none; }
+  .lock-note .tx { font-size: 13px; color: var(--text-3); }
+  .state-cta { margin-top: auto; height: 48px; border-radius: 11px; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; border: none; }
+  .state-cta.primary { background: var(--brand); color: #fff; }
+  .state-cta.outline { background: transparent; color: var(--text); border: 1px solid var(--line-strong); }
+  .state-cta svg { width: 17px; height: 17px; }
+  .state-cap { font-size: 12px; color: var(--text-4); text-align: center; margin-top: 11px; }
+
+  /* ===== 데스크탑 시안 반응형 (태블릿/좁은 창) ===== */
+  @media (max-width: 1024px) {
+    .wrap { padding: 24px 24px 48px; }
+    .hero { grid-template-columns: 1fr; gap: 24px; }
+    .hero-media { aspect-ratio: 16/9; }
+    .stats { padding-top: 18px; }
+    .lower { grid-template-columns: 1fr; gap: 28px; }
+    .aside { position: static; flex-direction: row; flex-wrap: wrap; }
+    .aside .card { flex: 1; min-width: 240px; }
+  }
+  @media (max-width: 640px) {
+    .nav { padding: 0 20px; }
+    .nav .links { display: none; }
+    .hero-info h1 { font-size: 24px; }
+    .stats { flex-wrap: wrap; }
+    .cta-row { flex-direction: column; }
+    .aside { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>Lecture Detail — 리디자인 시안</h1>
+  <p>현재 고정 1200px 2단 레이아웃을 반응형 Hero + 단일 스크롤 구조로 재설계. Hero는 강의 고유 영상이 없으므로 '이어보기 세션' 진입 카드로 구성(클릭 = 이어서 수강하기). 실제 제품 다크 테마(#0c0c0c / brand #ff5c16) 기준.</p>
+  <div class="legend">
+    <span><i class="dot" style="background:#ff5c16"></i> 주 액션 (수강 시작 / 다운로드)</span>
+    <span><i class="dot" style="background:#1d9e75"></i> 신규 추가 정보 (통계·진도·강사)</span>
+    <span><i class="dot" style="background:#333"></i> 기존 요소 재배치</span>
+  </div>
+</div>
+
+<!-- ============ DESKTOP ============ -->
+<div class="section-label">
+  <span class="tag">DESKTOP</span>
+  <h2>1280px — 반응형 컨테이너 + Hero + 2단 본문</h2>
+  <small>≥1024px 기준</small>
+</div>
+
+<div class="frame desktop">
+  <div class="browserbar">
+    <i></i><i></i><i></i>
+    <span class="url">sessionary.app/lecture/42</span>
+  </div>
+
+  <div class="nav">
+    <div class="brand">Session<b>ary</b></div>
+    <div class="links"><span>홈</span><span>탐색</span><span>즐겨찾기</span><span>폴더</span></div>
+    <div class="avatar"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="#">홈</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+      <a href="#">재즈 피아노</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+      <span style="color:var(--text-3)">Autumn Leaves 완벽 해석</span>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero hero-main">
+      <div class="hero-info">
+        <div class="tags">
+          <span class="tag-chip" style="background:#FF5C16">Intermediate</span>
+          <span class="tag-chip" style="background:#734e38">해석버전</span>
+        </div>
+        <h1>Autumn Leaves 완벽 해석 — 재즈 발라드의 정석</h1>
+        <div class="artist">
+          <div class="ava">CY</div>
+          <div>
+            <div class="name">차윤</div>
+            <div class="role">아티스트 · 재즈 피아니스트</div>
+          </div>
+        </div>
+        <p class="desc">스탠다드 명곡 Autumn Leaves를 보이싱·리하모니제이션·솔로 라인까지 단계별로 분해합니다. 코드 톤 선택의 이유를 악보와 자막으로 함께 따라가며 연습하세요.</p>
+
+        <div class="stats">
+          <div class="cell">
+            <span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>세션</span>
+            <span class="v">12<small> 개</small></span>
+          </div>
+          <div class="cell">
+            <span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>총 길이</span>
+            <span class="v">1:48<small> 시간</small></span>
+          </div>
+          <div class="cell">
+            <span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 16l-4.9 2.6.9-5.5-4-3.9 5.5-.8z"/></svg>난이도</span>
+            <span class="v">중급</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <div class="cur-top"><span class="t">커리큘럼</span><span class="p">4 / 12 세션</span></div>
+        <div class="cur-main">
+          <svg class="ring" viewBox="0 0 126 126">
+            <circle cx="63" cy="63" r="54" fill="none" stroke="#242424" stroke-width="10"/>
+            <circle cx="63" cy="63" r="54" fill="none" stroke="#ff5c16" stroke-width="10" stroke-linecap="round" stroke-dasharray="108.6 230.6" transform="rotate(-90 63 63)"/>
+            <text x="63" y="60" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">32%</text>
+            <text x="63" y="80" text-anchor="middle" font-size="11" fill="#848484">완료</text>
+          </svg>
+          <div class="cur-info">
+            <div class="now">이어보기</div>
+            <div class="now-t">05. A 섹션 리하모니제이션</div>
+            <div class="now-meta">02:11 / 09:40 · 실습</div>
+          </div>
+        </div>
+        <div class="cur-grid">
+          <i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="cur"></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <button class="cur-resume"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>이어서 수강하기</button>
+      </div>
+    </div>
+
+    <!-- LOWER -->
+    <div class="lower">
+      <div>
+        <div class="list-head">
+          <h2>세션 목록</h2>
+          <span class="list-sub">전체 12개 · 4개 완료</span>
+        </div>
+
+        <div class="session-list">
+          <div class="s-item done">
+            <span class="s-num">01</span>
+            <div class="s-body">
+              <div class="s-title">인트로 — 곡 구조와 코드 진행 한눈에 보기</div>
+              <div class="s-meta"><span class="typebadge">이론</span><span>완료</span></div>
+            </div>
+            <div class="s-right"><span class="s-dur">06:24</span><span class="check"><svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+          </div>
+
+          <div class="s-item current">
+            <span class="s-num">05</span>
+            <div class="s-body">
+              <div class="s-title">A 섹션 리하모니제이션 — ii-V 텐션 보이싱</div>
+              <div class="s-meta"><span class="typebadge">실습</span><span>이어보기 02:11 / 09:40</span></div>
+            </div>
+            <div class="s-right"><span class="next-badge">NEXT</span><span class="s-dur">09:40</span></div>
+          </div>
+
+          <div class="s-item">
+            <span class="s-num">06</span>
+            <div class="s-body">
+              <div class="s-title">B 섹션 멜로디 페이크와 루바토 표현</div>
+              <div class="s-meta"><span class="typebadge">실습</span></div>
+            </div>
+            <div class="s-right"><span class="s-dur">08:12</span><span class="lock"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span></div>
+          </div>
+
+          <div class="s-item">
+            <span class="s-num">07</span>
+            <div class="s-body">
+              <div class="s-title">솔로 라인 만들기 — 가이드 톤 접근법</div>
+              <div class="s-meta"><span class="typebadge">실습</span></div>
+            </div>
+            <div class="s-right"><span class="s-dur">11:05</span><span class="lock"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span></div>
+          </div>
+
+          <div class="s-item">
+            <span class="s-num">08</span>
+            <div class="s-body">
+              <div class="s-title">엔딩 — 리타르단도와 마무리 보이싱</div>
+              <div class="s-meta"><span class="typebadge">실습</span></div>
+            </div>
+            <div class="s-right"><span class="s-dur">07:48</span><span class="lock"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- aside -->
+      <div class="aside">
+        <div class="card">
+          <h3>악보 다운로드 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 12l-4 4-4-4M12 16V4"/></svg></h3>
+          <div class="sheet-preview">
+            <div class="lines"><i></i><i></i><i></i></div>
+            <div class="ov"><span class="dl-btn"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 12l-4 4-4-4M12 16V4"/></svg>PDF 다운로드</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>수강 정보</h3>
+          <div class="meta-list">
+            <div class="row"><span>제공 자료</span><span>악보 PDF · 자막</span></div>
+            <div class="row"><span>수강 방식</span><span>티켓 1장</span></div>
+            <div class="row"><span>업데이트</span><span>2026.05.18</span></div>
+            <div class="row"><span>등록일</span><span>2025.11.02</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>강사</h3>
+          <div class="artist-card">
+            <div class="ava">CY</div>
+            <div>
+              <div class="name">차윤</div>
+              <div class="sub">재즈 피아니스트 · 강의 8개</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 상태별 Hero (비로그인 / 미수강 / 수강중) ============ -->
+<div class="section-label">
+  <span class="tag">상태 적응</span>
+  <h2>같은 Hero 패널, 사용자 상태에 따라 콘텐츠 전환 — 재생 어포던스 없음</h2>
+  <small>비로그인 · 로그인 미수강 · 수강중</small>
+</div>
+
+<div class="frame desktop">
+  <div class="browserbar"><i></i><i></i><i></i><span class="url">상태별 Hero 좌측 패널 비교</span></div>
+  <div class="wrap" style="padding:28px 40px 40px">
+    <div class="state-grid">
+
+      <!-- 1) 비로그인 -->
+      <div class="state-panel locked">
+        <span class="state-badge sb-gray">비로그인</span>
+        <div class="summary">
+          <div class="row"><span>세션</span><span>12개</span></div>
+          <div class="row"><span>총 길이</span><span>1시간 48분</span></div>
+          <div class="row"><span>난이도</span><span>중급</span></div>
+        </div>
+        <div class="lock-note">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span>
+          <span class="tx">로그인하면 수강을<br/>시작할 수 있어요</span>
+        </div>
+        <button class="state-cta primary"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11 7L6 12l5 5M6 12h12" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>로그인하고 시작</button>
+        <div class="state-cap">세션 클릭 시 로그인 안내</div>
+      </div>
+
+      <!-- 2) 로그인 · 미수강 -->
+      <div class="state-panel">
+        <span class="state-badge sb-soft">미수강</span>
+        <div class="cur-top"><span class="t">커리큘럼</span><span class="p">0 / 12 세션</span></div>
+        <div class="cur-info">
+          <div class="now">시작하기</div>
+          <div class="now-t">01. 인트로 — 곡 구조와 코드 진행</div>
+          <div class="now-meta">06:24 · 이론</div>
+        </div>
+        <div class="cur-grid">
+          <i class="cur"></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <button class="state-cta primary"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>1강부터 시작하기</button>
+        <div class="state-cap">티켓 1장 사용</div>
+      </div>
+
+      <!-- 3) 수강중 -->
+      <div class="state-panel">
+        <span class="state-badge sb-brand">수강중</span>
+        <div class="cur-main" style="margin-bottom:6px">
+          <svg class="ring" viewBox="0 0 126 126">
+            <circle cx="63" cy="63" r="54" fill="none" stroke="#242424" stroke-width="10"/>
+            <circle cx="63" cy="63" r="54" fill="none" stroke="#ff5c16" stroke-width="10" stroke-linecap="round" stroke-dasharray="108.6 230.6" transform="rotate(-90 63 63)"/>
+            <text x="63" y="60" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">32%</text>
+            <text x="63" y="80" text-anchor="middle" font-size="11" fill="#848484">완료</text>
+          </svg>
+          <div class="cur-info">
+            <div class="now">이어보기</div>
+            <div class="now-t">05. A 섹션 리하모니제이션</div>
+            <div class="now-meta">02:11 / 09:40</div>
+          </div>
+        </div>
+        <div class="cur-grid">
+          <i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="cur"></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <button class="state-cta primary"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>이어서 수강하기</button>
+        <div class="state-cap">5강 · 02:11부터</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ MOBILE ============ -->
+<div class="section-label">
+  <span class="tag">MOBILE</span>
+  <h2>390px — 단일 컬럼 + 하단 고정 CTA + 탭</h2>
+  <small>≤768px 기준</small>
+</div>
+
+<div class="mobile-stage">
+  <!-- Screen 1: 상단 (정보) -->
+  <div>
+    <div class="phone">
+      <div class="phone-cap"></div>
+      <div class="m-scroll">
+        <div class="m-cover">
+          <div class="thumb"></div>
+          <div class="ov"></div>
+          <div class="top">
+            <button class="icon-btn" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg></button>
+            <button class="icon-btn" aria-label="북마크"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M5 4a2 2 0 012-2h10a2 2 0 012 2v18l-7-4-7 4V4z"/></svg></button>
+          </div>
+        </div>
+
+        <div class="m-body">
+          <div class="m-tags">
+            <span class="tag-chip" style="background:#FF5C16;font-size:12px;padding:5px 10px">Intermediate</span>
+            <span class="tag-chip" style="background:#734e38;font-size:12px;padding:5px 10px">해석버전</span>
+          </div>
+          <h1>Autumn Leaves 완벽 해석 — 재즈 발라드의 정석</h1>
+          <div class="m-artist">
+            <div class="ava">CY</div>
+            <div><div class="name">차윤</div><div class="role">아티스트 · 재즈 피아니스트</div></div>
+          </div>
+
+          <div class="m-progress">
+            <div class="mp-top"><span class="l">커리큘럼</span><span class="r">4 / 12 · 32%</span></div>
+            <div class="mp-grid">
+              <i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="cur"></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="mp-next">
+              <div class="now">이어보기</div>
+              <div class="now-t">05. A 섹션 리하모니제이션</div>
+              <div class="now-m">02:11 / 09:40 · 실습</div>
+            </div>
+          </div>
+
+          <div class="m-stats">
+            <div class="cell"><div class="v">12</div><div class="k">세션</div></div>
+            <div class="cell"><div class="v">1:48</div><div class="k">총 길이</div></div>
+            <div class="cell"><div class="v">중급</div><div class="k">난이도</div></div>
+          </div>
+
+          <p class="m-desc">스탠다드 명곡 Autumn Leaves를 보이싱·리하모니제이션·솔로 라인까지 단계별로 분해합니다. <span class="more">더보기</span></p>
+
+          <div class="m-tabbar">
+            <button class="active">세션 목록</button>
+            <button>악보</button>
+          </div>
+        </div>
+
+        <div class="m-cta">
+          <button class="btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>이어서 수강하기</button>
+          <button class="ib" aria-label="악보"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 12l-4 4-4-4M12 16V4"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="m-label">① 상단 — 커버 배너 · 진도 패널 · 통계 · 탭 · 하단 고정 CTA</div>
+  </div>
+
+  <!-- Screen 2: 세션 목록 -->
+  <div>
+    <div class="phone">
+      <div class="phone-cap"></div>
+      <div class="m-scroll">
+        <div class="m-tabbar" style="border-top:none">
+          <button class="active">세션 목록</button>
+          <button>악보</button>
+        </div>
+        <div class="m-sessions">
+          <div class="ms-item">
+            <span class="ms-num">01</span>
+            <div class="ms-body"><div class="ms-title">인트로 — 곡 구조와 코드 진행</div><div class="ms-meta">이론 · 완료</div></div>
+            <span class="check" style="width:20px;height:20px"><svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+          </div>
+          <div class="ms-item current">
+            <span class="ms-num">05</span>
+            <div class="ms-body"><div class="ms-title">A 섹션 리하모니제이션</div><div class="ms-meta">실습 · 이어보기 02:11</div></div>
+            <span class="next-badge">NEXT</span>
+          </div>
+          <div class="ms-item">
+            <span class="ms-num">06</span>
+            <div class="ms-body"><div class="ms-title">B 섹션 멜로디 페이크와 루바토</div><div class="ms-meta">실습</div></div>
+            <span class="ms-right ms-lock"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span>
+          </div>
+          <div class="ms-item">
+            <span class="ms-num">07</span>
+            <div class="ms-body"><div class="ms-title">솔로 라인 만들기 — 가이드 톤</div><div class="ms-meta">실습</div></div>
+            <span class="ms-right ms-lock"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span>
+          </div>
+          <div class="ms-item">
+            <span class="ms-num">08</span>
+            <div class="ms-body"><div class="ms-title">엔딩 — 리타르단도와 마무리</div><div class="ms-meta">실습</div></div>
+            <span class="ms-right">07:48</span>
+          </div>
+          <div class="ms-item">
+            <span class="ms-num">09</span>
+            <div class="ms-body"><div class="ms-title">전체 연주 & 리뷰</div><div class="ms-meta">실습</div></div>
+            <span class="ms-right">12:30</span>
+          </div>
+        </div>
+
+        <div class="m-cta">
+          <button class="btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>이어서 수강하기</button>
+          <button class="ib" aria-label="악보"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 12l-4 4-4-4M12 16V4"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="m-label">② 세션 탭 — 스크롤 중에도 CTA 고정</div>
+  </div>
+</div>
+
+</body>
+</html>

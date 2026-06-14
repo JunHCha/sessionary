@@ -6,6 +6,8 @@ from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
 from app.lesson.repository import LessonRepository
 from app.lesson.service import LessonService
+from app.progress.repository import ProgressRepository
+from app.progress.service import ProgressService
 from app.session.repository import SessionRepository
 from app.session.service import SessionService
 from app.sheetmusic.service import SheetmusicProvider
@@ -30,6 +32,7 @@ def _create_sheetmusic_provider(settings) -> SheetmusicProvider:
             secret_key=settings.sheetmusic_storage_secret_key,
             bucket_name=settings.sheetmusic_storage_bucket_name,
             secure=settings.sheetmusic_storage_secure,
+            public_endpoint=settings.sheetmusic_storage_public_endpoint,
         )
     else:
         raise ValueError(f"Unknown sheetmusic provider: {settings.sheetmusic_provider}")
@@ -49,6 +52,7 @@ def _create_video_provider(settings) -> VideoProvider:
             secret_key=settings.video_storage_secret_key,
             bucket_name=settings.video_storage_bucket_name,
             secure=settings.video_storage_secure,
+            public_endpoint=settings.video_storage_public_endpoint,
         )
     elif settings.video_provider == "cloudflare":
         from app.video.cloudflare import CloudflareVideoProvider
@@ -100,6 +104,16 @@ class ServicesContainer(containers.DeclarativeContainer):
     lesson_repository = providers.Factory(
         LessonRepository,
         session_manager=database.session_manager,
+    )
+
+    progress_repository = providers.Factory(
+        ProgressRepository,
+        session_manager=database.session_manager,
+    )
+
+    progress_service = providers.Factory(
+        ProgressService,
+        repository=progress_repository,
     )
 
     video_provider = providers.Factory(

@@ -1330,6 +1330,51 @@
         }
       }
     },
+    "/progress/lesson/{lesson_id}": {
+      "post": {
+        "tags": [
+          "progress"
+        ],
+        "summary": "Mark Lesson Complete",
+        "operationId": "mark_lesson_complete_progress_lesson__lesson_id__post",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LectureProgressData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ping": {
       "get": {
         "tags": [
@@ -1873,6 +1918,16 @@
             "type": "string",
             "format": "date-time",
             "title": "Time Updated"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LectureProgressData"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -2021,6 +2076,49 @@
           "total_sessions"
         ],
         "title": "LectureInfo"
+      },
+      "LectureProgressData": {
+        "properties": {
+          "completed_count": {
+            "type": "integer",
+            "title": "Completed Count"
+          },
+          "total_count": {
+            "type": "integer",
+            "title": "Total Count"
+          },
+          "percent": {
+            "type": "integer",
+            "title": "Percent"
+          },
+          "next_lesson_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Lesson Id"
+          },
+          "completed_lesson_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Completed Lesson Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "completed_count",
+          "total_count",
+          "percent",
+          "next_lesson_id",
+          "completed_lesson_ids"
+        ],
+        "title": "LectureProgressData"
       },
       "LessonAdminDetail": {
         "properties": {

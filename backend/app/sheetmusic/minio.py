@@ -17,6 +17,7 @@ class MinIOSheetmusicProvider(SheetmusicProvider):
         secret_key: str,
         bucket_name: str = "sheetmusic",
         secure: bool = False,
+        public_endpoint: str = "",
     ):
         self.client = Minio(
             endpoint=endpoint,
@@ -24,12 +25,26 @@ class MinIOSheetmusicProvider(SheetmusicProvider):
             secret_key=secret_key,
             secure=secure,
         )
+        # presigned URL은 브라우저에서 직접 접근하므로 외부에서 도달 가능한
+        # public endpoint로 서명을 생성한다. 미지정 시 내부 endpoint 사용.
+        # region을 명시해 서명 전 GetBucketLocation 네트워크 호출을 건너뛴다.
+        self.presign_client = (
+            Minio(
+                endpoint=public_endpoint,
+                access_key=access_key,
+                secret_key=secret_key,
+                secure=secure,
+                region="us-east-1",
+            )
+            if public_endpoint
+            else self.client
+        )
         self.bucket_name = bucket_name
 
     async def get_url(self, object_name: str) -> SheetmusicURLResponse:
         expires = timedelta(hours=2)
         try:
-            presigned_url = self.client.presigned_get_object(
+            presigned_url = self.presign_client.presigned_get_object(
                 bucket_name=self.bucket_name,
                 object_name=object_name,
                 expires=expires,

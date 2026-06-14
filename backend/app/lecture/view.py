@@ -1,8 +1,9 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Query
 
-from app.auth.access import superuser
+from app.auth.access import optional_current_user_placeholder, superuser
 from app.containers.application import ApplicationContainer
+from app.db.tables import User
 from app.lecture.models import (
     CreateLectureBody,
     CreateLectureResponseSchema,
@@ -11,6 +12,7 @@ from app.lecture.models import (
     UpdateLectureBody,
 )
 from app.lecture.service import BaseLectureService
+from app.progress.service import ProgressService
 
 app_router = APIRouter()
 
@@ -32,11 +34,18 @@ async def get_lectures(
 @inject
 async def get_lecture(
     lecture_id: int,
+    user: User | None = Depends(optional_current_user_placeholder),
     lecture_svc: BaseLectureService = Depends(
         Provide[ApplicationContainer.services.lecture_service]
     ),
+    progress_service: ProgressService = Depends(
+        Provide[ApplicationContainer.services.progress_service]
+    ),
 ):
     lecture = await lecture_svc.get_lecture_detail(lecture_id)
+    if user is not None:
+        progress = await progress_service.get_lecture_progress(user.id, lecture)
+        lecture = lecture.model_copy(update={"progress": progress})
     return GetLectureSchema(data=lecture)
 
 

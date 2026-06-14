@@ -4,7 +4,10 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
 from app.auth import view as auth_view
-from app.auth.access import current_user_placeholder
+from app.auth.access import (
+    current_user_placeholder,
+    optional_current_user_placeholder,
+)
 from app.containers.application import ApplicationContainer
 from app.core.errors.http_error import http_error_handler
 from app.core.errors.validation_error import http400_error_handler
@@ -13,6 +16,7 @@ from app.curation import view as curation_view
 from app.lecture import view as lecture_view
 from app.lesson import view as lesson_view
 from app.ping import view as ping_view
+from app.progress import view as progress_view
 from app.session import view as session_view
 from app.ticket import view as ticket_view
 from app.user import view as user_view
@@ -28,6 +32,7 @@ def create_container() -> ApplicationContainer:
             "app.session.view",
             "app.ticket.view",
             "app.curation.view",
+            "app.progress.view",
             "app.containers.auth",
             "app.auth.access",
         ]
@@ -48,6 +53,9 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
     application.container = container
     application.dependency_overrides[current_user_placeholder] = (
         auth_backend.components.current_user()
+    )
+    application.dependency_overrides[optional_current_user_placeholder] = (
+        auth_backend.components.current_user(optional=True)
     )
 
     application.add_middleware(
@@ -79,6 +87,9 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
     api_router.include_router(ticket_view.app_router, prefix="/ticket", tags=["ticket"])
     api_router.include_router(
         curation_view.app_router, prefix="/curation", tags=["curation"]
+    )
+    api_router.include_router(
+        progress_view.app_router, prefix="/progress", tags=["progress"]
     )
     api_router.include_router(ping_view.app_router, prefix="/ping", tags=["ping"])
     application.include_router(api_router)

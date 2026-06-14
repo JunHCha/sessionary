@@ -33,6 +33,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
             "app.lecture.view",
             "app.lesson.view",
             "app.ticket.view",
+            "app.progress.view",
             "app.containers.auth",
             "app.auth.access",
         ]
