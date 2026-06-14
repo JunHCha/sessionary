@@ -35,6 +35,11 @@
 			: candidates
 	)
 
+	function tagLabels(tags: unknown[] | null): string[] {
+		if (!tags || !Array.isArray(tags)) return []
+		return tags.map((t) => String(t))
+	}
+
 	onMount(async () => {
 		await waitForApiInit()
 		try {
@@ -132,9 +137,7 @@
 				data-testid={`section-${section}`}
 				class="flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-[#141414]"
 			>
-				<div
-					class="flex items-center justify-between border-b border-white/[0.06] px-5 py-4"
-				>
+				<div class="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
 					<div class="flex items-center gap-2.5">
 						<span
 							class="rounded-md bg-[#FF5C16]/12 px-2 py-0.5 text-[11px] font-bold text-[#FF8B5C]"
@@ -194,9 +197,7 @@
 							>
 								{i + 1}
 							</span>
-							<div
-								class="aspect-[16/10] h-10 shrink-0 overflow-hidden rounded-md bg-[#1d1d1d]"
-							>
+							<div class="aspect-[16/10] h-10 shrink-0 overflow-hidden rounded-md bg-[#1d1d1d]">
 								<img
 									src={getThumbnailSrc(thumbnailOf(id))}
 									alt=""
@@ -222,11 +223,7 @@
 										stroke="currentColor"
 										stroke-width="2"
 									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="m6 15 6-6 6 6"
-										/>
+										<path stroke-linecap="round" stroke-linejoin="round" d="m6 15 6-6 6 6" />
 									</svg>
 								</button>
 								<button
@@ -244,11 +241,7 @@
 										stroke="currentColor"
 										stroke-width="2"
 									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="m6 9 6 6 6-6"
-										/>
+										<path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
 									</svg>
 								</button>
 								<button
@@ -309,69 +302,96 @@
 			</div>
 		</div>
 
-		<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each filteredCandidates as lecture (lecture.id)}
 				<div
 					data-testid={`candidate-${lecture.id}`}
-					class="flex flex-col gap-3 rounded-2xl border border-white/[0.07] bg-[#141414] p-3"
+					class="group flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-[#141414] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#FF5C16]/40 hover:bg-[#171717]"
 				>
-					<div class="flex items-center gap-3">
-						<div
-							class="aspect-[16/10] h-12 shrink-0 overflow-hidden rounded-lg bg-[#1d1d1d]"
+					<div class="relative aspect-[16/9] w-full overflow-hidden bg-[#1d1d1d]">
+						<img
+							src={getThumbnailSrc(lecture.thumbnail)}
+							alt={lecture.title}
+							class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+						/>
+						<span
+							class="absolute right-2.5 top-2.5 rounded-md bg-black/60 px-2 py-0.5 text-[11px] font-medium text-[#cfcfcf] backdrop-blur-sm"
 						>
-							<img
-								src={getThumbnailSrc(lecture.thumbnail)}
-								alt=""
-								class="h-full w-full object-cover"
-							/>
+							#{lecture.id}
+						</span>
+					</div>
+					<div class="flex flex-1 flex-col gap-3 p-4">
+						<div class="flex flex-col gap-2">
+							<h3 class="line-clamp-2 text-[15px] font-bold leading-snug tracking-[-0.01em]">
+								{lecture.title}
+							</h3>
+							{#if tagLabels(lecture.tags).length}
+								<div class="flex flex-wrap items-center gap-1.5">
+									{#each tagLabels(lecture.tags).slice(0, 2) as tag (tag)}
+										<span
+											class="inline-flex items-center rounded-md bg-white/[0.05] px-2 py-0.5 text-[11px] font-medium text-[#9a9a9a]"
+										>
+											{tag}
+										</span>
+									{/each}
+								</div>
+							{/if}
 						</div>
-						<div class="flex min-w-0 flex-col">
-							<span class="truncate text-[13.5px] font-semibold">{lecture.title}</span
-							>
-							<span class="text-[11px] text-[#656565]">#{lecture.id}</span>
+						<div class="mt-auto flex items-center gap-2">
+							{#each sections as section (section)}
+								{@const isAdded = selected[section].includes(lecture.id)}
+								<button
+									type="button"
+									data-testid={`add-to-${section}-${lecture.id}`}
+									onclick={() => add(section, lecture.id)}
+									aria-pressed={isAdded}
+									class="flex flex-1 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-[13px] font-semibold transition-colors
+										{isAdded
+										? 'border-emerald-500/40 bg-emerald-500/12 text-emerald-300'
+										: 'border-[#FF5C16]/35 bg-[#FF5C16]/10 text-[#FF8B5C] hover:border-[#FF5C16]/70 hover:bg-[#FF5C16]/20 hover:text-white'}"
+								>
+									{#if isAdded}
+										<svg
+											class="h-3.5 w-3.5"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2.4"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									{:else}
+										<svg
+											class="h-3.5 w-3.5"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2.4"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M12 5v14M5 12h14" />
+										</svg>
+									{/if}
+									{sectionTag[section]}
+								</button>
+							{/each}
 						</div>
 					</div>
-					<div class="flex items-center gap-2">
-						{#each sections as section (section)}
-							{@const isAdded = selected[section].includes(lecture.id)}
-							<Button
-								data-testid={`add-to-${section}-${lecture.id}`}
-								color="alternative"
-								size="xs"
-								class="flex-1 gap-1 font-pretendard font-semibold {isAdded
-									? 'opacity-50'
-									: ''}"
-								onclick={() => add(section, lecture.id)}
-							>
-								{#if isAdded}
-									<svg
-										class="h-3.5 w-3.5"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2.4"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<path d="M20 6 9 17l-5-5" />
-									</svg>
-								{:else}
-									<svg
-										class="h-3.5 w-3.5"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2.4"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<path d="M12 5v14M5 12h14" />
-									</svg>
-								{/if}
-								{sectionTag[section]}
-							</Button>
-						{/each}
-					</div>
+				</div>
+			{:else}
+				<div
+					class="col-span-full flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-white/[0.1] bg-[#101010] py-12 text-center"
+					data-testid="candidates-empty"
+				>
+					<p class="text-[14px] font-semibold text-white">
+						{search.trim() ? '검색 결과가 없습니다' : '후보 렉처가 없습니다'}
+					</p>
+					<p class="text-[12px] text-[#656565]">
+						{search.trim() ? '다른 키워드로 검색해 보세요' : '렉처 탭에서 먼저 렉처를 만드세요'}
+					</p>
 				</div>
 			{/each}
 		</div>
