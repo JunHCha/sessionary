@@ -1,7 +1,7 @@
 import datetime
 
-import pytest
 from httpx import AsyncClient
+import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.tables import Lecture

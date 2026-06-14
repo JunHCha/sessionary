@@ -9,6 +9,7 @@ from app.containers.application import ApplicationContainer
 from app.core.errors.http_error import http_error_handler
 from app.core.errors.validation_error import http400_error_handler
 from app.core.middlewares import AuthSessionMiddleware
+from app.curation import view as curation_view
 from app.lecture import view as lecture_view
 from app.lesson import view as lesson_view
 from app.ping import view as ping_view
@@ -26,6 +27,7 @@ def create_container() -> ApplicationContainer:
             "app.lesson.view",
             "app.session.view",
             "app.ticket.view",
+            "app.curation.view",
             "app.containers.auth",
             "app.auth.access",
         ]
@@ -75,6 +77,9 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
         session_view.app_router, prefix="/session", tags=["session"]
     )
     api_router.include_router(ticket_view.app_router, prefix="/ticket", tags=["ticket"])
+    api_router.include_router(
+        curation_view.app_router, prefix="/curation", tags=["curation"]
+    )
     api_router.include_router(ping_view.app_router, prefix="/ping", tags=["ping"])
     application.include_router(api_router)
 

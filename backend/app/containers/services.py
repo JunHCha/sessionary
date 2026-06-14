@@ -1,5 +1,7 @@
 from dependency_injector import containers, providers
 
+from app.curation.repository import CurationRepository
+from app.curation.service import CurationService
 from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
 from app.lesson.repository import LessonRepository
@@ -127,4 +129,14 @@ class ServicesContainer(containers.DeclarativeContainer):
         repository=session_repository,
         video_provider=video_provider,
         sheetmusic_provider=sheetmusic_provider,
+    )
+
+    curation_repository = providers.Factory(
+        CurationRepository,
+        session_manager=database.session_manager,
+    )
+
+    curation_service = providers.Factory(
+        CurationService,
+        repository=curation_repository,
     )
