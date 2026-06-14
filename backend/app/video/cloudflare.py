@@ -22,3 +22,6 @@ class CloudflareVideoProvider(VideoProvider):
 
     def _generate_signed_token(self, video_id: str) -> str:
         raise NotImplementedError("Cloudflare signed token generation not implemented yet")
+
+    async def upload(self, object_name: str, data: bytes, content_type: str) -> str:
+        raise NotImplementedError("Cloudflare 업로드는 이번 범위 밖입니다")

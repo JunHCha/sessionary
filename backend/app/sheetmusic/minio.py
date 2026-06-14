@@ -1,4 +1,5 @@
 import datetime
+import io
 from datetime import timedelta, timezone
 
 from minio import Minio
@@ -41,3 +42,15 @@ class MinIOSheetmusicProvider(SheetmusicProvider):
             url=presigned_url,
             expires_at=expires_at,
         )
+
+    async def upload(self, object_name: str, data: bytes, content_type: str) -> str:
+        if not self.client.bucket_exists(self.bucket_name):
+            self.client.make_bucket(self.bucket_name)
+        self.client.put_object(
+            bucket_name=self.bucket_name,
+            object_name=object_name,
+            data=io.BytesIO(data),
+            length=len(data),
+            content_type=content_type,
+        )
+        return object_name
