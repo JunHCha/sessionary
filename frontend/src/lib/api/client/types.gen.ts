@@ -106,6 +106,7 @@ export type LectureDetail = {
     lecture_count: number;
     time_created: string;
     time_updated: string;
+    progress?: LectureProgressData | null;
 };
 
 export type LectureInList = {
@@ -126,6 +127,14 @@ export type LectureInfo = {
     id: number;
     title: string;
     total_sessions: number;
+};
+
+export type LectureProgressData = {
+    completed_count: number;
+    total_count: number;
+    percent: number;
+    next_lesson_id: number | null;
+    completed_lesson_ids: Array<(number)>;
 };
 
 export type LessonAdminDetail = {
@@ -421,6 +430,12 @@ export type SetCurationCurationSectionPutData = {
 };
 
 export type SetCurationCurationSectionPutResponse = unknown;
+
+export type MarkLessonCompleteProgressLessonLessonIdPostData = {
+    lessonId: number;
+};
+
+export type MarkLessonCompleteProgressLessonLessonIdPostResponse = LectureProgressData;
 
 export type PongPingGetResponse = unknown;
 
@@ -872,6 +887,25 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/progress/lesson/{lesson_id}': {
+        post: {
+            req: MarkLessonCompleteProgressLessonLessonIdPostData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LectureProgressData;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
                 /**
                  * Validation Error
                  */
