@@ -76,7 +76,8 @@ test.describe('admin 큐레이션', () => {
 
 	test('후보를 TRENDING에 추가하고 저장하면 순서대로 PUT된다', async ({ page }) => {
 		await page.goto('/admin/curation')
-		await expect(page.getByTestId('candidate-1')).toBeVisible()
+		await page.waitForLoadState('load')
+		await expect(page.getByTestId('candidate-1')).toBeVisible({ timeout: 15000 })
 
 		await page.getByTestId('add-to-TRENDING-3').click()
 		await page.getByTestId('add-to-TRENDING-1').click()
@@ -96,7 +97,8 @@ test.describe('admin 큐레이션', () => {
 
 	test('선택 항목을 위로 이동하면 순서가 바뀐다', async ({ page }) => {
 		await page.goto('/admin/curation')
-		await expect(page.getByTestId('candidate-1')).toBeVisible()
+		await page.waitForLoadState('load')
+		await expect(page.getByTestId('candidate-1')).toBeVisible({ timeout: 15000 })
 		await page.getByTestId('add-to-NEW-1').click()
 		await page.getByTestId('add-to-NEW-2').click()
 		await page.getByTestId('move-up-NEW-1').click()

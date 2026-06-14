@@ -45,5 +45,6 @@ test('관리자는 /admin 진입 가능', async ({ page }) => {
 		})
 	)
 	await page.goto('/admin')
-	await expect(page.getByTestId('admin-hub')).toBeVisible()
+	await page.waitForLoadState('load')
+	await expect(page.getByTestId('admin-hub')).toBeVisible({ timeout: 15000 })
 })

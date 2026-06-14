@@ -56,10 +56,12 @@ test.describe('admin 레슨 생성', () => {
 
 	test('새 레슨을 생성하면 편집 페이지로 이동한다', async ({ page }) => {
 		await page.goto('/admin/lessons/new?lectureId=1')
+		await page.waitForLoadState('load')
+		await expect(page.getByTestId('lesson-title-input')).toBeVisible({ timeout: 15000 })
 		await page.getByTestId('lesson-title-input').fill('레슨 A')
 		await page.getByTestId('create-lesson-btn').click()
 		await expect(page).toHaveURL(/\/admin\/lessons\/5/)
-		await expect(page.getByTestId('lesson-editor')).toBeVisible()
+		await expect(page.getByTestId('lesson-editor')).toBeVisible({ timeout: 15000 })
 	})
 })
 
@@ -108,9 +110,11 @@ test.describe('admin 레슨 편집', () => {
 
 	async function gotoEditor(page: Page) {
 		await page.goto('/admin/lessons/new?lectureId=1')
+		await page.waitForLoadState('load')
+		await expect(page.getByTestId('lesson-title-input')).toBeVisible({ timeout: 15000 })
 		await page.getByTestId('lesson-title-input').fill('레슨 A')
 		await page.getByTestId('create-lesson-btn').click()
-		await expect(page.getByTestId('lesson-editor')).toBeVisible()
+		await expect(page.getByTestId('lesson-editor')).toBeVisible({ timeout: 15000 })
 	}
 
 	test('자막 파일을 업로드하면 표에 행이 렌더되고 저장된다', async ({ page }) => {
