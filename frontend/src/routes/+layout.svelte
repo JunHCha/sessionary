@@ -33,7 +33,9 @@
 	<div class="flex-1">
 		{@render children()}
 	</div>
-	<Footer />
+	{#if !$page.url.pathname.startsWith('/admin')}
+		<Footer />
+	{/if}
 </main>
 
 <style>
