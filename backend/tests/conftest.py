@@ -46,6 +46,7 @@ def test_container(setup_env) -> ApplicationContainer:
             "app.lesson.view",
             "app.session.view",
             "app.ticket.view",
+            "app.curation.view",
             "app.containers.auth",
             "app.auth.access",
         ]

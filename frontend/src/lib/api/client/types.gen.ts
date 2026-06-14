@@ -24,6 +24,14 @@ export type Body_reset_reset_password_user_auth_reset_password_post = {
     password: string;
 };
 
+export type Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post = {
+    file: (Blob | File);
+};
+
+export type Body_upload_lesson_video_lesson__lesson_id__video_post = {
+    file: (Blob | File);
+};
+
 export type CreateLectureBody = {
     title: string;
     description?: string;
@@ -32,6 +40,25 @@ export type CreateLectureBody = {
 export type CreateLectureResponseSchema = {
     data: LectureDetail;
 };
+
+export type CreateLessonBody = {
+    lecture_id: number;
+    title: string;
+    length_sec?: number;
+    text?: string;
+    lecture_ordering?: number;
+    session_type?: SessionType | null;
+    sync_offset?: number;
+    subtitles?: Array<Subtitle>;
+    playing_guide?: Array<PlayingGuideStep>;
+};
+
+export type CurationData = {
+    TRENDING: Array<LectureInList>;
+    NEW: Array<LectureInList>;
+};
+
+export type CurationSection = 'TRENDING' | 'NEW';
 
 export type ErrorModel = {
     detail: string | {
@@ -46,6 +73,10 @@ export type FetchRecommendedLecuturesSchema = {
 
 export type GetArtistsResponse = {
     data: Array<UserArtistInfo>;
+};
+
+export type GetCurationSchema = {
+    data: CurationData;
 };
 
 export type GetLectureSchema = {
@@ -95,6 +126,25 @@ export type LectureInfo = {
     id: number;
     title: string;
     total_sessions: number;
+};
+
+export type LessonAdminDetail = {
+    id: number;
+    lecture_id: number;
+    title: string;
+    length_sec: number;
+    text: string | null;
+    lecture_ordering: number;
+    session_type: SessionType | null;
+    sheetmusic_url: string | null;
+    video_url: string | null;
+    sync_offset: number;
+    subtitles: Array<Subtitle>;
+    playing_guide: Array<PlayingGuideStep>;
+};
+
+export type LessonAdminSchema = {
+    data: LessonAdminDetail;
 };
 
 export type LessonInLecture = {
@@ -149,9 +199,31 @@ export type SessionNavigation = {
 
 export type SessionType = 'PLAY' | 'TALK' | 'JAM' | 'BASIC' | 'SHEET';
 
+export type SetCurationBody = {
+    lecture_ids: Array<(number)>;
+};
+
 export type Subtitle = {
     timestamp_ms: number;
     text: string;
+};
+
+export type UpdateLectureBody = {
+    title?: string | null;
+    description?: string | null;
+    tags?: unknown[] | null;
+    thumbnail?: string | null;
+};
+
+export type UpdateLessonBody = {
+    title?: string | null;
+    length_sec?: number | null;
+    text?: string | null;
+    lecture_ordering?: number | null;
+    session_type?: SessionType | null;
+    sync_offset?: number | null;
+    subtitles?: Array<Subtitle> | null;
+    playing_guide?: Array<PlayingGuideStep> | null;
 };
 
 export type UserArtistInfo = {
@@ -283,11 +355,45 @@ export type GetLectureLectureLectureIdGetData = {
 
 export type GetLectureLectureLectureIdGetResponse = GetLectureSchema;
 
+export type UpdateLectureLectureLectureIdPatchData = {
+    lectureId: number;
+    requestBody: UpdateLectureBody;
+};
+
+export type UpdateLectureLectureLectureIdPatchResponse = GetLectureSchema;
+
 export type GetLessonVideoLessonLessonIdVideoGetData = {
     lessonId: number;
 };
 
 export type GetLessonVideoLessonLessonIdVideoGetResponse = VideoURLResponse;
+
+export type UploadLessonVideoLessonLessonIdVideoPostData = {
+    formData: Body_upload_lesson_video_lesson__lesson_id__video_post;
+    lessonId: number;
+};
+
+export type UploadLessonVideoLessonLessonIdVideoPostResponse = LessonAdminSchema;
+
+export type CreateLessonLessonPostData = {
+    requestBody: CreateLessonBody;
+};
+
+export type CreateLessonLessonPostResponse = LessonAdminSchema;
+
+export type UpdateLessonLessonLessonIdPatchData = {
+    lessonId: number;
+    requestBody: UpdateLessonBody;
+};
+
+export type UpdateLessonLessonLessonIdPatchResponse = LessonAdminSchema;
+
+export type UploadLessonSheetmusicLessonLessonIdSheetmusicPostData = {
+    formData: Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post;
+    lessonId: number;
+};
+
+export type UploadLessonSheetmusicLessonLessonIdSheetmusicPostResponse = LessonAdminSchema;
 
 export type GetSessionDetailSessionSessionIdGetData = {
     sessionId: number;
@@ -306,6 +412,15 @@ export type UseTicketTicketLectureLectureIdPostData = {
 };
 
 export type UseTicketTicketLectureLectureIdPostResponse = LectureAccessStatus;
+
+export type GetCurationCurationGetResponse = GetCurationSchema;
+
+export type SetCurationCurationSectionPutData = {
+    requestBody: SetCurationBody;
+    section: CurationSection;
+};
+
+export type SetCurationCurationSectionPutResponse = unknown;
 
 export type PongPingGetResponse = unknown;
 
@@ -589,6 +704,19 @@ export type $OpenApiTs = {
                 422: HTTPValidationError;
             };
         };
+        patch: {
+            req: UpdateLectureLectureLectureIdPatchData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: GetLectureSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
     };
     '/lesson/{lesson_id}/video': {
         get: {
@@ -598,6 +726,64 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: VideoURLResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        post: {
+            req: UploadLessonVideoLessonLessonIdVideoPostData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LessonAdminSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/lesson': {
+        post: {
+            req: CreateLessonLessonPostData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                201: LessonAdminSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/lesson/{lesson_id}': {
+        patch: {
+            req: UpdateLessonLessonLessonIdPatchData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LessonAdminSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/lesson/{lesson_id}/sheetmusic': {
+        post: {
+            req: UploadLessonSheetmusicLessonLessonIdSheetmusicPostData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LessonAdminSchema;
                 /**
                  * Validation Error
                  */
@@ -661,6 +847,31 @@ export type $OpenApiTs = {
                  * Missing token or inactive user.
                  */
                 401: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/curation': {
+        get: {
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: GetCurationSchema;
+            };
+        };
+    };
+    '/curation/{section}': {
+        put: {
+            req: SetCurationCurationSectionPutData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
                 /**
                  * Validation Error
                  */

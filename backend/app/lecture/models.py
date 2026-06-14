@@ -91,3 +91,10 @@ class CreateLectureBody(BaseSchema):
 
 class CreateLectureResponseSchema(GetLectureSchema):
     pass
+
+
+class UpdateLectureBody(BaseSchema):
+    title: str | None = None
+    description: str | None = None
+    tags: tuple[LectureType, DifficultyLevel] | None = None
+    thumbnail: str | None = None

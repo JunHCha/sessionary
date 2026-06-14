@@ -27,6 +27,10 @@ class BaseLectureRepository(abc.ABC):
     async def create_lecture(self, title: str, description: str) -> LectureDetail:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    async def update_lecture(self, lecture_id: int, fields: dict) -> LectureDetail:
+        raise NotImplementedError
+
 
 class LectureRepository(BaseLectureRepository):
     async def fetch_lectures(
@@ -177,3 +181,25 @@ class LectureRepository(BaseLectureRepository):
                 time_created=new_lecture.time_created,
                 time_updated=new_lecture.time_updated,
             )
+
+    async def update_lecture(self, lecture_id: int, fields: dict) -> LectureDetail:
+        async with self._session_manager.async_session() as session:
+            result = (
+                (
+                    await session.execute(
+                        select(tb.Lecture)
+                        .options(
+                            joinedload(tb.Lecture.artist),
+                            joinedload(tb.Lecture.lessons),
+                        )
+                        .filter(tb.Lecture.id == lecture_id)
+                    )
+                )
+                .unique()
+                .scalar_one()
+            )
+            for key, value in fields.items():
+                setattr(result, key, value)
+            await session.commit()
+            await session.refresh(result)
+            return self._map_to_lecture_detail(result)

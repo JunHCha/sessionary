@@ -12,3 +12,6 @@ class MockVideoProvider(VideoProvider):
             expires_at=datetime.datetime.now(datetime.timezone.utc)
             + datetime.timedelta(hours=1),
         )
+
+    async def upload(self, object_name: str, data: bytes, content_type: str) -> str:
+        return object_name

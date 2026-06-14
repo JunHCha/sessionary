@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
 	import { initializeApi, usersCurrentUserUserMeGet } from '$lib/api'
-	import { setIsAuthenticated } from '$lib/features/auth'
+	import { setCurrentUser } from '$lib/features/auth'
 	import { NavBar, Footer } from '$lib/components/layout'
 	import type { Snippet } from 'svelte'
 
@@ -17,21 +17,25 @@
 
 	async function checkAuthentication() {
 		try {
-			await usersCurrentUserUserMeGet()
-			setIsAuthenticated(true)
+			const me = await usersCurrentUserUserMeGet()
+			setCurrentUser(me)
 		} catch {
-			setIsAuthenticated(false)
+			setCurrentUser(null)
 		}
 	}
 </script>
 
-<NavBar />
+{#if !$page.url.pathname.startsWith('/admin')}
+	<NavBar />
+{/if}
 
 <main>
 	<div class="flex-1">
 		{@render children()}
 	</div>
-	<Footer />
+	{#if !$page.url.pathname.startsWith('/admin')}
+		<Footer />
+	{/if}
 </main>
 
 <style>

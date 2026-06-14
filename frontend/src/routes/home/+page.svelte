@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getLecturesLectureGet, waitForApiInit } from '$lib/api'
+	import { getCurationCurationGet, waitForApiInit } from '$lib/api'
 	import type { LectureInList } from '$lib/api'
 	import { LectureList, RecommendSection } from '$lib/features/lecture'
 	import { HeroSection } from '$lib/components/layout'
@@ -7,21 +7,21 @@
 	let newLectures = $state<LectureInList[]>([])
 	let recommendedLectures = $state<LectureInList[]>([])
 
-	async function fetchLectures() {
+	async function fetchCuration() {
 		await waitForApiInit()
 		try {
-			const response = await getLecturesLectureGet({})
-			recommendedLectures = response.data || []
-			newLectures = response.data || []
+			const response = await getCurationCurationGet()
+			recommendedLectures = response.data?.TRENDING ?? []
+			newLectures = response.data?.NEW ?? []
 		} catch (error) {
-			console.error('Failed to fetch lectures:', error)
+			console.error('Failed to fetch curation:', error)
 			recommendedLectures = []
 			newLectures = []
 		}
 	}
 
 	$effect(() => {
-		fetchLectures()
+		fetchCuration()
 	})
 </script>
 

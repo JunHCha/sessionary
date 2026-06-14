@@ -1,4 +1,5 @@
 import datetime
+from enum import Enum as PyEnum
 import json
 import random
 import string
@@ -262,3 +263,24 @@ class TicketUsage(Base):
     )
 
     __tablename__ = "ticket_usage"
+
+
+class CurationSection(str, PyEnum):
+    TRENDING = "TRENDING"
+    NEW = "NEW"
+
+
+class HomeCuration(Base):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    section: Mapped[CurationSection] = mapped_column(
+        Enum(CurationSection, name="curationsection"), nullable=False
+    )
+    lecture_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("lecture.id"), nullable=False
+    )
+    ordering: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    # for orm
+    lecture: Mapped["Lecture"] = relationship("Lecture", lazy="selectin")
+
+    __tablename__ = "home_curation"

@@ -107,6 +107,32 @@ export const $Body_reset_reset_password_user_auth_reset_password_post = {
     title: 'Body_reset_reset_password_user_auth_reset_password_post'
 } as const;
 
+export const $Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post = {
+    properties: {
+        file: {
+            type: 'string',
+            format: 'binary',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post'
+} as const;
+
+export const $Body_upload_lesson_video_lesson__lesson_id__video_post = {
+    properties: {
+        file: {
+            type: 'string',
+            format: 'binary',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_upload_lesson_video_lesson__lesson_id__video_post'
+} as const;
+
 export const $CreateLectureBody = {
     properties: {
         title: {
@@ -133,6 +159,96 @@ export const $CreateLectureResponseSchema = {
     type: 'object',
     required: ['data'],
     title: 'CreateLectureResponseSchema'
+} as const;
+
+export const $CreateLessonBody = {
+    properties: {
+        lecture_id: {
+            type: 'integer',
+            title: 'Lecture Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        length_sec: {
+            type: 'integer',
+            title: 'Length Sec',
+            default: 0
+        },
+        text: {
+            type: 'string',
+            title: 'Text',
+            default: ''
+        },
+        lecture_ordering: {
+            type: 'integer',
+            title: 'Lecture Ordering',
+            default: 0
+        },
+        session_type: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/SessionType'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        sync_offset: {
+            type: 'integer',
+            title: 'Sync Offset',
+            default: 0
+        },
+        subtitles: {
+            items: {
+                '$ref': '#/components/schemas/Subtitle'
+            },
+            type: 'array',
+            title: 'Subtitles',
+            default: []
+        },
+        playing_guide: {
+            items: {
+                '$ref': '#/components/schemas/PlayingGuideStep'
+            },
+            type: 'array',
+            title: 'Playing Guide',
+            default: []
+        }
+    },
+    type: 'object',
+    required: ['lecture_id', 'title'],
+    title: 'CreateLessonBody'
+} as const;
+
+export const $CurationData = {
+    properties: {
+        TRENDING: {
+            items: {
+                '$ref': '#/components/schemas/LectureInList'
+            },
+            type: 'array',
+            title: 'Trending'
+        },
+        NEW: {
+            items: {
+                '$ref': '#/components/schemas/LectureInList'
+            },
+            type: 'array',
+            title: 'New'
+        }
+    },
+    type: 'object',
+    required: ['TRENDING', 'NEW'],
+    title: 'CurationData'
+} as const;
+
+export const $CurationSection = {
+    type: 'string',
+    enum: ['TRENDING', 'NEW'],
+    title: 'CurationSection'
 } as const;
 
 export const $ErrorModel = {
@@ -188,6 +304,17 @@ export const $GetArtistsResponse = {
     type: 'object',
     required: ['data'],
     title: 'GetArtistsResponse'
+} as const;
+
+export const $GetCurationSchema = {
+    properties: {
+        data: {
+            '$ref': '#/components/schemas/CurationData'
+        }
+    },
+    type: 'object',
+    required: ['data'],
+    title: 'GetCurationSchema'
 } as const;
 
 export const $GetLectureSchema = {
@@ -453,6 +580,106 @@ export const $LectureInfo = {
     title: 'LectureInfo'
 } as const;
 
+export const $LessonAdminDetail = {
+    properties: {
+        id: {
+            type: 'integer',
+            title: 'Id'
+        },
+        lecture_id: {
+            type: 'integer',
+            title: 'Lecture Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        length_sec: {
+            type: 'integer',
+            title: 'Length Sec'
+        },
+        text: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Text'
+        },
+        lecture_ordering: {
+            type: 'integer',
+            title: 'Lecture Ordering'
+        },
+        session_type: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/SessionType'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        sheetmusic_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sheetmusic Url'
+        },
+        video_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Video Url'
+        },
+        sync_offset: {
+            type: 'integer',
+            title: 'Sync Offset'
+        },
+        subtitles: {
+            items: {
+                '$ref': '#/components/schemas/Subtitle'
+            },
+            type: 'array',
+            title: 'Subtitles'
+        },
+        playing_guide: {
+            items: {
+                '$ref': '#/components/schemas/PlayingGuideStep'
+            },
+            type: 'array',
+            title: 'Playing Guide'
+        }
+    },
+    type: 'object',
+    required: ['id', 'lecture_id', 'title', 'length_sec', 'text', 'lecture_ordering', 'session_type', 'sheetmusic_url', 'video_url', 'sync_offset', 'subtitles', 'playing_guide'],
+    title: 'LessonAdminDetail'
+} as const;
+
+export const $LessonAdminSchema = {
+    properties: {
+        data: {
+            '$ref': '#/components/schemas/LessonAdminDetail'
+        }
+    },
+    type: 'object',
+    required: ['data'],
+    title: 'LessonAdminSchema'
+} as const;
+
 export const $LessonInLecture = {
     properties: {
         id: {
@@ -675,6 +902,21 @@ export const $SessionType = {
     title: 'SessionType'
 } as const;
 
+export const $SetCurationBody = {
+    properties: {
+        lecture_ids: {
+            items: {
+                type: 'integer'
+            },
+            type: 'array',
+            title: 'Lecture Ids'
+        }
+    },
+    type: 'object',
+    required: ['lecture_ids'],
+    title: 'SetCurationBody'
+} as const;
+
 export const $Subtitle = {
     properties: {
         timestamp_ms: {
@@ -690,6 +932,169 @@ export const $Subtitle = {
     type: 'object',
     required: ['timestamp_ms', 'text'],
     title: 'Subtitle'
+} as const;
+
+export const $UpdateLectureBody = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        tags: {
+            anyOf: [
+                {
+                    prefixItems: [
+                        {
+                            type: 'string',
+                            enum: ['원곡카피', '해석버전', '기본기']
+                        },
+                        {
+                            type: 'string',
+                            enum: ['Easy', 'Intermediate', 'Advanced']
+                        }
+                    ],
+                    type: 'array',
+                    maxItems: 2,
+                    minItems: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tags'
+        },
+        thumbnail: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    title: 'UpdateLectureBody'
+} as const;
+
+export const $UpdateLessonBody = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        length_sec: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Length Sec'
+        },
+        text: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Text'
+        },
+        lecture_ordering: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Lecture Ordering'
+        },
+        session_type: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/SessionType'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        sync_offset: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Sync Offset'
+        },
+        subtitles: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/Subtitle'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Subtitles'
+        },
+        playing_guide: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/PlayingGuideStep'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Playing Guide'
+        }
+    },
+    type: 'object',
+    title: 'UpdateLessonBody'
 } as const;
 
 export const $UserArtistInfo = {

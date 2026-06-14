@@ -1,15 +1,18 @@
 from dependency_injector import containers, providers
 
+from app.curation.repository import CurationRepository
+from app.curation.service import CurationService
 from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
 from app.lesson.repository import LessonRepository
+from app.lesson.service import LessonService
 from app.session.repository import SessionRepository
 from app.session.service import SessionService
+from app.sheetmusic.service import SheetmusicProvider
 from app.ticket.repository import TicketRepository
 from app.ticket.service import TicketService
 from app.user.repository import UserRepository
 from app.user.service import UserService
-from app.sheetmusic.service import SheetmusicProvider
 from app.video.service import VideoProvider
 
 
@@ -109,6 +112,13 @@ class ServicesContainer(containers.DeclarativeContainer):
         settings=settings,
     )
 
+    lesson_service = providers.Factory(
+        LessonService,
+        repository=lesson_repository,
+        video_provider=video_provider,
+        sheetmusic_provider=sheetmusic_provider,
+    )
+
     session_repository = providers.Factory(
         SessionRepository,
         session_manager=database.session_manager,
@@ -119,4 +129,14 @@ class ServicesContainer(containers.DeclarativeContainer):
         repository=session_repository,
         video_provider=video_provider,
         sheetmusic_provider=sheetmusic_provider,
+    )
+
+    curation_repository = providers.Factory(
+        CurationRepository,
+        session_manager=database.session_manager,
+    )
+
+    curation_service = providers.Factory(
+        CurationService,
+        repository=curation_repository,
     )
