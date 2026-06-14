@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
 from app.lesson.repository import LessonRepository
+from app.lesson.service import LessonService
 from app.session.repository import SessionRepository
 from app.session.service import SessionService
 from app.ticket.repository import TicketRepository
@@ -107,6 +108,13 @@ class ServicesContainer(containers.DeclarativeContainer):
     sheetmusic_provider = providers.Factory(
         _create_sheetmusic_provider,
         settings=settings,
+    )
+
+    lesson_service = providers.Factory(
+        LessonService,
+        repository=lesson_repository,
+        video_provider=video_provider,
+        sheetmusic_provider=sheetmusic_provider,
     )
 
     session_repository = providers.Factory(
