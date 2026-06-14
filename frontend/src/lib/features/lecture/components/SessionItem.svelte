@@ -1,72 +1,101 @@
 <script lang="ts">
 	import type { LessonInLecture } from '$lib/api'
+	import type { SessionState } from '../utils/progress'
 	import { formatDuration } from '../utils/format'
 
 	let {
 		session,
 		index,
-		isCurrent = false,
-		isCompleted = false,
+		state = 'locked',
 		onclick
 	}: {
 		session: LessonInLecture
 		index: number
-		isCurrent?: boolean
-		isCompleted?: boolean
+		state?: SessionState
 		onclick?: () => void
 	} = $props()
 
 	let displayNumber = $derived(String(index + 1).padStart(2, '0'))
 
-	// isCurrent가 isCompleted보다 우선순위가 높음 (현재 세션은 완료 상태여도 강조 표시)
-	let isVisuallyCompleted = $derived(isCompleted && !isCurrent)
-	let numberColor = $derived(isCurrent ? '#ff5c16' : isCompleted ? '#444' : '#666')
+	let isCurrent = $derived(state === 'current')
+	let isCompleted = $derived(state === 'completed')
+	let numberColor = $derived(isCurrent ? '#ff5c16' : isCompleted ? '#3a3a3a' : '#656565')
 </script>
 
 <button
 	type="button"
-	class="w-full flex items-center h-[107px] px-[25px] rounded-xl transition-all duration-200 text-left"
-	class:opacity-50={isVisuallyCompleted}
+	data-testid="session-item"
+	data-state={state}
+	class="flex w-full items-center gap-[18px] rounded-[8px] border px-[20px] py-[16px] text-left transition-colors duration-150"
+	class:current={isCurrent}
 	style={isCurrent
-		? 'border: 1px solid #ff5c16; background: linear-gradient(to right, #1a1410, #0c0c0c); box-shadow: 0px 20px 25px -5px rgba(255,92,22,0.2), 0px 8px 10px -6px rgba(255,92,22,0.2);'
-		: 'border: 1px solid #1f1f1f; background: #0c0c0c;'}
+		? 'border-color: #ff5c16; background: linear-gradient(to right, #1d1410, #0e0b09); box-shadow: 0 10px 30px -12px rgba(255,92,22,0.35);'
+		: 'border-color: #242424; background: #141414;'}
 	{onclick}
 >
-	<div class="flex items-center gap-[45px]">
-		<div class="flex items-center gap-2">
-			{#if isCurrent}
-				<span
-					class="px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
-					style="background: #ff5c16; font-family: Helvetica, Arial, sans-serif;"
-				>
-					NEXT
-				</span>
-			{/if}
-			{#if isCompleted}
-				<span class="w-2 h-2 rounded-full" style="background: #444;"></span>
-			{/if}
-			<span
-				class="text-[20px] font-bold"
-				style="color: {numberColor}; font-family: Helvetica, Arial, sans-serif;"
-			>
-				{displayNumber}
-			</span>
-		</div>
+	<span
+		class="min-w-[30px] text-[18px] font-bold"
+		style="color: {numberColor}; font-family: Helvetica, Arial, sans-serif;"
+	>
+		{displayNumber}
+	</span>
 
-		<div class="flex-1 min-w-0">
-			<p
-				class="font-medium truncate"
-				class:line-through={isVisuallyCompleted}
-				style="color: {isCurrent ? '#ffffff' : isCompleted ? '#666' : '#d5d5d5'};"
-			>
-				{session.title}
-			</p>
-		</div>
+	<div class="min-w-0 flex-1">
+		<p
+			class="truncate text-[15px] font-semibold"
+			style="color: {isCurrent ? '#ffffff' : isCompleted ? '#656565' : '#c9c9c9'};"
+		>
+			{session.title}
+		</p>
 	</div>
 
-	<div class="ml-auto flex-shrink-0">
-		<span class="text-sm" style="color: {isCurrent ? '#ffffff' : isCompleted ? '#555' : '#777'};">
+	<div class="flex flex-shrink-0 items-center gap-[14px]">
+		<span class="text-[13px]" style="color: {isCurrent ? '#c9c9c9' : '#848484'};">
 			{formatDuration(session.length_sec)}
 		</span>
+
+		{#if isCurrent}
+			<span
+				class="rounded-full px-[9px] py-[3px] text-[10px] font-bold text-white"
+				style="background: #ff5c16; font-family: Helvetica, Arial, sans-serif;"
+			>
+				NEXT
+			</span>
+		{:else if isCompleted}
+			<span
+				class="flex h-[22px] w-[22px] items-center justify-center rounded-full"
+				style="background: rgba(255,92,22,0.15);"
+				aria-label="완료"
+			>
+				<svg
+					class="h-[13px] w-[13px]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="#ff5c16"
+					stroke-width="3"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M5 12l5 5L20 7" />
+				</svg>
+			</span>
+		{:else if state === 'locked'}
+			<span
+				class="flex h-[32px] w-[32px] items-center justify-center rounded-[8px]"
+				style="background: #1a1a1a;"
+				aria-label="잠김"
+			>
+				<svg
+					class="h-[15px] w-[15px]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="#656565"
+					stroke-width="2"
+				>
+					<rect x="5" y="11" width="14" height="9" rx="2" />
+					<path d="M8 11V7a4 4 0 018 0v4" />
+				</svg>
+			</span>
+		{/if}
 	</div>
 </button>
