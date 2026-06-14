@@ -8,6 +8,7 @@ from app.lecture.models import (
     CreateLectureResponseSchema,
     FetchRecommendedLecuturesSchema,
     GetLectureSchema,
+    UpdateLectureBody,
 )
 from app.lecture.service import BaseLectureService
 
@@ -49,4 +50,19 @@ async def create_lecture(
     user=Depends(superuser),
 ):
     lecture = await lecture_svc.create_lecture(body.title, body.description)
+    return GetLectureSchema(data=lecture)
+
+
+@app_router.patch("/{lecture_id}", response_model=GetLectureSchema)
+@inject
+async def update_lecture(
+    lecture_id: int,
+    body: UpdateLectureBody,
+    lecture_svc: BaseLectureService = Depends(
+        Provide[ApplicationContainer.services.lecture_service]
+    ),
+    user=Depends(superuser),
+):
+    fields = body.model_dump(exclude_unset=True)
+    lecture = await lecture_svc.update_lecture(lecture_id, fields)
     return GetLectureSchema(data=lecture)
