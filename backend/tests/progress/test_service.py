@@ -6,6 +6,8 @@ from app.lesson.models import LessonInLecture
 from app.progress.repository import ProgressRepository
 from app.progress.service import ProgressService
 
+pytest_plugins = ["tests.conftest", "tests.api.conftest"]
+
 
 def _build_lecture_detail() -> LectureDetail:
     now = datetime.datetime.now()

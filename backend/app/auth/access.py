@@ -9,6 +9,10 @@ async def current_user_placeholder():
     raise NotImplementedError("current_user dependency should be overridden")
 
 
+async def optional_current_user_placeholder() -> User | None:
+    return None
+
+
 def authenticated_user(user: User = Depends(current_user_placeholder)):
     if not user:
         raise HTTPException(status_code=401, detail="Unauthenticated")

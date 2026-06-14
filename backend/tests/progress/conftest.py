@@ -9,8 +9,6 @@ from app.progress.repository import ProgressRepository
 from app.progress.service import ProgressService
 from tests.containers import TestSessionManager
 
-pytest_plugins = ["tests.conftest", "tests.api.conftest"]
-
 
 @pytest.fixture
 def progress_repository(stub_sess_manager: TestSessionManager) -> ProgressRepository:

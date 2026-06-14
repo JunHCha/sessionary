@@ -1,6 +1,8 @@
 from app.db import tables as tb
 from app.progress.repository import ProgressRepository
 
+pytest_plugins = ["tests.conftest", "tests.api.conftest"]
+
 
 async def test_mark_complete_creates_progress(
     progress_repository: ProgressRepository,

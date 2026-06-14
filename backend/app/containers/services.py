@@ -6,6 +6,8 @@ from app.lecture.repository import LectureRepository
 from app.lecture.service import LectureService
 from app.lesson.repository import LessonRepository
 from app.lesson.service import LessonService
+from app.progress.repository import ProgressRepository
+from app.progress.service import ProgressService
 from app.session.repository import SessionRepository
 from app.session.service import SessionService
 from app.sheetmusic.service import SheetmusicProvider
@@ -100,6 +102,16 @@ class ServicesContainer(containers.DeclarativeContainer):
     lesson_repository = providers.Factory(
         LessonRepository,
         session_manager=database.session_manager,
+    )
+
+    progress_repository = providers.Factory(
+        ProgressRepository,
+        session_manager=database.session_manager,
+    )
+
+    progress_service = providers.Factory(
+        ProgressService,
+        repository=progress_repository,
     )
 
     video_provider = providers.Factory(
