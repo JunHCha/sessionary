@@ -1,11 +1,19 @@
 <script lang="ts">
+	import Hls from 'hls.js'
 	import { goto } from '$app/navigation'
 	import { waitForApiInit } from '$lib/api/config'
 	import {
 		VideoPlayer,
 		SubtitleRoller,
 		TabSheet,
+		SessionLoadingSplash,
 		loadSessionDetail,
+		MIN_SPLASH_MS,
+		PRELOAD_TIMEOUT_MS,
+		areResourcesReady,
+		isVideoReady,
+		shouldTransitionFromSplash,
+		selectPreloadStrategy,
 		type SessionDetailData,
 		type SeekRequest
 	} from '$lib/features/session'
@@ -18,32 +26,114 @@
 	let currentTime = $state(0)
 	let seekRequest = $state<SeekRequest | undefined>(undefined)
 
+	// 스플래시 게이트 상태
+	let minElapsed = $state(false)
+	let videoPreloaded = $state(false)
+
 	function handleSeekRequest(timeSec: number) {
 		seekRequest = { time: timeSec, version: (seekRequest?.version ?? 0) + 1 }
 	}
 
 	let currentRequestId = 0
+	let minTimer: ReturnType<typeof setTimeout> | undefined
+	let preloadTimer: ReturnType<typeof setTimeout> | undefined
+	let preloadHls: Hls | null = null
+	let preloadVideo: HTMLVideoElement | null = null
+
+	function cleanupPreload() {
+		clearTimeout(minTimer)
+		clearTimeout(preloadTimer)
+		if (preloadHls) {
+			preloadHls.destroy()
+			preloadHls = null
+		}
+		if (preloadVideo) {
+			preloadVideo.removeAttribute('src')
+			preloadVideo.load()
+			preloadVideo = null
+		}
+	}
+
+	// 데이터 도착 시 영상 prefetch 시작 (videoUrl 없으면 즉시 ready)
+	function startVideoPreload(videoUrl: string, requestId: number) {
+		const markReady = () => {
+			if (requestId === currentRequestId) videoPreloaded = true
+		}
+
+		const strategy = selectPreloadStrategy(videoUrl)
+		if (strategy === 'none') {
+			markReady()
+			return
+		}
+
+		// 안전장치: 프리로드 지연/실패해도 상한 시간 후 ready 처리
+		preloadTimer = setTimeout(markReady, PRELOAD_TIMEOUT_MS)
+
+		if (strategy === 'hls' && Hls.isSupported()) {
+			preloadHls = new Hls()
+			preloadHls.loadSource(videoUrl)
+			preloadHls.on(Hls.Events.MANIFEST_PARSED, markReady)
+			preloadHls.on(Hls.Events.ERROR, (_, d) => {
+				if (d.fatal) markReady()
+			})
+		} else {
+			preloadVideo = document.createElement('video')
+			preloadVideo.preload = 'auto'
+			preloadVideo.muted = true
+			preloadVideo.addEventListener('loadedmetadata', markReady)
+			preloadVideo.addEventListener('canplay', markReady)
+			preloadVideo.addEventListener('error', markReady)
+			preloadVideo.src = videoUrl
+		}
+	}
 
 	async function fetchSession(sessionId: number) {
 		const requestId = ++currentRequestId
+		cleanupPreload()
 		loading = true
 		error = null
 		session = null
+		minElapsed = false
+		videoPreloaded = false
+
+		minTimer = setTimeout(() => {
+			if (requestId === currentRequestId) minElapsed = true
+		}, MIN_SPLASH_MS)
+
 		try {
 			await waitForApiInit()
 			const result = await loadSessionDetail(sessionId)
 			if (requestId !== currentRequestId) return
 			session = result
+			startVideoPreload(result.videoUrl, requestId)
 		} catch (e) {
 			if (requestId !== currentRequestId) return
 			error = e instanceof Error ? e.message : '세션을 불러올 수 없습니다'
-		} finally {
-			if (requestId === currentRequestId) loading = false
+			loading = false
 		}
 	}
 
+	// 리소스 준비 판정: 자막/악보는 데이터 동봉이므로 도착 시 ready
+	const resourcesReady = $derived(
+		!!session &&
+			areResourcesReady({
+				video: isVideoReady(session.videoUrl, videoPreloaded),
+				subtitles: true,
+				sheet: true
+			})
+	)
+
+	// 전환 게이트: 최소 시간 경과 && 리소스 준비 시 스플래시 종료
+	$effect(() => {
+		if (error) return
+		if (shouldTransitionFromSplash({ minElapsed, resourcesReady })) {
+			loading = false
+		}
+	})
+
 	$effect(() => {
 		fetchSession(data.sessionId)
+		return cleanupPreload
 	})
 
 	function goToPrevious() {
@@ -62,8 +152,8 @@
 <main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px] flex flex-col">
 	<div class="w-full max-w-[1280px] min-w-[390px] mx-auto px-[40px] py-6 flex-1 flex flex-col">
 		{#if loading}
-			<div data-testid="session-loading" class="flex items-center justify-center h-[60vh]">
-				<div class="text-[#999] text-lg">로딩 중...</div>
+			<div data-testid="session-loading">
+				<SessionLoadingSplash />
 			</div>
 		{:else if error}
 			<div data-testid="session-error" class="flex items-center justify-center h-[60vh]">

@@ -120,4 +120,21 @@ describe('splash 전환 게이트 로직', () => {
 			expect(videoPreloadEventToReady('progress')).toBe(false)
 		})
 	})
+
+	describe('selectPreloadStrategy', () => {
+		it('빈 URL이면 none (프리로드 불필요)', async () => {
+			const { selectPreloadStrategy } = await import('$lib/features/session/splash')
+			expect(selectPreloadStrategy('')).toBe('none')
+		})
+
+		it('.m3u8이면 hls', async () => {
+			const { selectPreloadStrategy } = await import('$lib/features/session/splash')
+			expect(selectPreloadStrategy('https://example.com/v.m3u8')).toBe('hls')
+		})
+
+		it('mp4이면 mp4', async () => {
+			const { selectPreloadStrategy } = await import('$lib/features/session/splash')
+			expect(selectPreloadStrategy('https://example.com/v.mp4')).toBe('mp4')
+		})
+	})
 })

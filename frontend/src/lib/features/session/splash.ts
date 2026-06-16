@@ -1,3 +1,5 @@
+import { isHlsSource } from './utils'
+
 /**
  * 세션 로딩 스플래시 최소 표시 시간 (ms).
  * 스플래시 진입 시각 기준으로 이 시간만큼은 무조건 노출한다.
@@ -61,4 +63,18 @@ export function videoPreloadEventToReady(eventType: string): boolean {
 	return (
 		eventType === 'loadedmetadata' || eventType === 'canplay' || eventType === 'manifestparsed'
 	)
+}
+
+export type PreloadStrategy = 'none' | 'hls' | 'mp4'
+
+/**
+ * videoUrl에 따라 프리로드 전략 선택.
+ * - 빈 문자열: 프리로드 불필요(none)
+ * - .m3u8: hls.js로 매니페스트+초기 프래그먼트 프리로드
+ * - 그 외: hidden <video preload="auto">로 메타데이터 프리로드
+ */
+export function selectPreloadStrategy(videoUrl: string): PreloadStrategy {
+	if (videoUrl === '') return 'none'
+	if (isHlsSource(videoUrl)) return 'hls'
+	return 'mp4'
 }
