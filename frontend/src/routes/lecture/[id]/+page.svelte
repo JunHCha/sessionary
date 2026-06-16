@@ -41,6 +41,9 @@
 		const id = Number($page.params.id)
 		if (!isNaN(id) && id > 0) {
 			access = createLectureAccess(id)
+			if (auth.isAuthenticated) {
+				access.loadAccessStatus()
+			}
 			fetchLecture(id)
 		}
 	})
@@ -78,6 +81,7 @@
 					sessions={lecture.lessons}
 					progress={lecture.progress}
 					isAuthenticated={auth.isAuthenticated}
+					accessible={access?.accessible}
 					onstart={handleSessionClick}
 					onlogin={() => access && (access.showLoginModal = true)}
 				/>
