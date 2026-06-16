@@ -124,25 +124,16 @@
 			isPlaying = !videoElement.paused
 		}
 
-		const handleMuteState = () => {
-			isMuted = videoElement.muted
-		}
-
-		// 음소거 자동재생 등 외부에서 muted가 설정된 경우 버튼 상태 동기화
-		isMuted = videoElement.muted
-
 		videoElement.addEventListener('timeupdate', handleTimeUpdate)
 		videoElement.addEventListener('play', handlePlayState)
 		videoElement.addEventListener('pause', handlePlayState)
 		videoElement.addEventListener('loadedmetadata', handleTimeUpdate)
-		videoElement.addEventListener('volumechange', handleMuteState)
 
 		return () => {
 			videoElement.removeEventListener('timeupdate', handleTimeUpdate)
 			videoElement.removeEventListener('play', handlePlayState)
 			videoElement.removeEventListener('pause', handlePlayState)
 			videoElement.removeEventListener('loadedmetadata', handleTimeUpdate)
-			videoElement.removeEventListener('volumechange', handleMuteState)
 		}
 	})
 </script>

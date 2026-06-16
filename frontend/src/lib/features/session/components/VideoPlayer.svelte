@@ -48,23 +48,11 @@
 	}
 
 	/**
-	 * 자동재생 시 음소거로 시작해야 하는지 판단
-	 * 브라우저는 소리 있는 자동재생을 차단하므로 autoplay면 음소거로 시작한다
+	 * 큰 재생 버튼 오버레이 표시 여부 판단
+	 * 아직 재생이 시작되지 않았고 에러가 없을 때만 표시 (에러 오버레이가 우선)
 	 */
-	export function shouldStartMuted(autoplay: boolean): boolean {
-		return autoplay
-	}
-
-	/**
-	 * "탭하여 소리 켜기" 어포던스 표시 여부 판단
-	 * 자동재생 음소거 중이고 에러가 없을 때만 표시 (에러 오버레이가 우선)
-	 */
-	export function shouldShowUnmuteAffordance(
-		autoplay: boolean,
-		muted: boolean,
-		hasError: boolean
-	): boolean {
-		return autoplay && muted && !hasError
+	export function shouldShowPlayOverlay(hasStarted: boolean, hasError: boolean): boolean {
+		return !hasStarted && !hasError
 	}
 
 	/**
@@ -104,17 +92,13 @@
 	let hls: Hls | null = null
 	let isLoading = $state(true)
 	let errorMessage = $state<string | null>(null)
-	// autoplay는 세션 동안 변하지 않는 prop이므로 초기값 캡처가 의도된 동작
-	// svelte-ignore state_referenced_locally
-	let muted = $state(shouldStartMuted(autoplay))
+	let hasStarted = $state(false)
 
-	let showUnmuteAffordance = $derived(
-		shouldShowUnmuteAffordance(autoplay, muted, errorMessage !== null)
-	)
+	let showPlayOverlay = $derived(shouldShowPlayOverlay(hasStarted, errorMessage !== null))
 
-	function unmute() {
-		muted = false
-		if (videoElement) videoElement.muted = false
+	function startPlayback() {
+		if (!videoElement) return
+		videoElement.play().catch(() => {})
 	}
 
 	// 브라우저 환경 체크
@@ -134,6 +118,7 @@
 	}
 
 	function handlePlay() {
+		hasStarted = true
 		onplay?.()
 	}
 
@@ -173,21 +158,11 @@
 			hls.loadSource(src)
 			hls.attachMedia(videoElement)
 
-			hls.on(Hls.Events.MANIFEST_PARSED, () => {
-				if (autoplay) {
-					videoElement.muted = muted
-					videoElement.play().catch(() => {})
-				}
-			})
-
 			hls.on(Hls.Events.ERROR, (_, data) => {
 				if (data.fatal) {
 					handleError(data.details || 'HLS playback error')
 				}
 			})
-		} else if (autoplay && videoElement.src) {
-			videoElement.muted = muted
-			videoElement.play().catch(() => {})
 		}
 	}
 
@@ -244,7 +219,6 @@
 		class="w-full h-full object-contain"
 		{poster}
 		src={getVideoSource(src, nativeHlsSupport)}
-		bind:muted={muted}
 		playsinline
 		preload="metadata"
 		ontimeupdate={handleTimeUpdate}
@@ -260,20 +234,21 @@
 
 	<VideoControls {videoElement} />
 
-	{#if showUnmuteAffordance}
+	{#if showPlayOverlay}
 		<button
 			type="button"
-			data-testid="unmute-affordance"
-			onclick={unmute}
-			class="absolute top-3 right-3 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 text-white text-sm font-medium backdrop-blur-sm hover:bg-black/80 transition-colors"
-			aria-label="탭하여 소리 켜기"
+			data-testid="play-overlay"
+			onclick={startPlayback}
+			class="absolute inset-0 z-20 flex items-center justify-center bg-black/30"
+			aria-label="재생"
 		>
-			<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-				<path
-					d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"
-				/>
-			</svg>
-			<span>탭하여 소리 켜기</span>
+			<span
+				class="flex items-center justify-center w-20 h-20 rounded-full bg-black/60 text-white backdrop-blur-sm transition-transform hover:scale-105"
+			>
+				<svg class="w-10 h-10 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+					<path d="M8 5v14l11-7z" />
+				</svg>
+			</span>
 		</button>
 	{/if}
 </div>

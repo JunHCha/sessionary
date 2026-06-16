@@ -89,49 +89,33 @@ describe('VideoPlayer', () => {
 		})
 	})
 
-	describe('shouldStartMuted', () => {
-		it('autoplay가 true면 음소거로 시작한다 (브라우저 정책 통과)', async () => {
-			const { shouldStartMuted } = await import(
+	describe('shouldShowPlayOverlay', () => {
+		it('재생 시작 전이고 에러가 없으면 재생 오버레이를 표시한다', async () => {
+			const { shouldShowPlayOverlay } = await import(
 				'$lib/features/session/components/VideoPlayer.svelte'
 			)
-			expect(shouldStartMuted(true)).toBe(true)
+			expect(shouldShowPlayOverlay(false, false)).toBe(true)
 		})
 
-		it('autoplay가 false면 음소거하지 않는다', async () => {
-			const { shouldStartMuted } = await import(
+		it('재생이 시작되면 재생 오버레이를 숨긴다', async () => {
+			const { shouldShowPlayOverlay } = await import(
 				'$lib/features/session/components/VideoPlayer.svelte'
 			)
-			expect(shouldStartMuted(false)).toBe(false)
-		})
-	})
-
-	describe('shouldShowUnmuteAffordance', () => {
-		it('자동재생 음소거 중이고 에러가 없으면 어포던스를 표시한다', async () => {
-			const { shouldShowUnmuteAffordance } = await import(
-				'$lib/features/session/components/VideoPlayer.svelte'
-			)
-			expect(shouldShowUnmuteAffordance(true, true, false)).toBe(true)
+			expect(shouldShowPlayOverlay(true, false)).toBe(false)
 		})
 
-		it('음소거가 해제되면 어포던스를 숨긴다', async () => {
-			const { shouldShowUnmuteAffordance } = await import(
+		it('에러가 있으면 재생 오버레이를 표시하지 않는다 (에러 오버레이 우선)', async () => {
+			const { shouldShowPlayOverlay } = await import(
 				'$lib/features/session/components/VideoPlayer.svelte'
 			)
-			expect(shouldShowUnmuteAffordance(true, false, false)).toBe(false)
+			expect(shouldShowPlayOverlay(false, true)).toBe(false)
 		})
 
-		it('autoplay가 아니면 어포던스를 표시하지 않는다', async () => {
-			const { shouldShowUnmuteAffordance } = await import(
+		it('재생도 시작됐고 에러도 있으면 표시하지 않는다', async () => {
+			const { shouldShowPlayOverlay } = await import(
 				'$lib/features/session/components/VideoPlayer.svelte'
 			)
-			expect(shouldShowUnmuteAffordance(false, true, false)).toBe(false)
-		})
-
-		it('에러가 있으면 어포던스를 표시하지 않는다 (에러 오버레이 우선)', async () => {
-			const { shouldShowUnmuteAffordance } = await import(
-				'$lib/features/session/components/VideoPlayer.svelte'
-			)
-			expect(shouldShowUnmuteAffordance(true, true, true)).toBe(false)
+			expect(shouldShowPlayOverlay(true, true)).toBe(false)
 		})
 	})
 
