@@ -48,6 +48,26 @@
 	}
 
 	/**
+	 * 자동재생 시 음소거로 시작해야 하는지 판단
+	 * 브라우저는 소리 있는 자동재생을 차단하므로 autoplay면 음소거로 시작한다
+	 */
+	export function shouldStartMuted(autoplay: boolean): boolean {
+		return autoplay
+	}
+
+	/**
+	 * "탭하여 소리 켜기" 어포던스 표시 여부 판단
+	 * 자동재생 음소거 중이고 에러가 없을 때만 표시 (에러 오버레이가 우선)
+	 */
+	export function shouldShowUnmuteAffordance(
+		autoplay: boolean,
+		muted: boolean,
+		hasError: boolean
+	): boolean {
+		return autoplay && muted && !hasError
+	}
+
+	/**
 	 * 스피너 오버레이 클래스
 	 * pointer-events-none: 스피너가 떠 있어도 아래 VideoControls 탭이 가능해야 함 (iOS 데드락 방지)
 	 */
