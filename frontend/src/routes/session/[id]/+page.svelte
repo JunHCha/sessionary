@@ -90,6 +90,7 @@
 				{#if session.videoUrl}
 					<VideoPlayer
 						src={session.videoUrl}
+						autoplay
 						seekTo={seekRequest}
 						ontimeupdate={(e) => (currentTime = e.currentTime)}
 					/>
