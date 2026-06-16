@@ -18,7 +18,7 @@ class BaseSessionRepository(abc.ABC):
     @abc.abstractmethod
     async def get_adjacent_sessions(
         self, session_id: int, lecture_id: int
-    ) -> tuple[int | None, int | None]:
+    ) -> tuple[int | None, int | None, str | None]:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -38,7 +38,7 @@ class SessionRepository(BaseSessionRepository):
 
     async def get_adjacent_sessions(
         self, session_id: int, lecture_id: int
-    ) -> tuple[int | None, int | None]:
+    ) -> tuple[int | None, int | None, str | None]:
         async with self._session_manager.async_session() as session:
             current_result = await session.execute(
                 select(tb.Lesson.lecture_ordering).where(
@@ -48,7 +48,7 @@ class SessionRepository(BaseSessionRepository):
             )
             current_ordering = current_result.scalar_one_or_none()
             if current_ordering is None:
-                return None, None
+                return None, None, None
 
             prev_result = await session.execute(
                 select(tb.Lesson.id)
@@ -62,7 +62,7 @@ class SessionRepository(BaseSessionRepository):
             prev_id = prev_result.scalar_one_or_none()
 
             next_result = await session.execute(
-                select(tb.Lesson.id)
+                select(tb.Lesson.id, tb.Lesson.title)
                 .where(
                     tb.Lesson.lecture_id == lecture_id,
                     tb.Lesson.lecture_ordering > current_ordering,
@@ -70,9 +70,11 @@ class SessionRepository(BaseSessionRepository):
                 .order_by(tb.Lesson.lecture_ordering.asc())
                 .limit(1)
             )
-            next_id = next_result.scalar_one_or_none()
+            next_row = next_result.first()
+            next_id = next_row.id if next_row else None
+            next_title = next_row.title if next_row else None
 
-            return prev_id, next_id
+            return prev_id, next_id, next_title
 
     async def count_sessions_in_lecture(self, lecture_id: int) -> int:
         async with self._session_manager.async_session() as session:

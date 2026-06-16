@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.db import tables as tb
-from app.session.models import SessionType, SessionDetailResponse
+from app.session.models import SessionDetailResponse, SessionType
 from app.session.service import SessionService
 from app.sheetmusic.models import SheetmusicURLResponse
 from app.video.models import VideoURLResponse
@@ -80,7 +80,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson()
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, 2)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, 2, "Next")
         mock_session_repository.count_sessions_in_lecture.return_value = 5
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -112,7 +112,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson(session_type=None)
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -130,7 +130,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson(video_url="")
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
 
         result = await session_service.get_session_detail(1)
@@ -143,7 +143,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson(subtitles=None)
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -160,7 +160,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson(playing_guide=None)
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -177,7 +177,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson()
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (5, 7)
+        mock_session_repository.get_adjacent_sessions.return_value = (5, 7, "Lesson 7")
         mock_session_repository.count_sessions_in_lecture.return_value = 10
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -189,13 +189,14 @@ class TestSessionService:
 
         assert result.navigation.prev_session_id == 5
         assert result.navigation.next_session_id == 7
+        assert result.navigation.next_session_title == "Lesson 7"
 
     async def test_sut_get_session_detail_returns_sheetmusic_presigned_url(
         self, session_service, mock_session_repository, mock_video_provider, mock_sheetmusic_provider
     ):
         lesson = create_mock_lesson(sheetmusic_url="sheet.gp")
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -217,7 +218,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson(sheetmusic_url="")
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
@@ -235,7 +236,7 @@ class TestSessionService:
     ):
         lesson = create_mock_lesson(sheetmusic_url=None)
         mock_session_repository.get_session_detail.return_value = lesson
-        mock_session_repository.get_adjacent_sessions.return_value = (None, None)
+        mock_session_repository.get_adjacent_sessions.return_value = (None, None, None)
         mock_session_repository.count_sessions_in_lecture.return_value = 1
         mock_video_provider.get_video_url.return_value = VideoURLResponse(
             url="https://signed.url/video.m3u8",
