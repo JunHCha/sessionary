@@ -937,6 +937,17 @@ export const $SessionNavigation = {
                 }
             ],
             title: 'Next Session Id'
+        },
+        next_session_title: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Next Session Title'
         }
     },
     type: 'object',
