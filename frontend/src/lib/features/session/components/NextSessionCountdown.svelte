@@ -55,6 +55,7 @@
 		oncancel: () => void
 	} = $props()
 
+	// svelte-ignore state_referenced_locally
 	let remaining = $state(seconds)
 
 	const offset = $derived(progressOffset(remaining, seconds, CIRCUMFERENCE))
