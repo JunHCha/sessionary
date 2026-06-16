@@ -87,6 +87,7 @@ export interface SessionDetailData {
 	playingGuide: Array<PlayingGuideStep>
 	prevSessionId: number | null
 	nextSessionId: number | null
+	nextSessionTitle: string | null
 }
 
 export function toSessionDetailData(response: SessionDetailResponse): SessionDetailData {
@@ -107,6 +108,7 @@ export function toSessionDetailData(response: SessionDetailResponse): SessionDet
 		subtitles: response.subtitles,
 		playingGuide: response.playing_guide,
 		prevSessionId: response.navigation.prev_session_id,
-		nextSessionId: response.navigation.next_session_id
+		nextSessionId: response.navigation.next_session_id,
+		nextSessionTitle: response.navigation.next_session_title ?? null
 	}
 }
