@@ -28,6 +28,14 @@ export function isHlsSource(src: string): boolean {
 	return url.toLowerCase().endsWith('.m3u8')
 }
 
+/**
+ * 영상 종료 시 다음 세션 카운트다운 오버레이를 표시할지 판단.
+ * 다음 세션이 있을 때만 표시한다(마지막 세션 예외).
+ */
+export function shouldShowCountdown(nextSessionId: number | null | undefined): boolean {
+	return nextSessionId != null
+}
+
 export function parseSessionId(raw: string): number {
 	const id = Number(raw)
 	if (isNaN(id) || !Number.isInteger(id) || id <= 0) {
