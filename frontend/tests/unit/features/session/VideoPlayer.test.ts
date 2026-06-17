@@ -89,6 +89,36 @@ describe('VideoPlayer', () => {
 		})
 	})
 
+	describe('shouldShowPlayOverlay', () => {
+		it('재생 시작 전이고 에러가 없으면 재생 오버레이를 표시한다', async () => {
+			const { shouldShowPlayOverlay } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(shouldShowPlayOverlay(false, false)).toBe(true)
+		})
+
+		it('재생이 시작되면 재생 오버레이를 숨긴다', async () => {
+			const { shouldShowPlayOverlay } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(shouldShowPlayOverlay(true, false)).toBe(false)
+		})
+
+		it('에러가 있으면 재생 오버레이를 표시하지 않는다 (에러 오버레이 우선)', async () => {
+			const { shouldShowPlayOverlay } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(shouldShowPlayOverlay(false, true)).toBe(false)
+		})
+
+		it('재생도 시작됐고 에러도 있으면 표시하지 않는다', async () => {
+			const { shouldShowPlayOverlay } = await import(
+				'$lib/features/session/components/VideoPlayer.svelte'
+			)
+			expect(shouldShowPlayOverlay(true, true)).toBe(false)
+		})
+	})
+
 	describe('SPINNER_OVERLAY_CLASS', () => {
 		it('pointer-events-none을 포함해 아래 컨트롤 탭을 막지 않는다', async () => {
 			const { SPINNER_OVERLAY_CLASS } = await import(
