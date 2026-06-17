@@ -36,7 +36,7 @@
 </script>
 
 <script lang="ts">
-	const RADIUS = 36
+	const RADIUS = 44
 	const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 	let {
@@ -73,51 +73,63 @@
 	})
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="absolute inset-0 z-20 flex items-center justify-center bg-black/70"
 	data-testid="next-session-countdown"
 	data-next-session-id={nextSessionId}
+	onclick={oncancel}
 >
-	<div class="mx-4 flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl bg-zinc-900/95 p-6 text-center shadow-xl">
-		<p class="text-sm text-zinc-400">다음 세션 {nextOrdering}</p>
-		<p class="text-lg font-semibold text-white">{nextSessionTitle ?? '다음 세션'}</p>
+	<div class="relative flex items-center justify-center">
+		<!-- 원형 카운트다운 링 -->
+		<svg
+			class="-rotate-90"
+			width="120"
+			height="120"
+			viewBox="0 0 100 100"
+		>
+			<!-- 배경 트랙 -->
+			<circle
+				cx="50"
+				cy="50"
+				r={RADIUS}
+				fill="none"
+				stroke="#3f3f46"
+				stroke-width="5"
+			/>
+			<!-- 진행 링 -->
+			<circle
+				cx="50"
+				cy="50"
+				r={RADIUS}
+				fill="none"
+				stroke="#FF5C16"
+				stroke-width="5"
+				stroke-linecap="round"
+				stroke-dasharray={CIRCUMFERENCE}
+				stroke-dashoffset={offset}
+				style="transition: stroke-dashoffset 1s linear;"
+			/>
+		</svg>
 
-		<div class="relative flex h-24 w-24 items-center justify-center">
-			<svg class="h-24 w-24 -rotate-90" viewBox="0 0 80 80">
-				<circle cx="40" cy="40" r={RADIUS} fill="none" stroke="#3f3f46" stroke-width="6" />
-				<circle
-					cx="40"
-					cy="40"
-					r={RADIUS}
-					fill="none"
-					stroke="#FF5C16"
-					stroke-width="6"
-					stroke-linecap="round"
-					stroke-dasharray={CIRCUMFERENCE}
-					stroke-dashoffset={offset}
-				/>
+		<!-- 중앙 next 버튼 -->
+		<button
+			type="button"
+			class="absolute flex h-14 w-14 items-center justify-center rounded-full bg-[#FF5C16] shadow-lg transition-transform hover:scale-105 active:scale-95"
+			data-testid="countdown-start-btn"
+			aria-label="다음 세션 재생: {nextSessionTitle ?? '다음 세션'}"
+			onclick={(e) => { e.stopPropagation(); onstart(); }}
+		>
+			<svg
+				width="22"
+				height="22"
+				viewBox="0 0 24 24"
+				fill="white"
+				aria-hidden="true"
+			>
+				<path d="M8 5v14l11-7z" />
 			</svg>
-			<span
-				class="absolute text-2xl font-bold text-white"
-				data-testid="countdown-seconds">{formatCountdown(remaining)}</span
-			>
-		</div>
-
-		<p class="text-xs text-zinc-400">{formatCountdown(remaining)}초 후 자동 이동</p>
-
-		<div class="flex w-full gap-2">
-			<button
-				type="button"
-				class="flex-1 rounded-lg border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-zinc-800"
-				data-testid="countdown-cancel-btn"
-				onclick={oncancel}>취소</button
-			>
-			<button
-				type="button"
-				class="flex-1 rounded-lg bg-[#FF5C16] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#FF5C16]/90"
-				data-testid="countdown-start-btn"
-				onclick={onstart}>지금 시작</button
-			>
-		</div>
+		</button>
 	</div>
 </div>
