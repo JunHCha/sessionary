@@ -108,14 +108,15 @@ bash infra/scripts/setup-staging-secrets.sh
 
 ### 빠른 시작 (권장): `make devup`
 ```bash
-make devup    # 공유 인프라 기동 + 마이그레이션 + be(:8000)/fe(:5173) 동시 구동
+make devup    # 공유 인프라 기동 + 마이그레이션 + be(:8000)/fe(:3000) 동시 구동
               # Ctrl-C 로 be/fe 둘 다 종료 (인프라는 유지)
-make devdown  # 호스트 dev 앱(:8000,:5173)만 종료, 인프라는 유지
+make devdown  # 호스트 dev 앱(:8000,:3000)만 종료, 인프라는 유지
 ```
 
 **전략: 단일 활성 + 공유 인프라.** 인프라(db/redis/minio)는 stateful & worktree 공용이라
 `docker compose -p sessionary-dev` 로 한 벌만 띄워 모든 worktree가 공유한다. 앱(be/fe)은
-무상태 & 포트 고정(:8000/:5173)이라 활성 worktree 하나에서만 띄운다.
+무상태 & 포트 고정(:8000/:3000)이라 활성 worktree 하나에서만 띄운다.
+fe 는 3000 으로 띄운다 (Google OAuth redirect_uri 가 `localhost:3000/oauth-callback` 기준).
 worktree 전환: 현재에서 Ctrl-C → 다른 worktree 에서 `make devup` (인프라 재사용, 앱만 새로).
 여러 worktree 의 앱을 *동시에* 띄우려면 포트가 충돌하므로 단일 활성 모델을 쓴다.
 
@@ -135,15 +136,16 @@ cd infra/dev && docker compose up -d  # PostgreSQL, Redis, MinIO (+ be/fe 컨테
 ```bash
 cd backend
 uv sync
-uv run alembic upgrade head
-uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
+# APP_ENV=dev 를 줘야 .env.dev 를 읽는다 (app_env 기본값은 prod → 미설정 시 설정 누락 에러)
+APP_ENV=dev uv run alembic upgrade head
+APP_ENV=dev uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend 개발 서버
 ```bash
 cd frontend
 yarn install
-yarn dev  # http://localhost:5173
+yarn dev --port 3000 --strictPort  # http://localhost:3000 (OAuth redirect_uri 가 3000 기준)
 ```
 
 ### API 클라이언트 재생성
