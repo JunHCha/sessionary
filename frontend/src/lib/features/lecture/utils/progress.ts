@@ -8,10 +8,17 @@ export type SessionState = 'completed' | 'current' | 'upcoming' | 'locked'
 
 export function getLectureStatusMode(
 	progress: LectureProgress | null | undefined,
-	isAuthenticated: boolean
+	isAuthenticated: boolean,
+	accessible?: boolean | null
 ): LectureStatusMode {
 	if (!progress || !isAuthenticated) {
 		return 'anonymous'
+	}
+	if (accessible === true) {
+		return 'in-progress'
+	}
+	if (accessible === false) {
+		return 'not-started'
 	}
 	return progress.completed_count > 0 ? 'in-progress' : 'not-started'
 }

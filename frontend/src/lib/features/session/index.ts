@@ -7,6 +7,7 @@ export { default as TabSheetPlaceholder } from './components/TabSheetPlaceholder
 export { default as VideoPlayer } from './components/VideoPlayer.svelte'
 export { default as SessionLoadingSplash } from './components/SessionLoadingSplash.svelte'
 export { default as VideoControls } from './components/VideoControls.svelte'
+export { default as NextSessionCountdown } from './components/NextSessionCountdown.svelte'
 export * from './types'
 export * from './utils'
 export * from './services'

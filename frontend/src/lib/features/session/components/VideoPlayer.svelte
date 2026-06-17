@@ -48,6 +48,14 @@
 	}
 
 	/**
+	 * 큰 재생 버튼 오버레이 표시 여부 판단
+	 * 아직 재생이 시작되지 않았고 에러가 없을 때만 표시 (에러 오버레이가 우선)
+	 */
+	export function shouldShowPlayOverlay(hasStarted: boolean, hasError: boolean): boolean {
+		return !hasStarted && !hasError
+	}
+
+	/**
 	 * 스피너 오버레이 클래스
 	 * pointer-events-none: 스피너가 떠 있어도 아래 VideoControls 탭이 가능해야 함 (iOS 데드락 방지)
 	 */
@@ -84,6 +92,14 @@
 	let hls: Hls | null = null
 	let isLoading = $state(true)
 	let errorMessage = $state<string | null>(null)
+	let hasStarted = $state(false)
+
+	let showPlayOverlay = $derived(shouldShowPlayOverlay(hasStarted, errorMessage !== null))
+
+	function startPlayback() {
+		if (!videoElement) return
+		videoElement.play().catch(() => {})
+	}
 
 	// 브라우저 환경 체크
 	const isBrowser = typeof window !== 'undefined'
@@ -102,6 +118,7 @@
 	}
 
 	function handlePlay() {
+		hasStarted = true
 		onplay?.()
 	}
 
@@ -141,19 +158,11 @@
 			hls.loadSource(src)
 			hls.attachMedia(videoElement)
 
-			hls.on(Hls.Events.MANIFEST_PARSED, () => {
-				if (autoplay) {
-					videoElement.play().catch(() => {})
-				}
-			})
-
 			hls.on(Hls.Events.ERROR, (_, data) => {
 				if (data.fatal) {
 					handleError(data.details || 'HLS playback error')
 				}
 			})
-		} else if (autoplay && videoElement.src) {
-			videoElement.play().catch(() => {})
 		}
 	}
 
@@ -224,4 +233,22 @@
 	</video>
 
 	<VideoControls {videoElement} />
+
+	{#if showPlayOverlay}
+		<button
+			type="button"
+			data-testid="play-overlay"
+			onclick={startPlayback}
+			class="absolute inset-0 z-20 flex items-center justify-center bg-black/30"
+			aria-label="재생"
+		>
+			<span
+				class="flex items-center justify-center w-20 h-20 rounded-full bg-black/60 text-white backdrop-blur-sm transition-transform hover:scale-105"
+			>
+				<svg class="w-10 h-10 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+					<path d="M8 5v14l11-7z" />
+				</svg>
+			</span>
+		</button>
+	{/if}
 </div>

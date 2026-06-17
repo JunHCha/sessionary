@@ -21,7 +21,20 @@ export function createLectureAccess(lectureId: number) {
 	let showInsufficientModal = $state(false)
 	let ticketCount = $state(0)
 	let daysUntilRefill = $state(0)
+	let accessible = $state<boolean | null>(null)
 	let pendingSessionId: number | null = null
+
+	async function loadAccessStatus() {
+		if (!auth.isAuthenticated) return
+		await waitForApiInit()
+		try {
+			const status = await getLectureAccessStatusTicketLectureLectureIdGet({ lectureId })
+			accessible = status.accessible
+			ticketCount = status.ticket_count
+		} catch {
+			accessible = null
+		}
+	}
 
 	function calculateDaysUntilNextMonday(): number {
 		const now = new Date()
@@ -138,6 +151,10 @@ export function createLectureAccess(lectureId: number) {
 		get daysUntilRefill() {
 			return daysUntilRefill
 		},
+		get accessible() {
+			return accessible
+		},
+		loadAccessStatus,
 		requestSession,
 		resumePendingSessionIfExists,
 		confirmTicket,

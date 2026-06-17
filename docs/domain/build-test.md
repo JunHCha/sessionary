@@ -106,25 +106,52 @@ bash infra/scripts/setup-staging-secrets.sh
 
 ## 로컬 개발
 
+### 빠른 시작 (권장): `make devup`
+```bash
+make devup            # 공유 인프라 기동 + 마이그레이션 + be(:8000)/fe(:3100) 동시 구동
+                      # Ctrl-C 로 be/fe 둘 다 종료 (인프라는 유지)
+make devup FE_PORT=3000   # 포트 오버라이드 (다른 로컬 프로젝트와 충돌 시 조절)
+make devdown          # 호스트 dev 앱(:8000,:3100)만 종료, 인프라는 유지
+```
+
+**전략: 단일 활성 + 공유 인프라.** 인프라(db/redis/minio)는 stateful & worktree 공용이라
+`docker compose -p sessionary-dev` 로 한 벌만 띄워 모든 worktree가 공유한다. 앱(be/fe)은
+무상태 & 포트 고정(:8000/:`FE_PORT`)이라 활성 worktree 하나에서만 띄운다.
+fe 는 `FE_PORT`(기본 3100)로 띄우고, devup 이 OAuth redirect_uri 를 그 포트로 주입한다
+(`GOOGLE_OAUTH_REDIRECT_URI=http://localhost:$FE_PORT/oauth-callback`). 기본 3000 대신 3100 을
+쓰는 이유는 다른 로컬 프로젝트(3000 사용)와의 충돌을 피하기 위함. **새 포트는 Google Cloud
+Console 의 승인된 리디렉션 URI 에 `http://localhost:3100/oauth-callback` 가 등록돼 있어야 로그인이 된다.**
+worktree 전환: 현재에서 Ctrl-C → 다른 worktree 에서 `make devup` (인프라 재사용, 앱만 새로).
+여러 worktree 의 앱을 *동시에* 띄우려면 포트가 충돌하므로 단일 활성 모델을 쓴다.
+
+아래는 `make devup` 이 내부적으로 수행하는 단계다 (개별 실행/디버깅용).
+
 ### 인프라 시작 (Docker Compose)
 ```bash
-cd infra/dev
-docker compose up -d  # PostgreSQL, Redis, MinIO
+make infra-up   # = docker compose -p sessionary-dev -f infra/dev/docker-compose.yml up -d db auth-redis minio minio-init
+# 또는 수동:
+cd infra/dev && docker compose up -d  # PostgreSQL, Redis, MinIO (+ be/fe 컨테이너까지 전부)
 ```
+> 주의: `infra/dev/docker-compose.yml` 은 backend/frontend 컨테이너(:8000/:3000, 호스트 3000→컨테이너 5173)도 정의한다.
+> 호스트에서 `uv run`/`yarn dev` 로 앱을 띄울 거면 인프라 서비스만 올려야 포트가 안 겹친다
+> (`make infra-up` 이 인프라만 선택해서 띄운다).
 
 ### Backend 개발 서버
 ```bash
 cd backend
 uv sync
-uv run alembic upgrade head
-uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
+# APP_ENV=dev 를 줘야 .env.dev 를 읽는다 (app_env 기본값은 prod → 미설정 시 설정 누락 에러)
+APP_ENV=dev uv run alembic upgrade head
+APP_ENV=dev uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend 개발 서버
 ```bash
 cd frontend
 yarn install
-yarn dev  # http://localhost:5173
+VITE_HMR_CLIENT_PORT=3100 yarn dev --port 3100 --strictPort  # http://localhost:3100
+# 단독 실행 시 backend 에 동일 포트의 redirect_uri 를 줘야 한다:
+#   GOOGLE_OAUTH_REDIRECT_URI=http://localhost:3100/oauth-callback ... uvicorn ...
 ```
 
 ### API 클라이언트 재생성

@@ -5,13 +5,39 @@
 # (소스를 통합하는 것이 아니라 "어디서 무엇을 치는지"만 모은다.)
 
 .PHONY: help install \
+        devup devdown infra-up infra-down \
         test test-be test-fe test-unit test-e2e \
         export-spec gen-client check-spec \
         lint format check
 
+# 로컬 인프라 스택. -p 로 프로젝트명을 고정해 어느 worktree 에서 실행하든
+# 같은 db/redis/minio(=같은 데이터) 한 벌을 가리키게 한다.
+COMPOSE := docker compose -p sessionary-dev -f infra/dev/docker-compose.yml
+# stateful 인프라만 (앱 컨테이너 backend/frontend 는 호스트에서 직접 띄운다)
+INFRA_SERVICES := db auth-redis minio minio-init
+# backend 는 APP_ENV 로 .env.{APP_ENV} 를 고른다. 미설정 시 app_env 기본값(prod)으로
+# 떨어져 .env.dev 를 못 읽으므로(설정 누락 에러) 호스트 직접 실행 시 명시해야 한다.
+APP_ENV ?= dev
+# 호스트 직접 실행은 compose 인프라를 localhost 로 접근한다. .env.dev 의 AUTH_REDIS_URL 은
+# 컨테이너 네트워크 호스트명(auth-redis)이라 호스트에서는 DNS 해석이 안 되므로 덮어쓴다.
+# (DATABASE_URL 은 .env.dev 가 이미 localhost 라 그대로 쓴다.)
+AUTH_REDIS_URL ?= redis://localhost:6379
+# 호스트 frontend dev 포트. 다른 로컬 프로젝트와의 충돌을 피하려 3000 대신 3100 을 기본값으로 쓴다.
+# (compose 경로는 여전히 3000:5173 매핑을 쓰므로 .env.dev 의 OAuth redirect 기본값은 3000 으로 둔다.)
+FE_PORT ?= 3100
+# 호스트 직접 실행 시 OAuth redirect_uri 를 실제 fe 포트로 맞춘다. .env.dev 값(compose 기본 3000)을 덮어쓴다.
+# 주의: 이 redirect_uri 가 Google Cloud Console 의 승인된 리디렉션 URI 에 등록돼 있어야 로그인이 동작한다.
+GOOGLE_OAUTH_REDIRECT_URI ?= http://localhost:$(FE_PORT)/oauth-callback
+# devup 의 backend 명령에 공통으로 붙는 호스트-실행용 환경
+DEV_BE_ENV := APP_ENV=$(APP_ENV) AUTH_REDIS_URL=$(AUTH_REDIS_URL) GOOGLE_OAUTH_REDIRECT_URI=$(GOOGLE_OAUTH_REDIRECT_URI)
+
 help: ## 사용 가능한 명령 목록
 	@echo "Sessionary 통합 명령:"
 	@echo "  make install      - fe/be 의존성 설치"
+	@echo "  make devup        - 공유 인프라 + be(:8000)/fe(:$(FE_PORT)) 개발 서버 동시 구동 (Ctrl-C 로 종료)"
+	@echo "  make devdown      - 호스트 dev 앱(:8000,:$(FE_PORT)) 종료 (인프라는 유지)"
+	@echo "  make infra-up     - 공유 로컬 인프라(db/redis/minio)만 기동"
+	@echo "  make infra-down   - 공유 인프라 중지 (볼륨 데이터 보존)"
 	@echo "  make test         - 백엔드 + 프론트엔드 전체 테스트"
 	@echo "  make test-be      - 백엔드 pytest"
 	@echo "  make test-fe      - 프론트엔드 유닛 + e2e"
@@ -27,6 +53,36 @@ help: ## 사용 가능한 명령 목록
 install: ## fe/be 의존성 설치
 	cd backend && uv sync
 	cd frontend && yarn install
+
+# --- 로컬 개발 --------------------------------------------------------------
+#
+# 전략: "단일 활성 + 공유 인프라".
+#  - 인프라(db/redis/minio)는 stateful & worktree 공용 → 한 벌만 띄워 공유.
+#  - 앱(be/fe)은 무상태 & 포트 고정(:8000/:$(FE_PORT)) → 활성 worktree 하나에서만.
+#    fe 는 FE_PORT(기본 3100)로 강제(--strictPort)하고, devup 이 OAuth redirect_uri 를
+#    그 포트로 주입(GOOGLE_OAUTH_REDIRECT_URI)해 콜백을 일치시킨다. vite 기본값(5173)은 안 쓴다.
+#    포트를 바꾸려면 `make devup FE_PORT=3000` 처럼 오버라이드한다.
+# worktree 전환: 현재에서 Ctrl-C(또는 make devdown) → 다른 worktree 에서 make devup.
+# 인프라는 재사용되고 앱만 새로 뜬다.
+
+infra-up: ## 공유 로컬 인프라(db/redis/minio) 기동 — worktree 공용, idempotent
+	$(COMPOSE) up -d $(INFRA_SERVICES)
+
+infra-down: ## 공유 인프라 중지 (볼륨 데이터는 보존)
+	$(COMPOSE) stop $(INFRA_SERVICES)
+
+devup: infra-up ## 공유 인프라 + be/fe 개발 서버 동시 구동 (Ctrl-C 로 둘 다 종료)
+	cd backend && $(DEV_BE_ENV) uv run alembic upgrade head
+	@echo "▶ backend(:8000) + frontend(:$(FE_PORT)) 기동 — Ctrl-C 로 둘 다 종료"
+	@trap 'kill 0' INT TERM EXIT; \
+	(cd backend && $(DEV_BE_ENV) uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000) & \
+	(cd frontend && VITE_HMR_CLIENT_PORT=$(FE_PORT) yarn dev --port $(FE_PORT) --strictPort) & \
+	wait
+
+devdown: ## 호스트 dev 앱(:8000,:$(FE_PORT)) 종료 — 인프라는 유지
+	-@pids=$$(lsof -ti tcp:8000); [ -n "$$pids" ] && kill $$pids 2>/dev/null || true
+	-@pids=$$(lsof -ti tcp:$(FE_PORT)); [ -n "$$pids" ] && kill $$pids 2>/dev/null || true
+	@echo "dev 앱 종료. 인프라까지 내리려면 make infra-down."
 
 # --- 테스트 -----------------------------------------------------------------
 

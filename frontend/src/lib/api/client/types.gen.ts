@@ -204,6 +204,7 @@ export type SessionDetailResponse = {
 export type SessionNavigation = {
     prev_session_id: number | null;
     next_session_id: number | null;
+    next_session_title?: string | null;
 };
 
 export type SessionType = 'PLAY' | 'TALK' | 'JAM' | 'BASIC' | 'SHEET';

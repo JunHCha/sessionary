@@ -7,12 +7,14 @@
 		sessions,
 		progress = null,
 		isAuthenticated = false,
+		accessible = null,
 		onstart,
 		onlogin
 	}: {
 		sessions: LessonInLecture[]
 		progress?: LectureProgress | null
 		isAuthenticated?: boolean
+		accessible?: boolean | null
 		onstart?: (lessonId: number) => void
 		onlogin?: () => void
 	} = $props()
@@ -21,7 +23,7 @@
 		[...sessions].sort((a, b) => a.lecture_ordering - b.lecture_ordering)
 	)
 
-	let mode = $derived(getLectureStatusMode(progress, isAuthenticated))
+	let mode = $derived(getLectureStatusMode(progress, isAuthenticated, accessible))
 	let cells = $derived(buildMinimap(sortedSessions, progress, isAuthenticated))
 
 	let resumeLessonId = $derived(getResumeLessonId(sortedSessions, progress, isAuthenticated))
@@ -94,16 +96,17 @@
 		</div>
 	{:else if mode === 'not-started'}
 		<span
-			class="mb-[18px] self-start rounded-full bg-[rgba(255,92,22,0.12)] px-[11px] py-[4px] text-[12px] font-bold text-[#ff5c16]"
+			data-testid="not-started-badge"
+			class="mb-[18px] self-start rounded-full bg-[#1a1a1a] px-[11px] py-[4px] text-[12px] font-bold text-[#848484]"
 		>
 			미수강
 		</span>
-		<div class="mb-[18px] flex items-center justify-between">
+		<div class="mb-[18px] flex items-center justify-between opacity-50">
 			<span class="text-[15px] font-semibold text-[#c9c9c9]">커리큘럼</span>
 			<span class="text-[13px] text-[#656565]">0 / {totalCount} 세션</span>
 		</div>
-		<div class="min-w-0">
-			<div class="text-[12px] font-bold tracking-wide text-[#ff5c16]">시작하기</div>
+		<div class="min-w-0 opacity-50">
+			<div class="text-[12px] font-bold tracking-wide text-[#848484]">시작하기</div>
 			<div class="mt-[5px] text-[17px] font-bold leading-[1.35] text-white">
 				{resumeNumber}. {resumeLesson?.title ?? ''}
 			</div>
@@ -126,7 +129,7 @@
 	{/if}
 
 	{#if mode !== 'anonymous'}
-		<div class="mt-[18px] grid grid-cols-6 gap-[6px]">
+		<div class="mt-[18px] grid grid-cols-6 gap-[6px]" class:opacity-50={mode === 'not-started'}>
 			{#each cells as cell}
 				<span
 					class="h-[9px] rounded-[3px]"
@@ -134,7 +137,7 @@
 					style={cell === 'done'
 						? 'background:#ff5c16'
 						: cell === 'current'
-							? 'background:transparent;border:1.5px solid #ff5c16'
+							? `background:transparent;border:1.5px solid ${mode === 'not-started' ? '#3a3a3a' : '#ff5c16'}`
 							: 'background:#1a1a1a'}
 				></span>
 			{/each}
