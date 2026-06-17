@@ -18,6 +18,12 @@ INFRA_SERVICES := db auth-redis minio minio-init
 # backend 는 APP_ENV 로 .env.{APP_ENV} 를 고른다. 미설정 시 app_env 기본값(prod)으로
 # 떨어져 .env.dev 를 못 읽으므로(설정 누락 에러) 호스트 직접 실행 시 명시해야 한다.
 APP_ENV ?= dev
+# 호스트 직접 실행은 compose 인프라를 localhost 로 접근한다. .env.dev 의 AUTH_REDIS_URL 은
+# 컨테이너 네트워크 호스트명(auth-redis)이라 호스트에서는 DNS 해석이 안 되므로 덮어쓴다.
+# (DATABASE_URL 은 .env.dev 가 이미 localhost 라 그대로 쓴다.)
+AUTH_REDIS_URL ?= redis://localhost:6379
+# devup 의 backend 명령에 공통으로 붙는 호스트-실행용 환경
+DEV_BE_ENV := APP_ENV=$(APP_ENV) AUTH_REDIS_URL=$(AUTH_REDIS_URL)
 
 help: ## 사용 가능한 명령 목록
 	@echo "Sessionary 통합 명령:"
@@ -59,10 +65,10 @@ infra-down: ## 공유 인프라 중지 (볼륨 데이터는 보존)
 	$(COMPOSE) stop $(INFRA_SERVICES)
 
 devup: infra-up ## 공유 인프라 + be/fe 개발 서버 동시 구동 (Ctrl-C 로 둘 다 종료)
-	cd backend && APP_ENV=$(APP_ENV) uv run alembic upgrade head
+	cd backend && $(DEV_BE_ENV) uv run alembic upgrade head
 	@echo "▶ backend(:8000) + frontend(:3000) 기동 — Ctrl-C 로 둘 다 종료"
 	@trap 'kill 0' INT TERM EXIT; \
-	(cd backend && APP_ENV=$(APP_ENV) uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000) & \
+	(cd backend && $(DEV_BE_ENV) uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000) & \
 	(cd frontend && yarn dev --port 3000 --strictPort) & \
 	wait
 
