@@ -40,9 +40,10 @@
 	$effect(() => {
 		const id = Number($page.params.id)
 		if (!isNaN(id) && id > 0) {
-			access = createLectureAccess(id)
+			const controller = createLectureAccess(id)
+			access = controller
 			if (auth.isAuthenticated) {
-				access.loadAccessStatus()
+				controller.loadAccessStatus()
 			}
 			fetchLecture(id)
 		}
