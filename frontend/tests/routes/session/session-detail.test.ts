@@ -44,6 +44,28 @@ test.describe('Session Detail 페이지 Type 1 레이아웃', () => {
 	})
 })
 
+test.describe('Session Detail 로딩 스플래시', () => {
+	test('진입 시 스플래시가 보이고 최소 시간 후 본문으로 전환됩니다', async ({ page }) => {
+		mockUserMeApi(page)
+		// 영상 없는 세션: 영상 프리로드 대기 없이 결정적으로 2초 게이트만 검증
+		mockSessionDetailApi(page, createMockSessionDetailResponse({ video: null }))
+
+		await page.goto('/session/1')
+
+		// 스플래시 즉시 노출
+		const splash = page.locator('[data-testid="session-loading-splash"]')
+		await expect(splash).toBeVisible()
+
+		// 최소 표시 시간(2초) 경과 후 본문으로 전환
+		await page.waitForSelector(
+			'[data-testid="session-detail-page"]:not(:has([data-testid="session-loading"]))',
+			{ timeout: 10000 }
+		)
+		await expect(splash).not.toBeVisible()
+		await expect(page.locator('[data-testid="session-title"]')).toBeVisible()
+	})
+})
+
 test.describe('Session Detail 비디오 없는 세션', () => {
 	test.beforeEach(async ({ page }) => {
 		mockUserMeApi(page)
