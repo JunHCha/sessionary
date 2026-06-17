@@ -106,11 +106,30 @@ bash infra/scripts/setup-staging-secrets.sh
 
 ## 로컬 개발
 
+### 빠른 시작 (권장): `make devup`
+```bash
+make devup    # 공유 인프라 기동 + 마이그레이션 + be(:8000)/fe(:5173) 동시 구동
+              # Ctrl-C 로 be/fe 둘 다 종료 (인프라는 유지)
+make devdown  # 호스트 dev 앱(:8000,:5173)만 종료, 인프라는 유지
+```
+
+**전략: 단일 활성 + 공유 인프라.** 인프라(db/redis/minio)는 stateful & worktree 공용이라
+`docker compose -p sessionary-dev` 로 한 벌만 띄워 모든 worktree가 공유한다. 앱(be/fe)은
+무상태 & 포트 고정(:8000/:5173)이라 활성 worktree 하나에서만 띄운다.
+worktree 전환: 현재에서 Ctrl-C → 다른 worktree 에서 `make devup` (인프라 재사용, 앱만 새로).
+여러 worktree 의 앱을 *동시에* 띄우려면 포트가 충돌하므로 단일 활성 모델을 쓴다.
+
+아래는 `make devup` 이 내부적으로 수행하는 단계다 (개별 실행/디버깅용).
+
 ### 인프라 시작 (Docker Compose)
 ```bash
-cd infra/dev
-docker compose up -d  # PostgreSQL, Redis, MinIO
+make infra-up   # = docker compose -p sessionary-dev -f infra/dev/docker-compose.yml up -d db auth-redis minio minio-init
+# 또는 수동:
+cd infra/dev && docker compose up -d  # PostgreSQL, Redis, MinIO (+ be/fe 컨테이너까지 전부)
 ```
+> 주의: `infra/dev/docker-compose.yml` 은 backend/frontend 컨테이너(:8000/:3000)도 정의한다.
+> 호스트에서 `uv run`/`yarn dev` 로 앱을 띄울 거면 인프라 서비스만 올려야 포트가 안 겹친다
+> (`make infra-up` 이 인프라만 선택해서 띄운다).
 
 ### Backend 개발 서버
 ```bash
