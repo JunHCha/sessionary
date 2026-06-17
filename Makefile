@@ -15,6 +15,9 @@
 COMPOSE := docker compose -p sessionary-dev -f infra/dev/docker-compose.yml
 # stateful 인프라만 (앱 컨테이너 backend/frontend 는 호스트에서 직접 띄운다)
 INFRA_SERVICES := db auth-redis minio minio-init
+# backend 는 APP_ENV 로 .env.{APP_ENV} 를 고른다. 미설정 시 app_env 기본값(prod)으로
+# 떨어져 .env.dev 를 못 읽으므로(설정 누락 에러) 호스트 직접 실행 시 명시해야 한다.
+APP_ENV ?= dev
 
 help: ## 사용 가능한 명령 목록
 	@echo "Sessionary 통합 명령:"
@@ -54,10 +57,10 @@ infra-down: ## 공유 인프라 중지 (볼륨 데이터는 보존)
 	$(COMPOSE) stop $(INFRA_SERVICES)
 
 devup: infra-up ## 공유 인프라 + be/fe 개발 서버 동시 구동 (Ctrl-C 로 둘 다 종료)
-	cd backend && uv run alembic upgrade head
+	cd backend && APP_ENV=$(APP_ENV) uv run alembic upgrade head
 	@echo "▶ backend(:8000) + frontend(:5173) 기동 — Ctrl-C 로 둘 다 종료"
 	@trap 'kill 0' INT TERM EXIT; \
-	(cd backend && uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000) & \
+	(cd backend && APP_ENV=$(APP_ENV) uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000) & \
 	(cd frontend && yarn dev) & \
 	wait
 

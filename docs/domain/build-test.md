@@ -135,8 +135,9 @@ cd infra/dev && docker compose up -d  # PostgreSQL, Redis, MinIO (+ be/fe 컨테
 ```bash
 cd backend
 uv sync
-uv run alembic upgrade head
-uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
+# APP_ENV=dev 를 줘야 .env.dev 를 읽는다 (app_env 기본값은 prod → 미설정 시 설정 누락 에러)
+APP_ENV=dev uv run alembic upgrade head
+APP_ENV=dev uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend 개발 서버
