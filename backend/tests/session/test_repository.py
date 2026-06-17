@@ -146,28 +146,31 @@ class TestSessionRepository:
         self, stub_sess_manager, test_lessons: list[Lesson]
     ):
         repo = SessionRepository(stub_sess_manager)
-        prev_id, next_id = await repo.get_adjacent_sessions(102, 100)
+        prev_id, next_id, next_title = await repo.get_adjacent_sessions(102, 100)
 
         assert prev_id == 101
         assert next_id == 103
+        assert next_title == "Session 3"
 
     async def test_sut_get_adjacent_sessions_returns_none_for_first(
         self, stub_sess_manager, test_lessons: list[Lesson]
     ):
         repo = SessionRepository(stub_sess_manager)
-        prev_id, next_id = await repo.get_adjacent_sessions(101, 100)
+        prev_id, next_id, next_title = await repo.get_adjacent_sessions(101, 100)
 
         assert prev_id is None
         assert next_id == 102
+        assert next_title == "Session 2"
 
     async def test_sut_get_adjacent_sessions_returns_none_for_last(
         self, stub_sess_manager, test_lessons: list[Lesson]
     ):
         repo = SessionRepository(stub_sess_manager)
-        prev_id, next_id = await repo.get_adjacent_sessions(103, 100)
+        prev_id, next_id, next_title = await repo.get_adjacent_sessions(103, 100)
 
         assert prev_id == 102
         assert next_id is None
+        assert next_title is None
 
     async def test_sut_count_sessions_in_lecture(
         self, stub_sess_manager, test_lessons: list[Lesson]

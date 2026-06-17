@@ -55,6 +55,7 @@ class VideoInfo(BaseModel):
 class SessionNavigation(BaseModel):
     prev_session_id: int | None
     next_session_id: int | None
+    next_session_title: str | None = None
 
 
 class SessionDetailResponse(BaseModel):

@@ -5,7 +5,9 @@
 		VideoPlayer,
 		SubtitleRoller,
 		TabSheet,
+		NextSessionCountdown,
 		loadSessionDetail,
+		shouldShowCountdown,
 		type SessionDetailData,
 		type SeekRequest
 	} from '$lib/features/session'
@@ -17,6 +19,7 @@
 	let error = $state<string | null>(null)
 	let currentTime = $state(0)
 	let seekRequest = $state<SeekRequest | undefined>(undefined)
+	let showCountdown = $state(false)
 
 	function handleSeekRequest(timeSec: number) {
 		seekRequest = { time: timeSec, version: (seekRequest?.version ?? 0) + 1 }
@@ -29,6 +32,7 @@
 		loading = true
 		error = null
 		session = null
+		showCountdown = false
 		try {
 			await waitForApiInit()
 			const result = await loadSessionDetail(sessionId)
@@ -88,11 +92,25 @@
 			<!-- Video + Subtitle Roller (세로 스택, 컨테이너 전체 너비) -->
 			<div class="mb-4">
 				{#if session.videoUrl}
-					<VideoPlayer
-						src={session.videoUrl}
-						seekTo={seekRequest}
-						ontimeupdate={(e) => (currentTime = e.currentTime)}
-					/>
+					<div class="relative">
+						<VideoPlayer
+							src={session.videoUrl}
+							seekTo={seekRequest}
+							ontimeupdate={(e) => (currentTime = e.currentTime)}
+							onended={() => {
+								if (shouldShowCountdown(session?.nextSessionId)) showCountdown = true
+							}}
+						/>
+						{#if showCountdown && session.nextSessionId}
+							<NextSessionCountdown
+								nextSessionId={session.nextSessionId}
+								nextSessionTitle={session.nextSessionTitle}
+								nextOrdering={session.lectureOrdering + 1}
+								onstart={goToNext}
+								oncancel={() => (showCountdown = false)}
+							/>
+						{/if}
+					</div>
 				{:else}
 					<div
 						data-testid="video-unavailable"

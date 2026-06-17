@@ -39,7 +39,7 @@ class SessionService:
                 expires_at=video_response.expires_at,
             )
 
-        prev_id, next_id = await self.repository.get_adjacent_sessions(
+        prev_id, next_id, next_title = await self.repository.get_adjacent_sessions(
             session_id, lesson.lecture_id
         )
         total_sessions = await self.repository.count_sessions_in_lecture(
@@ -79,5 +79,6 @@ class SessionService:
             navigation=SessionNavigation(
                 prev_session_id=prev_id,
                 next_session_id=next_id,
+                next_session_title=next_title,
             ),
         )

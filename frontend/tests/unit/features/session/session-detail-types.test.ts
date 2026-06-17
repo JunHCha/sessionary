@@ -37,7 +37,8 @@ function createMockSessionDetailResponse(): SessionDetailResponse {
 		],
 		navigation: {
 			prev_session_id: 41,
-			next_session_id: 43
+			next_session_id: 43,
+			next_session_title: '바레 코드 마스터'
 		}
 	}
 }
@@ -96,6 +97,14 @@ describe('Session Detail Types', () => {
 			expect(data.nextSessionId).toBe(43)
 		})
 
+		it('navigation에서 다음 세션 제목을 추출한다', async () => {
+			const { toSessionDetailData } = await import('$lib/features/session/types')
+			const response = createMockSessionDetailResponse()
+			const data = toSessionDetailData(response)
+
+			expect(data.nextSessionTitle).toBe('바레 코드 마스터')
+		})
+
 		it('navigation의 prev/next가 null이면 null을 유지한다', async () => {
 			const { toSessionDetailData } = await import('$lib/features/session/types')
 			const response = createMockSessionDetailResponse()
@@ -104,6 +113,15 @@ describe('Session Detail Types', () => {
 
 			expect(data.prevSessionId).toBeNull()
 			expect(data.nextSessionId).toBeNull()
+		})
+
+		it('next_session_title이 없으면 null을 유지한다', async () => {
+			const { toSessionDetailData } = await import('$lib/features/session/types')
+			const response = createMockSessionDetailResponse()
+			response.navigation = { prev_session_id: null, next_session_id: null }
+			const data = toSessionDetailData(response)
+
+			expect(data.nextSessionTitle).toBeNull()
 		})
 
 		it('subtitles와 playing_guide를 그대로 전달한다', async () => {
