@@ -76,7 +76,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="absolute inset-0 z-20 flex items-center justify-center bg-black/70"
+	class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
 	data-testid="next-session-countdown"
 	data-next-session-id={nextSessionId}
 	onclick={oncancel}
@@ -116,19 +116,19 @@
 		<!-- 중앙 next 버튼 -->
 		<button
 			type="button"
-			class="absolute flex h-14 w-14 items-center justify-center rounded-full bg-[#FF5C16] shadow-lg transition-transform hover:scale-105 active:scale-95"
+			class="absolute flex h-[100px] w-[100px] items-center justify-center rounded-full bg-[#FF5C16] shadow-lg transition-transform hover:scale-105 active:scale-95"
 			data-testid="countdown-start-btn"
-			aria-label="다음 세션 재생: {nextSessionTitle ?? '다음 세션'}"
+			aria-label="다음 세션으로 이동: {nextSessionTitle ?? '다음 세션'}"
 			onclick={(e) => { e.stopPropagation(); onstart(); }}
 		>
 			<svg
-				width="22"
-				height="22"
+				width="40"
+				height="40"
 				viewBox="0 0 24 24"
 				fill="white"
 				aria-hidden="true"
 			>
-				<path d="M8 5v14l11-7z" />
+				<path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
 			</svg>
 		</button>
 	</div>
