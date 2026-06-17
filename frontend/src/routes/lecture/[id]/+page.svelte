@@ -40,7 +40,11 @@
 	$effect(() => {
 		const id = Number($page.params.id)
 		if (!isNaN(id) && id > 0) {
-			access = createLectureAccess(id)
+			const controller = createLectureAccess(id)
+			access = controller
+			if (auth.isAuthenticated) {
+				controller.loadAccessStatus()
+			}
 			fetchLecture(id)
 		}
 	})
@@ -78,6 +82,7 @@
 					sessions={lecture.lessons}
 					progress={lecture.progress}
 					isAuthenticated={auth.isAuthenticated}
+					accessible={access?.accessible}
 					onstart={handleSessionClick}
 					onlogin={() => access && (access.showLoginModal = true)}
 				/>
