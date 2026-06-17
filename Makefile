@@ -22,8 +22,8 @@ APP_ENV ?= dev
 help: ## 사용 가능한 명령 목록
 	@echo "Sessionary 통합 명령:"
 	@echo "  make install      - fe/be 의존성 설치"
-	@echo "  make devup        - 공유 인프라 + be(:8000)/fe(:5173) 개발 서버 동시 구동 (Ctrl-C 로 종료)"
-	@echo "  make devdown      - 호스트 dev 앱(:8000,:5173) 종료 (인프라는 유지)"
+	@echo "  make devup        - 공유 인프라 + be(:8000)/fe(:3000) 개발 서버 동시 구동 (Ctrl-C 로 종료)"
+	@echo "  make devdown      - 호스트 dev 앱(:8000,:3000) 종료 (인프라는 유지)"
 	@echo "  make infra-up     - 공유 로컬 인프라(db/redis/minio)만 기동"
 	@echo "  make infra-down   - 공유 인프라 중지 (볼륨 데이터 보존)"
 	@echo "  make test         - 백엔드 + 프론트엔드 전체 테스트"
@@ -46,7 +46,9 @@ install: ## fe/be 의존성 설치
 #
 # 전략: "단일 활성 + 공유 인프라".
 #  - 인프라(db/redis/minio)는 stateful & worktree 공용 → 한 벌만 띄워 공유.
-#  - 앱(be/fe)은 무상태 & 포트 고정(:8000/:5173) → 활성 worktree 하나에서만.
+#  - 앱(be/fe)은 무상태 & 포트 고정(:8000/:3000) → 활성 worktree 하나에서만.
+#    fe 는 3000: Google OAuth redirect_uri 가 localhost:3000/oauth-callback 기준이라
+#    vite 기본값(5173) 대신 3000 으로 강제(--strictPort)해 콜백을 일치시킨다.
 # worktree 전환: 현재에서 Ctrl-C(또는 make devdown) → 다른 worktree 에서 make devup.
 # 인프라는 재사용되고 앱만 새로 뜬다.
 
@@ -58,15 +60,15 @@ infra-down: ## 공유 인프라 중지 (볼륨 데이터는 보존)
 
 devup: infra-up ## 공유 인프라 + be/fe 개발 서버 동시 구동 (Ctrl-C 로 둘 다 종료)
 	cd backend && APP_ENV=$(APP_ENV) uv run alembic upgrade head
-	@echo "▶ backend(:8000) + frontend(:5173) 기동 — Ctrl-C 로 둘 다 종료"
+	@echo "▶ backend(:8000) + frontend(:3000) 기동 — Ctrl-C 로 둘 다 종료"
 	@trap 'kill 0' INT TERM EXIT; \
 	(cd backend && APP_ENV=$(APP_ENV) uv run uvicorn app.main:get_app --reload --host 0.0.0.0 --port 8000) & \
-	(cd frontend && yarn dev) & \
+	(cd frontend && yarn dev --port 3000 --strictPort) & \
 	wait
 
-devdown: ## 호스트 dev 앱(:8000,:5173) 종료 — 인프라는 유지
+devdown: ## 호스트 dev 앱(:8000,:3000) 종료 — 인프라는 유지
 	-@pids=$$(lsof -ti tcp:8000); [ -n "$$pids" ] && kill $$pids 2>/dev/null || true
-	-@pids=$$(lsof -ti tcp:5173); [ -n "$$pids" ] && kill $$pids 2>/dev/null || true
+	-@pids=$$(lsof -ti tcp:3000); [ -n "$$pids" ] && kill $$pids 2>/dev/null || true
 	@echo "dev 앱 종료. 인프라까지 내리려면 make infra-down."
 
 # --- 테스트 -----------------------------------------------------------------
