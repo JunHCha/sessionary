@@ -61,15 +61,22 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
     )
 
     # add_middleware prepends, so the last call is the outermost layer.
-    # Order (outer -> inner): CORS -> AuthSession -> ServerError.
-    # The inner ServerErrorMiddleware converts unhandled 5xx into a JSONResponse
-    # that flows back out through CORSMiddleware, keeping the
-    # Access-Control-Allow-Origin header on 5xx responses.
-    application.add_middleware(
-        ServerErrorMiddleware, handler=unhandled_error_handler
-    )
+    # Final stack (outer -> inner): CORS -> ServerError -> AuthSession.
+    #
+    # AuthSessionMiddleware는 redis.get/ttl/write_token 등에서 예외를 전파할 수
+    # 있다(Redis 장애·세션 데이터 손상 시). ServerErrorMiddleware가 AuthSession보다
+    # 바깥에 있어야 해당 예외를 JSONResponse로 변환한 뒤 CORSMiddleware를 통과시켜
+    # Access-Control-Allow-Origin 헤더를 보장한다.
+    #
+    # add 순서 (prepend이므로 역순이 실행 순서):
+    #   1. AuthSessionMiddleware  → 가장 안쪽 (먼저 add)
+    #   2. ServerErrorMiddleware  → AuthSession 바깥
+    #   3. CORSMiddleware         → 가장 바깥 (마지막 add)
     application.add_middleware(
         AuthSessionMiddleware, settings=settings, auth_backend=auth_backend
+    )
+    application.add_middleware(
+        ServerErrorMiddleware, handler=unhandled_error_handler
     )
     application.add_middleware(
         CORSMiddleware,
