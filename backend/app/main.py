@@ -2,6 +2,7 @@ from fastapi import APIRouter, FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.errors import ServerErrorMiddleware
 
 from app.auth import view as auth_view
 from app.auth.access import (
@@ -10,6 +11,7 @@ from app.auth.access import (
 )
 from app.containers.application import ApplicationContainer
 from app.core.errors.http_error import http_error_handler
+from app.core.errors.server_error import unhandled_error_handler
 from app.core.errors.validation_error import http400_error_handler
 from app.core.middlewares import AuthSessionMiddleware
 from app.curation import view as curation_view
@@ -58,15 +60,30 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
         auth_backend.components.current_user(optional=True)
     )
 
+    # add_middleware prepends, so the last call is the outermost layer.
+    # Final stack (outer -> inner): CORS -> ServerError -> AuthSession.
+    #
+    # AuthSessionMiddleware는 redis.get/ttl/write_token 등에서 예외를 전파할 수
+    # 있다(Redis 장애·세션 데이터 손상 시). ServerErrorMiddleware가 AuthSession보다
+    # 바깥에 있어야 해당 예외를 JSONResponse로 변환한 뒤 CORSMiddleware를 통과시켜
+    # Access-Control-Allow-Origin 헤더를 보장한다.
+    #
+    # add 순서 (prepend이므로 역순이 실행 순서):
+    #   1. AuthSessionMiddleware  → 가장 안쪽 (먼저 add)
+    #   2. ServerErrorMiddleware  → AuthSession 바깥
+    #   3. CORSMiddleware         → 가장 바깥 (마지막 add)
+    application.add_middleware(
+        AuthSessionMiddleware, settings=settings, auth_backend=auth_backend
+    )
+    application.add_middleware(
+        ServerErrorMiddleware, handler=unhandled_error_handler
+    )
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_hosts,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-    )
-    application.add_middleware(
-        AuthSessionMiddleware, settings=settings, auth_backend=auth_backend
     )
 
     application.add_exception_handler(HTTPException, http_error_handler)
