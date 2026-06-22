@@ -1,7 +1,7 @@
 import abc
 import uuid
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 
 from app.db import tables as tb
 from app.db.session import SessionManager
@@ -37,6 +37,7 @@ class ProgressRepository(BaseProgressRepository):
                 select(tb.LessonProgress.lesson_id).where(
                     tb.LessonProgress.user_id == user_id,
                     tb.LessonProgress.lecture_id == lecture_id,
+                    tb.LessonProgress.completed_at.is_not(None),
                 )
             )
             return list(result.scalars().all())
@@ -65,6 +66,8 @@ class ProgressRepository(BaseProgressRepository):
                 user_id=user_id,
                 lesson_id=lesson_id,
                 lecture_id=lecture_id,
+                progress_percent=100,
+                completed_at=func.now(),
             )
             session.add(progress)
             await session.flush()
