@@ -2,6 +2,7 @@ from fastapi import APIRouter, FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.errors import ServerErrorMiddleware
 
 from app.auth import view as auth_view
 from app.auth.access import (
@@ -10,6 +11,7 @@ from app.auth.access import (
 )
 from app.containers.application import ApplicationContainer
 from app.core.errors.http_error import http_error_handler
+from app.core.errors.server_error import unhandled_error_handler
 from app.core.errors.validation_error import http400_error_handler
 from app.core.middlewares import AuthSessionMiddleware
 from app.curation import view as curation_view
@@ -58,15 +60,23 @@ def get_application(container: ApplicationContainer | None = None) -> FastAPI:
         auth_backend.components.current_user(optional=True)
     )
 
+    # add_middleware prepends, so the last call is the outermost layer.
+    # Order (outer -> inner): CORS -> AuthSession -> ServerError.
+    # The inner ServerErrorMiddleware converts unhandled 5xx into a JSONResponse
+    # that flows back out through CORSMiddleware, keeping the
+    # Access-Control-Allow-Origin header on 5xx responses.
+    application.add_middleware(
+        ServerErrorMiddleware, handler=unhandled_error_handler
+    )
+    application.add_middleware(
+        AuthSessionMiddleware, settings=settings, auth_backend=auth_backend
+    )
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_hosts,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-    )
-    application.add_middleware(
-        AuthSessionMiddleware, settings=settings, auth_backend=auth_backend
     )
 
     application.add_exception_handler(HTTPException, http_error_handler)
