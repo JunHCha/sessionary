@@ -930,6 +930,10 @@ export type $OpenApiTs = {
                  */
                 401: unknown;
                 /**
+                 * Lesson not found.
+                 */
+                404: unknown;
+                /**
                  * Validation Error
                  */
                 422: HTTPValidationError;
@@ -948,6 +952,10 @@ export type $OpenApiTs = {
                  * Missing token or inactive user.
                  */
                 401: unknown;
+                /**
+                 * Lesson not found.
+                 */
+                404: unknown;
                 /**
                  * Validation Error
                  */

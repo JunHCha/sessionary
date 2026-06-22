@@ -505,6 +505,7 @@ export const markLessonCompleteProgressLessonLessonIdPost = (data: MarkLessonCom
     },
     errors: {
         401: 'Missing token or inactive user.',
+        404: 'Lesson not found.',
         422: 'Validation Error'
     }
 }); };
@@ -527,6 +528,7 @@ export const reportLessonPositionProgressLessonLessonIdPositionPut = (data: Repo
     mediaType: 'application/json',
     errors: {
         401: 'Missing token or inactive user.',
+        404: 'Lesson not found.',
         422: 'Validation Error'
     }
 }); };
