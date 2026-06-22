@@ -5,7 +5,7 @@ from app.auth.access import authenticated_user
 from app.containers.application import ApplicationContainer
 from app.db.tables import User
 from app.lecture.service import BaseLectureService
-from app.progress.models import LectureProgressData
+from app.progress.models import LectureProgressData, PositionReport
 from app.progress.service import ProgressService
 
 app_router = APIRouter()
@@ -30,3 +30,22 @@ async def mark_lesson_complete(
     progress = await progress_service.mark_complete(user.id, lesson_id)
     lecture = await lecture_service.get_lecture_detail(progress.lecture_id)
     return await progress_service.get_lecture_progress(user.id, lecture)
+
+
+@app_router.put(
+    "/lesson/{lesson_id}/position",
+    response_model=LectureProgressData,
+    responses={401: {"description": "Missing token or inactive user."}},
+)
+@inject
+async def report_lesson_position(
+    lesson_id: int,
+    report: PositionReport,
+    user: User = Depends(authenticated_user),
+    progress_service: ProgressService = Depends(
+        Provide[ApplicationContainer.services.progress_service]
+    ),
+):
+    return await progress_service.report_position(
+        user.id, lesson_id, report.position_sec, report.duration_sec
+    )
