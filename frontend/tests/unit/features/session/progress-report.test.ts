@@ -3,6 +3,7 @@ import {
 	evaluatePositionReport,
 	createReportState,
 	computePercent,
+	buildPositionBeacon,
 	type ReportState
 } from '$lib/features/session/progress-report'
 
@@ -96,6 +97,25 @@ describe('evaluatePositionReport - duration 가드', () => {
 		})
 		expect(result.shouldReport).toBe(false)
 		expect(result.fired90).toBe(false)
+	})
+})
+
+describe('buildPositionBeacon', () => {
+	it('PUT position URL과 JSON Blob payload를 만든다', () => {
+		const beacon = buildPositionBeacon('https://api.test', 700, 45.6, 90.2)
+		expect(beacon.url).toBe('https://api.test/progress/lesson/700/position')
+		expect(beacon.blob.type).toBe('application/json')
+	})
+
+	it('position/duration을 정수로 반올림한다', async () => {
+		const beacon = buildPositionBeacon('https://api.test', 700, 45.6, 90.2)
+		const body = JSON.parse(await beacon.blob.text())
+		expect(body).toEqual({ position_sec: 46, duration_sec: 90 })
+	})
+
+	it('baseUrl 끝 슬래시를 정규화한다', () => {
+		const beacon = buildPositionBeacon('https://api.test/', 700, 0, 0)
+		expect(beacon.url).toBe('https://api.test/progress/lesson/700/position')
 	})
 })
 

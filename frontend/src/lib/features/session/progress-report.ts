@@ -68,3 +68,28 @@ export function evaluatePositionReport(state: ReportState, sample: PositionSampl
 
 	return { ...state, shouldReport: false, reason: 'none' }
 }
+
+export interface PositionBeacon {
+	url: string
+	blob: Blob
+}
+
+/**
+ * unload 시 navigator.sendBeacon 으로 전송할 최종 위치 payload 생성.
+ */
+export function buildPositionBeacon(
+	baseUrl: string,
+	lessonId: number,
+	positionSec: number,
+	durationSec: number
+): PositionBeacon {
+	const base = baseUrl.replace(/\/+$/, '')
+	const body = JSON.stringify({
+		position_sec: Math.round(positionSec),
+		duration_sec: Math.round(durationSec)
+	})
+	return {
+		url: `${base}/progress/lesson/${lessonId}/position`,
+		blob: new Blob([body], { type: 'application/json' })
+	}
+}

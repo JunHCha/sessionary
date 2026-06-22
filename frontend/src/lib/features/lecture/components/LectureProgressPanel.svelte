@@ -82,7 +82,14 @@
 					stroke-dashoffset={dashOffset}
 					transform="rotate(-90 63 63)"
 				/>
-				<text x="63" y="60" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">
+				<text
+					x="63"
+					y="60"
+					text-anchor="middle"
+					font-size="25"
+					font-weight="700"
+					fill="#fff"
+				>
 					{percent}%
 				</text>
 				<text x="63" y="80" text-anchor="middle" font-size="11" fill="#848484">완료</text>
@@ -117,9 +124,19 @@
 		>
 			비로그인
 		</span>
-		<div class="flex flex-1 flex-col items-center justify-center gap-[8px] py-[20px] text-center">
-			<span class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1a1a1a]">
-				<svg class="h-[20px] w-[20px]" viewBox="0 0 24 24" fill="none" stroke="#848484" stroke-width="2">
+		<div
+			class="flex flex-1 flex-col items-center justify-center gap-[8px] py-[20px] text-center"
+		>
+			<span
+				class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1a1a1a]"
+			>
+				<svg
+					class="h-[20px] w-[20px]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="#848484"
+					stroke-width="2"
+				>
 					<rect x="5" y="11" width="14" height="9" rx="2" />
 					<path d="M8 11V7a4 4 0 018 0v4" />
 				</svg>
@@ -155,10 +172,14 @@
 		{#if mode === 'anonymous'}
 			로그인하고 시작
 		{:else if mode === 'not-started'}
-			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"
+				><path d="M8 5v14l11-7z" /></svg
+			>
 			1강부터 시작하기
 		{:else}
-			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"
+				><path d="M8 5v14l11-7z" /></svg
+			>
 			이어서 수강하기
 		{/if}
 	</button>

@@ -40,19 +40,21 @@ describe('getLectureStatusMode', () => {
 	})
 
 	it('accessible=true 이고 completed=0 이면 in-progress (0% 활성)', () => {
-		expect(getLectureStatusMode(progress({ completed_count: 0 }), true, true)).toBe('in-progress')
+		expect(getLectureStatusMode(progress({ completed_count: 0 }), true, true)).toBe(
+			'in-progress'
+		)
 	})
 
 	it('accessible=false 이면 completed>0 이어도 not-started (티켓 미사용 우선)', () => {
-		expect(getLectureStatusMode(progress({ completed_count: 2, percent: 66 }), true, false)).toBe(
-			'not-started'
-		)
+		expect(
+			getLectureStatusMode(progress({ completed_count: 2, percent: 66 }), true, false)
+		).toBe('not-started')
 	})
 
 	it('accessible=true 이고 completed>0 이면 in-progress', () => {
-		expect(getLectureStatusMode(progress({ completed_count: 1, percent: 33 }), true, true)).toBe(
-			'in-progress'
-		)
+		expect(
+			getLectureStatusMode(progress({ completed_count: 1, percent: 33 }), true, true)
+		).toBe('in-progress')
 	})
 
 	it('accessible 생략 시 기존 휴리스틱 유지', () => {
@@ -61,8 +63,12 @@ describe('getLectureStatusMode', () => {
 	})
 
 	it('비인증이면 accessible 값과 무관하게 anonymous', () => {
-		expect(getLectureStatusMode(progress({ completed_count: 1 }), false, true)).toBe('anonymous')
-		expect(getLectureStatusMode(progress({ completed_count: 1 }), false, false)).toBe('anonymous')
+		expect(getLectureStatusMode(progress({ completed_count: 1 }), false, true)).toBe(
+			'anonymous'
+		)
+		expect(getLectureStatusMode(progress({ completed_count: 1 }), false, false)).toBe(
+			'anonymous'
+		)
 	})
 })
 
