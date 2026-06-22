@@ -15,6 +15,9 @@ const progress = (overrides: Partial<LectureProgress> = {}): LectureProgress => 
 	percent: 0,
 	next_lesson_id: 700,
 	completed_lesson_ids: [],
+	lessons: [],
+	resume_lesson_id: null,
+	resume_position_sec: 0,
 	...overrides
 })
 
@@ -73,6 +76,49 @@ describe('buildMinimap', () => {
 		const p = progress({ next_lesson_id: 700, completed_count: 0 })
 		const cells = buildMinimap(lessons, p, true)
 		expect(cells).toEqual(['current', 'upcoming', 'upcoming'])
+	})
+
+	it('완료 아님 + percent>0 인 lesson은 partial', () => {
+		const p = progress({
+			next_lesson_id: 700,
+			completed_count: 0,
+			lessons: [{ lesson_id: 701, percent: 40, completed: false, last_position_sec: 50 }]
+		})
+		const cells = buildMinimap(lessons, p, true)
+		expect(cells).toEqual(['current', 'partial', 'upcoming'])
+	})
+
+	it('완료 셀은 percent>0 이어도 done이 우선', () => {
+		const p = progress({
+			completed_lesson_ids: [700],
+			next_lesson_id: 701,
+			completed_count: 1,
+			lessons: [{ lesson_id: 700, percent: 100, completed: true, last_position_sec: 90 }]
+		})
+		const cells = buildMinimap(lessons, p, true)
+		expect(cells).toEqual(['done', 'current', 'upcoming'])
+	})
+
+	it('current 셀은 percent>0 이어도 current가 우선', () => {
+		const p = progress({
+			next_lesson_id: 700,
+			completed_count: 0,
+			lessons: [{ lesson_id: 700, percent: 30, completed: false, last_position_sec: 20 }]
+		})
+		const cells = buildMinimap(lessons, p, true)
+		expect(cells).toEqual(['current', 'upcoming', 'upcoming'])
+	})
+})
+
+describe('getResumeLessonId - 서버 resume 우선', () => {
+	it('서버 resume_lesson_id가 있으면 우선 사용', () => {
+		const p = progress({ next_lesson_id: 700, resume_lesson_id: 702 })
+		expect(getResumeLessonId(lessons, p, true)).toBe(702)
+	})
+
+	it('서버 resume_lesson_id가 null이면 next_lesson_id 폴백', () => {
+		const p = progress({ next_lesson_id: 701, resume_lesson_id: null })
+		expect(getResumeLessonId(lessons, p, true)).toBe(701)
 	})
 })
 

@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
 	getLectureStatusMode,
 	getSessionState,
+	getLessonPercent,
+	getLessonLastPosition,
 	type LectureProgress
 } from '$lib/features/lecture/utils/progress'
 
@@ -11,6 +13,9 @@ const progress = (overrides: Partial<LectureProgress> = {}): LectureProgress => 
 	percent: 0,
 	next_lesson_id: 700,
 	completed_lesson_ids: [],
+	lessons: [],
+	resume_lesson_id: null,
+	resume_position_sec: 0,
 	...overrides
 })
 
@@ -79,5 +84,37 @@ describe('getSessionState', () => {
 
 	it('비로그인이면 locked', () => {
 		expect(getSessionState(700, null, false)).toBe('locked')
+	})
+})
+
+describe('getLessonPercent', () => {
+	it('lessons[]에서 lesson_id 매칭 percent를 반환', () => {
+		const p = progress({
+			lessons: [{ lesson_id: 700, percent: 42, completed: false, last_position_sec: 30 }]
+		})
+		expect(getLessonPercent(700, p)).toBe(42)
+	})
+
+	it('매칭 없으면 0', () => {
+		const p = progress({ lessons: [] })
+		expect(getLessonPercent(999, p)).toBe(0)
+	})
+
+	it('progress 없으면 0', () => {
+		expect(getLessonPercent(700, null)).toBe(0)
+	})
+})
+
+describe('getLessonLastPosition', () => {
+	it('lessons[]에서 lesson_id 매칭 last_position_sec를 반환', () => {
+		const p = progress({
+			lessons: [{ lesson_id: 700, percent: 42, completed: false, last_position_sec: 30 }]
+		})
+		expect(getLessonLastPosition(700, p)).toBe(30)
+	})
+
+	it('매칭 없으면 0', () => {
+		expect(getLessonLastPosition(999, progress())).toBe(0)
+		expect(getLessonLastPosition(700, null)).toBe(0)
 	})
 })

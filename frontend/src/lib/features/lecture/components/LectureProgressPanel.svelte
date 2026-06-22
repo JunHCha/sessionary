@@ -136,9 +136,11 @@
 					class:bg-brand={cell === 'done'}
 					style={cell === 'done'
 						? 'background:#ff5c16'
-						: cell === 'current'
-							? `background:transparent;border:1.5px solid ${mode === 'not-started' ? '#3a3a3a' : '#ff5c16'}`
-							: 'background:#1a1a1a'}
+						: cell === 'partial'
+							? 'background:#5e3018'
+							: cell === 'current'
+								? `background:transparent;border:1.5px solid ${mode === 'not-started' ? '#3a3a3a' : '#ff5c16'}`
+								: 'background:#1a1a1a'}
 				></span>
 			{/each}
 		</div>

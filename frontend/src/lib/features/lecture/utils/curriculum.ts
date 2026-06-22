@@ -1,7 +1,7 @@
 import type { LectureProgress, SessionState } from './progress'
-import { getSessionState } from './progress'
+import { getSessionState, getLessonPercent } from './progress'
 
-export type MinimapCell = 'done' | 'current' | 'upcoming' | 'locked'
+export type MinimapCell = 'done' | 'current' | 'upcoming' | 'partial' | 'locked'
 
 type OrderedLesson = {
 	id: number
@@ -41,9 +41,13 @@ export function buildMinimap(
 	progress: LectureProgress | null | undefined,
 	isAuthenticated: boolean
 ): MinimapCell[] {
-	return sortByOrdering(lessons).map(
-		(lesson) => STATE_TO_CELL[getSessionState(lesson.id, progress, isAuthenticated)]
-	)
+	return sortByOrdering(lessons).map((lesson) => {
+		const state = getSessionState(lesson.id, progress, isAuthenticated)
+		if (state === 'upcoming' && getLessonPercent(lesson.id, progress) > 0) {
+			return 'partial'
+		}
+		return STATE_TO_CELL[state]
+	})
 }
 
 export function getFirstLessonId(lessons: OrderedLesson[]): number | null {
@@ -56,6 +60,9 @@ export function getResumeLessonId(
 	progress: LectureProgress | null | undefined,
 	isAuthenticated: boolean
 ): number | null {
+	if (isAuthenticated && progress?.resume_lesson_id != null) {
+		return progress.resume_lesson_id
+	}
 	if (isAuthenticated && progress?.next_lesson_id != null) {
 		return progress.next_lesson_id
 	}
