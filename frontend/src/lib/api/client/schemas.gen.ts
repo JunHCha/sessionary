@@ -621,10 +621,32 @@ export const $LectureProgressData = {
             },
             type: 'array',
             title: 'Completed Lesson Ids'
+        },
+        lessons: {
+            items: {
+                '$ref': '#/components/schemas/LessonProgressItem'
+            },
+            type: 'array',
+            title: 'Lessons'
+        },
+        resume_lesson_id: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Resume Lesson Id'
+        },
+        resume_position_sec: {
+            type: 'integer',
+            title: 'Resume Position Sec'
         }
     },
     type: 'object',
-    required: ['completed_count', 'total_count', 'percent', 'next_lesson_id', 'completed_lesson_ids'],
+    required: ['completed_count', 'total_count', 'percent', 'next_lesson_id', 'completed_lesson_ids', 'lessons', 'resume_lesson_id', 'resume_position_sec'],
     title: 'LectureProgressData'
 } as const;
 
@@ -762,6 +784,30 @@ export const $LessonInLecture = {
     title: 'LessonInLecture'
 } as const;
 
+export const $LessonProgressItem = {
+    properties: {
+        lesson_id: {
+            type: 'integer',
+            title: 'Lesson Id'
+        },
+        percent: {
+            type: 'integer',
+            title: 'Percent'
+        },
+        completed: {
+            type: 'boolean',
+            title: 'Completed'
+        },
+        last_position_sec: {
+            type: 'integer',
+            title: 'Last Position Sec'
+        }
+    },
+    type: 'object',
+    required: ['lesson_id', 'percent', 'completed', 'last_position_sec'],
+    title: 'LessonProgressItem'
+} as const;
+
 export const $OAuth2AuthorizeResponse = {
     properties: {
         authorization_url: {
@@ -836,6 +882,22 @@ export const $PlayingGuideStep = {
     type: 'object',
     required: ['step', 'title', 'description', 'start_time', 'end_time'],
     title: 'PlayingGuideStep'
+} as const;
+
+export const $PositionReport = {
+    properties: {
+        position_sec: {
+            type: 'integer',
+            title: 'Position Sec'
+        },
+        duration_sec: {
+            type: 'integer',
+            title: 'Duration Sec'
+        }
+    },
+    type: 'object',
+    required: ['position_sec', 'duration_sec'],
+    title: 'PositionReport'
 } as const;
 
 export const $SessionDetailResponse = {
