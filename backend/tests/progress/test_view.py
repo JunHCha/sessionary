@@ -65,3 +65,22 @@ async def test_report_position_requires_auth(
         json={"position_sec": 30, "duration_sec": 60},
     )
     assert response.status_code == 401
+
+
+async def test_report_position_unknown_lesson_returns_404(
+    authorized_client: AsyncClient,
+    lecture_with_lessons: tb.Lecture,
+):
+    response = await authorized_client.put(
+        "/progress/lesson/999999/position",
+        json={"position_sec": 30, "duration_sec": 60},
+    )
+    assert response.status_code == 404
+
+
+async def test_mark_complete_unknown_lesson_returns_404(
+    authorized_client: AsyncClient,
+    lecture_with_lessons: tb.Lecture,
+):
+    response = await authorized_client.post("/progress/lesson/999999")
+    assert response.status_code == 404

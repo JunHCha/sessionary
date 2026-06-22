@@ -1362,6 +1362,9 @@
           "401": {
             "description": "Missing token or inactive user."
           },
+          "404": {
+            "description": "Lesson not found."
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -1416,6 +1419,9 @@
           },
           "401": {
             "description": "Missing token or inactive user."
+          },
+          "404": {
+            "description": "Lesson not found."
           },
           "422": {
             "description": "Validation Error",
