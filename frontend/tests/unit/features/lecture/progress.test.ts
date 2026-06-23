@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import {
 	getLectureStatusMode,
 	getSessionState,
-	getLessonLastPosition,
 	type LectureProgress
 } from '$lib/features/lecture/utils/progress'
 
@@ -89,19 +88,5 @@ describe('getSessionState', () => {
 
 	it('비로그인이면 locked', () => {
 		expect(getSessionState(700, null, false)).toBe('locked')
-	})
-})
-
-describe('getLessonLastPosition', () => {
-	it('lessons[]에서 lesson_id 매칭 last_position_sec를 반환', () => {
-		const p = progress({
-			lessons: [{ lesson_id: 700, percent: 42, completed: false, last_position_sec: 30 }]
-		})
-		expect(getLessonLastPosition(700, p)).toBe(30)
-	})
-
-	it('매칭 없으면 0', () => {
-		expect(getLessonLastPosition(999, progress())).toBe(0)
-		expect(getLessonLastPosition(700, null)).toBe(0)
 	})
 })

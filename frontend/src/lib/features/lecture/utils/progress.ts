@@ -39,14 +39,3 @@ export function getSessionState(
 	}
 	return 'upcoming'
 }
-
-function findLessonItem(lessonId: number, progress: LectureProgress | null | undefined) {
-	return progress?.lessons?.find((l) => l.lesson_id === lessonId) ?? null
-}
-
-export function getLessonLastPosition(
-	lessonId: number,
-	progress: LectureProgress | null | undefined
-): number {
-	return findLessonItem(lessonId, progress)?.last_position_sec ?? 0
-}
