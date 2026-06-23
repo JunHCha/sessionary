@@ -232,6 +232,12 @@
 			goto(`/session/${session.nextSessionId}`)
 		}
 	}
+
+	function goToLecture() {
+		if (session?.lectureId != null) {
+			goto(`/lecture/${session.lectureId}`)
+		}
+	}
 </script>
 
 <main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px] flex flex-col">
@@ -245,6 +251,24 @@
 				<div class="text-red-400 text-lg">{error}</div>
 			</div>
 		{:else if session}
+			<!-- 강의로 돌아가기 -->
+			<button
+				type="button"
+				data-testid="back-to-lecture"
+				onclick={goToLecture}
+				class="group mb-3 inline-flex items-center gap-1.5 text-sm text-[#999] hover:text-white transition-colors"
+			>
+				<svg
+					class="w-4 h-4 transition-transform group-hover:-translate-x-0.5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+				</svg>
+				<span class="truncate max-w-[52ch]">{session.lectureTitle}</span>
+			</button>
+
 			<!-- 심플 헤더 -->
 			<div class="flex items-end justify-between gap-4 mb-5">
 				<h1 data-testid="session-title" class="text-2xl font-bold leading-tight text-white">
