@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LessonInLecture } from '$lib/api'
 	import { getLectureStatusMode, type LectureProgress } from '../utils/progress'
-	import { buildMinimap, getFirstLessonId, getResumeLessonId } from '../utils/curriculum'
+	import { getFirstLessonId, getResumeLessonId } from '../utils/curriculum'
 
 	let {
 		sessions,
@@ -24,7 +24,6 @@
 	)
 
 	let mode = $derived(getLectureStatusMode(progress, isAuthenticated, accessible))
-	let cells = $derived(buildMinimap(sortedSessions, progress, isAuthenticated))
 
 	let resumeLessonId = $derived(getResumeLessonId(sortedSessions, progress, isAuthenticated))
 	let firstLessonId = $derived(getFirstLessonId(sortedSessions))
@@ -142,24 +141,6 @@
 				</svg>
 			</span>
 			<span class="text-[13px] text-[#848484]">로그인하면 수강을<br />시작할 수 있어요</span>
-		</div>
-	{/if}
-
-	{#if mode !== 'anonymous'}
-		<div class="mt-[18px] grid grid-cols-6 gap-[6px]" class:opacity-50={mode === 'not-started'}>
-			{#each cells as cell}
-				<span
-					class="h-[9px] rounded-[3px]"
-					class:bg-brand={cell === 'done'}
-					style={cell === 'done'
-						? 'background:#ff5c16'
-						: cell === 'partial'
-							? 'background:#5e3018'
-							: cell === 'current'
-								? `background:transparent;border:1.5px solid ${mode === 'not-started' ? '#3a3a3a' : '#ff5c16'}`
-								: 'background:#1a1a1a'}
-				></span>
-			{/each}
 		</div>
 	{/if}
 

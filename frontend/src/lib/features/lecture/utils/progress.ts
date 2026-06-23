@@ -44,13 +44,6 @@ function findLessonItem(lessonId: number, progress: LectureProgress | null | und
 	return progress?.lessons?.find((l) => l.lesson_id === lessonId) ?? null
 }
 
-export function getLessonPercent(
-	lessonId: number,
-	progress: LectureProgress | null | undefined
-): number {
-	return findLessonItem(lessonId, progress)?.percent ?? 0
-}
-
 export function getLessonLastPosition(
 	lessonId: number,
 	progress: LectureProgress | null | undefined
