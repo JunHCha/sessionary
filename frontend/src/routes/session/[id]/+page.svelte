@@ -252,7 +252,7 @@
 				</h1>
 				<div data-testid="session-progress" class="text-sm font-medium shrink-0">
 					<span class="text-brand-primary"
-						>{String(session.lectureOrdering).padStart(2, '0')}</span
+						>{String(session.lectureOrdering + 1).padStart(2, '0')}</span
 					>
 					<span class="text-[#666] mx-1.5">/</span>
 					<span class="text-[#ddd]">{String(session.totalSessions).padStart(2, '0')}</span
@@ -336,7 +336,7 @@
 
 				<div class="text-white font-medium">
 					<span class="text-brand-primary"
-						>{String(session.lectureOrdering).padStart(2, '0')}</span
+						>{String(session.lectureOrdering + 1).padStart(2, '0')}</span
 					>
 					<span class="text-[#666] mx-2">/</span>
 					<span>{String(session.totalSessions).padStart(2, '0')}</span>
