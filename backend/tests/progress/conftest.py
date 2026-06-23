@@ -5,6 +5,8 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import tables as tb
+from app.lecture.repository import LectureRepository
+from app.lecture.service import LectureService
 from app.progress.repository import ProgressRepository
 from app.progress.service import ProgressService
 from tests.containers import TestSessionManager
@@ -16,8 +18,21 @@ def progress_repository(stub_sess_manager: TestSessionManager) -> ProgressReposi
 
 
 @pytest.fixture
-def progress_service(progress_repository: ProgressRepository) -> ProgressService:
-    return ProgressService(repository=progress_repository)
+def lecture_service(stub_sess_manager: TestSessionManager) -> LectureService:
+    return LectureService(
+        repository=LectureRepository(session_manager=stub_sess_manager)
+    )
+
+
+@pytest.fixture
+def progress_service(
+    progress_repository: ProgressRepository,
+    lecture_service: LectureService,
+) -> ProgressService:
+    return ProgressService(
+        repository=progress_repository,
+        lecture_service=lecture_service,
+    )
 
 
 @pytest.fixture

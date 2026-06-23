@@ -298,8 +298,15 @@ class LessonProgress(Base):
     lecture_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("lecture.id"), nullable=False
     )
-    completed_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), default=func.now(), nullable=False
+    last_position_sec: Mapped[int] = mapped_column(
+        Integer, default=0, server_default="0", nullable=False
+    )
+    duration_sec: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    progress_percent: Mapped[int] = mapped_column(
+        Integer, default=0, server_default="0", nullable=False
+    )
+    completed_at: Mapped[datetime.datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
     )
 
     __tablename__ = "lesson_progress"

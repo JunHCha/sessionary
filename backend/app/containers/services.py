@@ -114,6 +114,7 @@ class ServicesContainer(containers.DeclarativeContainer):
     progress_service = providers.Factory(
         ProgressService,
         repository=progress_repository,
+        lecture_service=lecture_service,
     )
 
     video_provider = providers.Factory(

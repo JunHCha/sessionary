@@ -1362,6 +1362,67 @@
           "401": {
             "description": "Missing token or inactive user."
           },
+          "404": {
+            "description": "Lesson not found."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/progress/lesson/{lesson_id}/position": {
+      "put": {
+        "tags": [
+          "progress"
+        ],
+        "summary": "Report Lesson Position",
+        "operationId": "report_lesson_position_progress_lesson__lesson_id__position_put",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PositionReport"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LectureProgressData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "404": {
+            "description": "Lesson not found."
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -2108,6 +2169,28 @@
             },
             "type": "array",
             "title": "Completed Lesson Ids"
+          },
+          "lessons": {
+            "items": {
+              "$ref": "#/components/schemas/LessonProgressItem"
+            },
+            "type": "array",
+            "title": "Lessons"
+          },
+          "resume_lesson_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resume Lesson Id"
+          },
+          "resume_position_sec": {
+            "type": "integer",
+            "title": "Resume Position Sec"
           }
         },
         "type": "object",
@@ -2116,7 +2199,10 @@
           "total_count",
           "percent",
           "next_lesson_id",
-          "completed_lesson_ids"
+          "completed_lesson_ids",
+          "lessons",
+          "resume_lesson_id",
+          "resume_position_sec"
         ],
         "title": "LectureProgressData"
       },
@@ -2273,6 +2359,34 @@
         ],
         "title": "LessonInLecture"
       },
+      "LessonProgressItem": {
+        "properties": {
+          "lesson_id": {
+            "type": "integer",
+            "title": "Lesson Id"
+          },
+          "percent": {
+            "type": "integer",
+            "title": "Percent"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          },
+          "last_position_sec": {
+            "type": "integer",
+            "title": "Last Position Sec"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lesson_id",
+          "percent",
+          "completed",
+          "last_position_sec"
+        ],
+        "title": "LessonProgressItem"
+      },
       "OAuth2AuthorizeResponse": {
         "properties": {
           "authorization_url": {
@@ -2358,6 +2472,24 @@
           "end_time"
         ],
         "title": "PlayingGuideStep"
+      },
+      "PositionReport": {
+        "properties": {
+          "position_sec": {
+            "type": "integer",
+            "title": "Position Sec"
+          },
+          "duration_sec": {
+            "type": "integer",
+            "title": "Duration Sec"
+          }
+        },
+        "type": "object",
+        "required": [
+          "position_sec",
+          "duration_sec"
+        ],
+        "title": "PositionReport"
       },
       "SessionDetailResponse": {
         "properties": {

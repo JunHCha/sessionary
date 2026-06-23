@@ -1,7 +1,4 @@
-import type { LectureProgress, SessionState } from './progress'
-import { getSessionState } from './progress'
-
-export type MinimapCell = 'done' | 'current' | 'upcoming' | 'locked'
+import type { LectureProgress } from './progress'
 
 type OrderedLesson = {
 	id: number
@@ -29,23 +26,6 @@ export function getDifficultyLabel(tags: unknown[] | null | undefined): string {
 	return '-'
 }
 
-const STATE_TO_CELL: Record<SessionState, MinimapCell> = {
-	completed: 'done',
-	current: 'current',
-	upcoming: 'upcoming',
-	locked: 'locked'
-}
-
-export function buildMinimap(
-	lessons: OrderedLesson[],
-	progress: LectureProgress | null | undefined,
-	isAuthenticated: boolean
-): MinimapCell[] {
-	return sortByOrdering(lessons).map(
-		(lesson) => STATE_TO_CELL[getSessionState(lesson.id, progress, isAuthenticated)]
-	)
-}
-
 export function getFirstLessonId(lessons: OrderedLesson[]): number | null {
 	const sorted = sortByOrdering(lessons)
 	return sorted.length > 0 ? sorted[0].id : null
@@ -56,6 +36,9 @@ export function getResumeLessonId(
 	progress: LectureProgress | null | undefined,
 	isAuthenticated: boolean
 ): number | null {
+	if (isAuthenticated && progress?.resume_lesson_id != null) {
+		return progress.resume_lesson_id
+	}
 	if (isAuthenticated && progress?.next_lesson_id != null) {
 		return progress.next_lesson_id
 	}

@@ -135,6 +135,9 @@ export type LectureProgressData = {
     percent: number;
     next_lesson_id: number | null;
     completed_lesson_ids: Array<(number)>;
+    lessons: Array<LessonProgressItem>;
+    resume_lesson_id: number | null;
+    resume_position_sec: number;
 };
 
 export type LessonAdminDetail = {
@@ -165,6 +168,13 @@ export type LessonInLecture = {
     time_updated: string;
 };
 
+export type LessonProgressItem = {
+    lesson_id: number;
+    percent: number;
+    completed: boolean;
+    last_position_sec: number;
+};
+
 export type OAuth2AuthorizeResponse = {
     authorization_url: string;
 };
@@ -183,6 +193,11 @@ export type PlayingGuideStep = {
     start_time: string;
     end_time: string;
     tip?: string | null;
+};
+
+export type PositionReport = {
+    position_sec: number;
+    duration_sec: number;
 };
 
 export type SessionDetailResponse = {
@@ -437,6 +452,13 @@ export type MarkLessonCompleteProgressLessonLessonIdPostData = {
 };
 
 export type MarkLessonCompleteProgressLessonLessonIdPostResponse = LectureProgressData;
+
+export type ReportLessonPositionProgressLessonLessonIdPositionPutData = {
+    lessonId: number;
+    requestBody: PositionReport;
+};
+
+export type ReportLessonPositionProgressLessonLessonIdPositionPutResponse = LectureProgressData;
 
 export type PongPingGetResponse = unknown;
 
@@ -907,6 +929,33 @@ export type $OpenApiTs = {
                  * Missing token or inactive user.
                  */
                 401: unknown;
+                /**
+                 * Lesson not found.
+                 */
+                404: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/progress/lesson/{lesson_id}/position': {
+        put: {
+            req: ReportLessonPositionProgressLessonLessonIdPositionPutData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: LectureProgressData;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+                /**
+                 * Lesson not found.
+                 */
+                404: unknown;
                 /**
                  * Validation Error
                  */

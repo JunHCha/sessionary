@@ -11,4 +11,5 @@ export { default as NextSessionCountdown } from './components/NextSessionCountdo
 export * from './types'
 export * from './utils'
 export * from './services'
+export * from './progress-report'
 export * from './splash'

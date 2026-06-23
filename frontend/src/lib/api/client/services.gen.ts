@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, UpdateLectureLectureLectureIdPatchData, UpdateLectureLectureLectureIdPatchResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, UploadLessonVideoLessonLessonIdVideoPostData, UploadLessonVideoLessonLessonIdVideoPostResponse, CreateLessonLessonPostData, CreateLessonLessonPostResponse, UpdateLessonLessonLessonIdPatchData, UpdateLessonLessonLessonIdPatchResponse, UploadLessonSheetmusicLessonLessonIdSheetmusicPostData, UploadLessonSheetmusicLessonLessonIdSheetmusicPostResponse, GetSessionDetailSessionSessionIdGetData, GetSessionDetailSessionSessionIdGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, GetCurationCurationGetResponse, SetCurationCurationSectionPutData, SetCurationCurationSectionPutResponse, MarkLessonCompleteProgressLessonLessonIdPostData, MarkLessonCompleteProgressLessonLessonIdPostResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
+import type { GetArtistsUserArtistsGetResponse, AuthRedisLoginUserAuthLoginPostData, AuthRedisLoginUserAuthLoginPostResponse, AuthRedisLogoutUserAuthLogoutPostResponse, ResetForgotPasswordUserAuthForgotPasswordPostData, ResetForgotPasswordUserAuthForgotPasswordPostResponse, ResetResetPasswordUserAuthResetPasswordPostData, ResetResetPasswordUserAuthResetPasswordPostResponse, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetData, OauthGoogleRedisAuthorizeUserOauthGoogleAuthorizeGetResponse, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetData, OauthGoogleRedisCallbackUserOauthGoogleCallbackGetResponse, UsersCurrentUserUserMeGetResponse, UsersPatchCurrentUserUserMePatchData, UsersPatchCurrentUserUserMePatchResponse, UsersUserUserIdGetData, UsersUserUserIdGetResponse, UsersPatchUserUserIdPatchData, UsersPatchUserUserIdPatchResponse, UsersDeleteUserUserIdDeleteData, UsersDeleteUserUserIdDeleteResponse, GetLecturesLectureGetData, GetLecturesLectureGetResponse, CreateLectureLecturePostData, CreateLectureLecturePostResponse, GetLectureLectureLectureIdGetData, GetLectureLectureLectureIdGetResponse, UpdateLectureLectureLectureIdPatchData, UpdateLectureLectureLectureIdPatchResponse, GetLessonVideoLessonLessonIdVideoGetData, GetLessonVideoLessonLessonIdVideoGetResponse, UploadLessonVideoLessonLessonIdVideoPostData, UploadLessonVideoLessonLessonIdVideoPostResponse, CreateLessonLessonPostData, CreateLessonLessonPostResponse, UpdateLessonLessonLessonIdPatchData, UpdateLessonLessonLessonIdPatchResponse, UploadLessonSheetmusicLessonLessonIdSheetmusicPostData, UploadLessonSheetmusicLessonLessonIdSheetmusicPostResponse, GetSessionDetailSessionSessionIdGetData, GetSessionDetailSessionSessionIdGetResponse, GetLectureAccessStatusTicketLectureLectureIdGetData, GetLectureAccessStatusTicketLectureLectureIdGetResponse, UseTicketTicketLectureLectureIdPostData, UseTicketTicketLectureLectureIdPostResponse, GetCurationCurationGetResponse, SetCurationCurationSectionPutData, SetCurationCurationSectionPutResponse, MarkLessonCompleteProgressLessonLessonIdPostData, MarkLessonCompleteProgressLessonLessonIdPostResponse, ReportLessonPositionProgressLessonLessonIdPositionPutData, ReportLessonPositionProgressLessonLessonIdPositionPutResponse, PongPingGetResponse, AuthPongPingAuthGetResponse } from './types.gen';
 
 /**
  * Get Artists
@@ -505,6 +505,30 @@ export const markLessonCompleteProgressLessonLessonIdPost = (data: MarkLessonCom
     },
     errors: {
         401: 'Missing token or inactive user.',
+        404: 'Lesson not found.',
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Report Lesson Position
+ * @param data The data for the request.
+ * @param data.lessonId
+ * @param data.requestBody
+ * @returns LectureProgressData Successful Response
+ * @throws ApiError
+ */
+export const reportLessonPositionProgressLessonLessonIdPositionPut = (data: ReportLessonPositionProgressLessonLessonIdPositionPutData): CancelablePromise<ReportLessonPositionProgressLessonLessonIdPositionPutResponse> => { return __request(OpenAPI, {
+    method: 'PUT',
+    url: '/progress/lesson/{lesson_id}/position',
+    path: {
+        lesson_id: data.lessonId
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        401: 'Missing token or inactive user.',
+        404: 'Lesson not found.',
         422: 'Validation Error'
     }
 }); };

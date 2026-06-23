@@ -2,10 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
 	formatTotalLength,
 	getDifficultyLabel,
-	buildMinimap,
 	getResumeLessonId,
-	getFirstLessonId,
-	type MinimapCell
+	getFirstLessonId
 } from '$lib/features/lecture/utils/curriculum'
 import type { LectureProgress } from '$lib/features/lecture/utils/progress'
 
@@ -15,6 +13,9 @@ const progress = (overrides: Partial<LectureProgress> = {}): LectureProgress => 
 	percent: 0,
 	next_lesson_id: 700,
 	completed_lesson_ids: [],
+	lessons: [],
+	resume_lesson_id: null,
+	resume_position_sec: 0,
 	...overrides
 })
 
@@ -57,22 +58,15 @@ describe('getDifficultyLabel', () => {
 	})
 })
 
-describe('buildMinimap', () => {
-	it('순서대로 done/current/upcoming 셀을 만든다', () => {
-		const p = progress({ completed_lesson_ids: [700], next_lesson_id: 701, completed_count: 1 })
-		const cells: MinimapCell[] = buildMinimap(lessons, p, true)
-		expect(cells).toEqual(['done', 'current', 'upcoming'])
+describe('getResumeLessonId - 서버 resume 우선', () => {
+	it('서버 resume_lesson_id가 있으면 우선 사용', () => {
+		const p = progress({ next_lesson_id: 700, resume_lesson_id: 702 })
+		expect(getResumeLessonId(lessons, p, true)).toBe(702)
 	})
 
-	it('비로그인이면 모두 locked', () => {
-		const cells = buildMinimap(lessons, null, false)
-		expect(cells).toEqual(['locked', 'locked', 'locked'])
-	})
-
-	it('미수강이면 1강이 current, 나머지 upcoming', () => {
-		const p = progress({ next_lesson_id: 700, completed_count: 0 })
-		const cells = buildMinimap(lessons, p, true)
-		expect(cells).toEqual(['current', 'upcoming', 'upcoming'])
+	it('서버 resume_lesson_id가 null이면 next_lesson_id 폴백', () => {
+		const p = progress({ next_lesson_id: 701, resume_lesson_id: null })
+		expect(getResumeLessonId(lessons, p, true)).toBe(701)
 	})
 })
 

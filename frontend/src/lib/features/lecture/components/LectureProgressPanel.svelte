@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LessonInLecture } from '$lib/api'
 	import { getLectureStatusMode, type LectureProgress } from '../utils/progress'
-	import { buildMinimap, getFirstLessonId, getResumeLessonId } from '../utils/curriculum'
+	import { getFirstLessonId, getResumeLessonId } from '../utils/curriculum'
 
 	let {
 		sessions,
@@ -24,7 +24,6 @@
 	)
 
 	let mode = $derived(getLectureStatusMode(progress, isAuthenticated, accessible))
-	let cells = $derived(buildMinimap(sortedSessions, progress, isAuthenticated))
 
 	let resumeLessonId = $derived(getResumeLessonId(sortedSessions, progress, isAuthenticated))
 	let firstLessonId = $derived(getFirstLessonId(sortedSessions))
@@ -82,7 +81,14 @@
 					stroke-dashoffset={dashOffset}
 					transform="rotate(-90 63 63)"
 				/>
-				<text x="63" y="60" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">
+				<text
+					x="63"
+					y="60"
+					text-anchor="middle"
+					font-size="25"
+					font-weight="700"
+					fill="#fff"
+				>
 					{percent}%
 				</text>
 				<text x="63" y="80" text-anchor="middle" font-size="11" fill="#848484">완료</text>
@@ -117,30 +123,24 @@
 		>
 			비로그인
 		</span>
-		<div class="flex flex-1 flex-col items-center justify-center gap-[8px] py-[20px] text-center">
-			<span class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1a1a1a]">
-				<svg class="h-[20px] w-[20px]" viewBox="0 0 24 24" fill="none" stroke="#848484" stroke-width="2">
+		<div
+			class="flex flex-1 flex-col items-center justify-center gap-[8px] py-[20px] text-center"
+		>
+			<span
+				class="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1a1a1a]"
+			>
+				<svg
+					class="h-[20px] w-[20px]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="#848484"
+					stroke-width="2"
+				>
 					<rect x="5" y="11" width="14" height="9" rx="2" />
 					<path d="M8 11V7a4 4 0 018 0v4" />
 				</svg>
 			</span>
 			<span class="text-[13px] text-[#848484]">로그인하면 수강을<br />시작할 수 있어요</span>
-		</div>
-	{/if}
-
-	{#if mode !== 'anonymous'}
-		<div class="mt-[18px] grid grid-cols-6 gap-[6px]" class:opacity-50={mode === 'not-started'}>
-			{#each cells as cell}
-				<span
-					class="h-[9px] rounded-[3px]"
-					class:bg-brand={cell === 'done'}
-					style={cell === 'done'
-						? 'background:#ff5c16'
-						: cell === 'current'
-							? `background:transparent;border:1.5px solid ${mode === 'not-started' ? '#3a3a3a' : '#ff5c16'}`
-							: 'background:#1a1a1a'}
-				></span>
-			{/each}
 		</div>
 	{/if}
 
@@ -153,10 +153,14 @@
 		{#if mode === 'anonymous'}
 			로그인하고 시작
 		{:else if mode === 'not-started'}
-			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"
+				><path d="M8 5v14l11-7z" /></svg
+			>
 			1강부터 시작하기
 		{:else}
-			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+			<svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="#fff"
+				><path d="M8 5v14l11-7z" /></svg
+			>
 			이어서 수강하기
 		{/if}
 	</button>

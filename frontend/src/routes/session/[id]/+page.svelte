@@ -1,7 +1,9 @@
 <script lang="ts">
 	import Hls from 'hls.js'
+	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { waitForApiInit } from '$lib/api/config'
+	import { OpenAPI } from '$lib/api/client'
 	import {
 		VideoPlayer,
 		SubtitleRoller,
@@ -9,6 +11,11 @@
 		SessionLoadingSplash,
 		NextSessionCountdown,
 		loadSessionDetail,
+		reportLessonPosition,
+		fetchLessonResumePosition,
+		evaluatePositionReport,
+		createReportState,
+		buildPositionBeacon,
 		MIN_SPLASH_MS,
 		PRELOAD_TIMEOUT_MS,
 		areResourcesReady,
@@ -17,7 +24,8 @@
 		selectPreloadStrategy,
 		shouldShowCountdown,
 		type SessionDetailData,
-		type SeekRequest
+		type SeekRequest,
+		type ReportState
 	} from '$lib/features/session'
 
 	let { data } = $props()
@@ -36,6 +44,76 @@
 	function handleSeekRequest(timeSec: number) {
 		seekRequest = { time: timeSec, version: (seekRequest?.version ?? 0) + 1 }
 	}
+
+	// --- 위치 리포팅 (비반응 상태: effect 자기참조 회귀 #125 방지) ---
+	let reportState: ReportState = createReportState()
+	let lastPosition = 0
+	let lastDuration = 0
+
+	function resetReporting() {
+		reportState = createReportState()
+		lastPosition = 0
+		lastDuration = 0
+	}
+
+	function sendReport(positionSec: number, durationSec: number) {
+		if (!session || durationSec <= 0) return
+		void reportLessonPosition(session.id, positionSec, durationSec)
+	}
+
+	function handlePositionUpdate(time: number, duration: number) {
+		currentTime = time
+		lastPosition = time
+		lastDuration = duration
+		const decision = evaluatePositionReport(reportState, {
+			currentTime: time,
+			duration,
+			now: Date.now()
+		})
+		reportState = { lastReportedAt: decision.lastReportedAt, fired90: decision.fired90 }
+		if (decision.shouldReport) {
+			sendReport(time, duration)
+		}
+	}
+
+	function flushPosition(viaBeacon: boolean) {
+		if (!session || lastDuration <= 0) return
+		if (viaBeacon && typeof navigator !== 'undefined') {
+			// PUT 전용 엔드포인트라 sendBeacon(POST) 대신 fetch keepalive 사용
+			const beacon = buildPositionBeacon(OpenAPI.BASE, session.id, lastPosition, lastDuration)
+			void fetch(beacon.url, {
+				method: 'PUT',
+				body: beacon.blob,
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				keepalive: true
+			}).catch(() => {})
+			return
+		}
+		sendReport(lastPosition, lastDuration)
+	}
+
+	async function applyResumeSeek(loaded: SessionDetailData) {
+		const pos = await fetchLessonResumePosition(loaded.lectureId, loaded.id)
+		if (pos > 0 && session?.id === loaded.id) {
+			handleSeekRequest(pos)
+		}
+	}
+
+	function handleVisibilityChange() {
+		if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+			flushPosition(true)
+		}
+	}
+
+	onMount(() => {
+		if (typeof document === 'undefined') return
+		document.addEventListener('visibilitychange', handleVisibilityChange)
+		window.addEventListener('beforeunload', () => flushPosition(true))
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange)
+		}
+	})
 
 	let currentRequestId = 0
 	let minTimer: ReturnType<typeof setTimeout> | undefined
@@ -99,6 +177,8 @@
 		minElapsed = false
 		videoPreloaded = false
 		showCountdown = false
+		seekRequest = undefined
+		resetReporting()
 
 		minTimer = setTimeout(() => {
 			if (requestId === currentRequestId) minElapsed = true
@@ -110,6 +190,7 @@
 			if (requestId !== currentRequestId) return
 			session = result
 			startVideoPreload(result.videoUrl, requestId)
+			void applyResumeSeek(result)
 		} catch (e) {
 			if (requestId !== currentRequestId) return
 			error = e instanceof Error ? e.message : '세션을 불러올 수 없습니다'
@@ -151,6 +232,12 @@
 			goto(`/session/${session.nextSessionId}`)
 		}
 	}
+
+	function goToLecture() {
+		if (session?.lectureId != null) {
+			goto(`/lecture/${session.lectureId}`)
+		}
+	}
 </script>
 
 <main data-testid="session-detail-page" class="min-h-screen bg-[#0c0c0c] pt-[73px] flex flex-col">
@@ -164,6 +251,24 @@
 				<div class="text-red-400 text-lg">{error}</div>
 			</div>
 		{:else if session}
+			<!-- 강의로 돌아가기 -->
+			<button
+				type="button"
+				data-testid="back-to-lecture"
+				onclick={goToLecture}
+				class="group mb-3 inline-flex items-center gap-1.5 text-sm text-[#999] hover:text-white transition-colors"
+			>
+				<svg
+					class="w-4 h-4 transition-transform group-hover:-translate-x-0.5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+				</svg>
+				<span class="truncate max-w-[52ch]">{session.lectureTitle}</span>
+			</button>
+
 			<!-- 심플 헤더 -->
 			<div class="flex items-end justify-between gap-4 mb-5">
 				<h1 data-testid="session-title" class="text-2xl font-bold leading-tight text-white">
@@ -171,7 +276,7 @@
 				</h1>
 				<div data-testid="session-progress" class="text-sm font-medium shrink-0">
 					<span class="text-brand-primary"
-						>{String(session.lectureOrdering).padStart(2, '0')}</span
+						>{String(session.lectureOrdering + 1).padStart(2, '0')}</span
 					>
 					<span class="text-[#666] mx-1.5">/</span>
 					<span class="text-[#ddd]">{String(session.totalSessions).padStart(2, '0')}</span
@@ -186,9 +291,12 @@
 						<VideoPlayer
 							src={session.videoUrl}
 							seekTo={seekRequest}
-							ontimeupdate={(e) => (currentTime = e.currentTime)}
+							ontimeupdate={(e) => handlePositionUpdate(e.currentTime, e.duration)}
+							onpause={() => flushPosition(false)}
 							onended={() => {
-								if (shouldShowCountdown(session?.nextSessionId)) showCountdown = true
+								flushPosition(false)
+								if (shouldShowCountdown(session?.nextSessionId))
+									showCountdown = true
 							}}
 						/>
 						{#if showCountdown && session.nextSessionId}
@@ -252,7 +360,7 @@
 
 				<div class="text-white font-medium">
 					<span class="text-brand-primary"
-						>{String(session.lectureOrdering).padStart(2, '0')}</span
+						>{String(session.lectureOrdering + 1).padStart(2, '0')}</span
 					>
 					<span class="text-[#666] mx-2">/</span>
 					<span>{String(session.totalSessions).padStart(2, '0')}</span>

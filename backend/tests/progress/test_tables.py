@@ -73,7 +73,30 @@ async def test_lesson_progress_row_persists(
     saved = result.scalar_one()
     assert saved.lesson_id == 900
     assert saved.lecture_id == progress_lecture.id
-    assert saved.completed_at is not None
+
+
+async def test_lesson_progress_position_fields_default(
+    test_user: tb.User, progress_lecture: tb.Lecture, test_session: AsyncSession
+):
+    progress = tb.LessonProgress(
+        user_id=test_user.id,
+        lesson_id=900,
+        lecture_id=progress_lecture.id,
+        completed_at=None,
+    )
+    async with test_session.begin():
+        test_session.add(progress)
+        await test_session.flush()
+    await test_session.commit()
+
+    result = await test_session.execute(
+        select(tb.LessonProgress).where(tb.LessonProgress.user_id == test_user.id)
+    )
+    saved = result.scalar_one()
+    assert saved.last_position_sec == 0
+    assert saved.duration_sec is None
+    assert saved.progress_percent == 0
+    assert saved.completed_at is None
 
 
 async def test_lesson_progress_unique_user_lesson(
