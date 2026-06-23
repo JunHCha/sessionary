@@ -72,7 +72,11 @@
 </script>
 
 <script lang="ts">
+	import { onDestroy } from 'svelte'
 	import { formatSubtitleTimestamp } from '../utils'
+
+	/** 휠 탐색이 멈춘 뒤 이 시간(ms)이 지나면 수동 인덱스를 해제하고 재생 시간 추적으로 복귀 */
+	const WHEEL_RELEASE_MS = 2000
 
 	let {
 		subtitles,
@@ -91,6 +95,7 @@
 	let activeIndex = $derived(resolveActiveIndex(manualIndex, subtitles, currentTime * 1000))
 
 	let wheelLock = false
+	let wheelReleaseTimer: ReturnType<typeof setTimeout> | undefined
 	let previousActiveIndex = -1
 
 	$effect(() => {
@@ -114,13 +119,21 @@
 		setTimeout(() => (wheelLock = false), 90)
 		const base = activeIndex < 0 ? 0 : activeIndex
 		manualIndex = computeWheelIndex(base, event.deltaY, subtitles.length)
+		// 휠이 멈춘 뒤 일정 시간이 지나면 수동 인덱스를 해제해 재생 시간 추적으로 복귀시킨다.
+		clearTimeout(wheelReleaseTimer)
+		wheelReleaseTimer = setTimeout(() => (manualIndex = null), WHEEL_RELEASE_MS)
 	}
 
 	function toggleExpanded() {
 		expanded = !expanded
 		// 펼치면 전체 탐색 모드 → 휠 탐색 상태를 해제해 재생 위치에 다시 동기화한다.
-		if (expanded) manualIndex = null
+		if (expanded) {
+			clearTimeout(wheelReleaseTimer)
+			manualIndex = null
+		}
 	}
+
+	onDestroy(() => clearTimeout(wheelReleaseTimer))
 </script>
 
 <div
