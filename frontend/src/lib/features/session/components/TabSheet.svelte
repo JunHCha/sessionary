@@ -109,6 +109,12 @@
 				settings.display.scale = 0.9
 
 				const instance = new AlphaTabApi(containerEl!, settings)
+				// 비동기 로드/렌더 에러도 표면화 (try/catch 는 동기 에러만 잡음)
+				instance.error.on((e: unknown) => {
+					if (!destroyed) {
+						error = e instanceof Error ? e.message : '악보를 렌더링할 수 없습니다'
+					}
+				})
 				instance.load(sheetmusicUrl!)
 				api = instance
 			} catch (e) {
@@ -170,13 +176,15 @@
 {/if}
 
 <style>
-	/* 어두운 UI 위에 떠 있는 '종이' 카드 — 너무 흰 느낌을 완화하고 깊이감 부여 */
+	/* 어두운 UI 위에 떠 있는 '종이' 카드 — 따뜻한 크림 그라데이션 + 깊이감 */
 	.tab-sheet-card {
 		height: 232px;
-		padding: 14px 18px;
-		background: linear-gradient(180deg, #fcfbf7 0%, #f0eee6 100%);
+		padding: 16px 20px;
+		background:
+			radial-gradient(120% 80% at 50% 0%, #ffffff 0%, #f6f1e4 55%, #eae1cd 100%);
 		box-shadow:
-			0 10px 30px rgba(0, 0, 0, 0.38),
-			inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+			0 16px 40px rgba(0, 0, 0, 0.5),
+			0 2px 6px rgba(0, 0, 0, 0.35),
+			inset 0 1px 0 rgba(255, 255, 255, 0.85);
 	}
 </style>
