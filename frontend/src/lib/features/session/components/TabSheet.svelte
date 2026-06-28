@@ -76,7 +76,7 @@
 				const alphaTabModule = await import('@coderline/alphatab')
 				if (destroyed) return
 
-				const { AlphaTabApi, Settings, PlayerMode } = alphaTabModule
+				const { AlphaTabApi, Settings, PlayerMode, NotationElement } = alphaTabModule
 
 				const settings = new Settings()
 				// @coderline/alphatab-vite 플러그인이 Bravura 폰트/사운드폰트를
@@ -85,6 +85,23 @@
 				settings.player.enablePlayer = true
 				settings.player.playerMode = PlayerMode.EnabledExternalMedia
 				settings.player.soundFont = '/soundfont/sonivox.sf2'
+
+				// 오선지(악보)만 표시 — 제목/아티스트/트랙명 등 메타데이터 헤더 숨김
+				const hiddenElements = [
+					NotationElement.ScoreTitle,
+					NotationElement.ScoreSubTitle,
+					NotationElement.ScoreArtist,
+					NotationElement.ScoreAlbum,
+					NotationElement.ScoreWords,
+					NotationElement.ScoreMusic,
+					NotationElement.ScoreWordsAndMusic,
+					NotationElement.ScoreCopyright,
+					NotationElement.GuitarTuning,
+					NotationElement.TrackNames
+				]
+				for (const el of hiddenElements) {
+					settings.notation.elements.set(el, false)
+				}
 
 				const instance = new AlphaTabApi(containerEl!, settings)
 				instance.load(sheetmusicUrl!)
@@ -142,7 +159,7 @@
 	<div
 		data-testid="tab-sheet"
 		bind:this={containerEl}
-		class="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full overflow-auto"
+		class="bg-[#fbfaf6] rounded-lg border border-[#2a2a2a] w-full overflow-auto p-4"
 		style="min-height: 200px;"
 	></div>
 {/if}
