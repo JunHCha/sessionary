@@ -76,7 +76,8 @@
 				const alphaTabModule = await import('@coderline/alphatab')
 				if (destroyed) return
 
-				const { AlphaTabApi, Settings, PlayerMode, NotationElement } = alphaTabModule
+				const { AlphaTabApi, Settings, PlayerMode, NotationElement, LayoutMode } =
+					alphaTabModule
 
 				const settings = new Settings()
 				// @coderline/alphatab-vite 플러그인이 Bravura 폰트/사운드폰트를
@@ -102,6 +103,10 @@
 				for (const el of hiddenElements) {
 					settings.notation.elements.set(el, false)
 				}
+
+				// 한 줄 가로 레이아웃 + 컴팩트 스케일 → 고정 높이 + 가로 스크롤만
+				settings.display.layoutMode = LayoutMode.Horizontal
+				settings.display.scale = 0.9
 
 				const instance = new AlphaTabApi(containerEl!, settings)
 				instance.load(sheetmusicUrl!)
@@ -158,8 +163,20 @@
 {:else}
 	<div
 		data-testid="tab-sheet"
-		bind:this={containerEl}
-		class="bg-[#fbfaf6] rounded-lg border border-[#2a2a2a] w-full overflow-auto p-4"
-		style="min-height: 200px;"
-	></div>
+		class="tab-sheet-card flex items-center w-full overflow-x-auto overflow-y-hidden rounded-xl border border-[#2b2b2b]"
+	>
+		<div bind:this={containerEl} class="w-full"></div>
+	</div>
 {/if}
+
+<style>
+	/* 어두운 UI 위에 떠 있는 '종이' 카드 — 너무 흰 느낌을 완화하고 깊이감 부여 */
+	.tab-sheet-card {
+		height: 232px;
+		padding: 14px 18px;
+		background: linear-gradient(180deg, #fcfbf7 0%, #f0eee6 100%);
+		box-shadow:
+			0 10px 30px rgba(0, 0, 0, 0.38),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+	}
+</style>

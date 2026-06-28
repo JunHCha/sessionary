@@ -328,7 +328,7 @@
 			</div>
 
 			<!-- Tab Sheet (남은 높이를 채워 페이지 height full) -->
-			<div class="mb-4 flex-1 flex">
+			<div class="mb-4">
 				<TabSheet
 					sheetmusicUrl={session.sheetmusicUrl}
 					{currentTime}
