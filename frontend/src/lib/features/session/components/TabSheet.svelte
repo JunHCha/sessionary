@@ -79,10 +79,12 @@
 				const { AlphaTabApi, Settings, PlayerMode } = alphaTabModule
 
 				const settings = new Settings()
-				settings.core.fontDirectory = '/alphatab/font/'
+				// @coderline/alphatab-vite 플러그인이 Bravura 폰트/사운드폰트를
+				// <root>/font/ 와 <root>/soundfont/ 로 서빙한다 (/alphatab/* 아님).
+				settings.core.fontDirectory = '/font/'
 				settings.player.enablePlayer = true
 				settings.player.playerMode = PlayerMode.EnabledExternalMedia
-				settings.player.soundFont = '/alphatab/soundfont/sonivox.sf2'
+				settings.player.soundFont = '/soundfont/sonivox.sf2'
 
 				const instance = new AlphaTabApi(containerEl!, settings)
 				instance.load(sheetmusicUrl!)
