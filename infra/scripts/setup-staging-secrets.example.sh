@@ -18,6 +18,9 @@ set -euo pipefail
 #   flyctl releases -a sessionary-staging-backend
 #   flyctl deploy -a sessionary-staging-backend --image <previous-image>
 #
+# 참고: Sheetmusic 스토리지는 별도 비용을 피하기 위해 Video 와 동일한 Tigris
+#       버킷/자격증명을 공유한다 (SHEETMUSIC_STORAGE_* = VIDEO_STORAGE_* 값).
+#
 # =============================================================================
 
 echo "============================================"
@@ -57,7 +60,14 @@ flyctl secrets set -a sessionary-staging-backend \
   VIDEO_STORAGE_ACCESS_KEY="<tigris-access-key>" \
   VIDEO_STORAGE_SECRET_KEY="<tigris-secret-key>" \
   VIDEO_STORAGE_BUCKET_NAME="<tigris-bucket-name>" \
-  VIDEO_STORAGE_SECURE="true"
+  VIDEO_STORAGE_SECURE="true" \
+  SHEETMUSIC_PROVIDER="local" \
+  SHEETMUSIC_STORAGE_ENDPOINT="<tigris-endpoint>" \
+  SHEETMUSIC_STORAGE_PUBLIC_ENDPOINT="<tigris-endpoint>" \
+  SHEETMUSIC_STORAGE_ACCESS_KEY="<tigris-access-key>" \
+  SHEETMUSIC_STORAGE_SECRET_KEY="<tigris-secret-key>" \
+  SHEETMUSIC_STORAGE_BUCKET_NAME="<tigris-bucket-name>" \
+  SHEETMUSIC_STORAGE_SECURE="true"
 
 echo "[Backend] Done. Verifying..."
 flyctl secrets list -a sessionary-staging-backend
