@@ -1,10 +1,19 @@
+<script module lang="ts">
+	import { setCurrentUser } from '$lib/features/auth'
+	import { usersCurrentUserUserMeGet } from '$lib/api'
+
+	export async function fetchAndStoreCurrentUser() {
+		const me = await usersCurrentUserUserMeGet()
+		setCurrentUser(me)
+		return me
+	}
+</script>
+
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { setIsAuthenticated } from '$lib/features/auth'
 	import {
 		oauthGoogleRedisCallbackUserOauthGoogleCallbackGet,
-		usersCurrentUserUserMeGet,
 		waitForApiInit
 	} from '$lib/api'
 	import { Spinner } from 'flowbite-svelte'
@@ -29,8 +38,7 @@
 			await oauthGoogleRedisCallbackUserOauthGoogleCallbackGet({ code, state })
 
 			if (typeof window !== 'undefined') {
-				await usersCurrentUserUserMeGet()
-				setIsAuthenticated(true)
+				await fetchAndStoreCurrentUser()
 
 				// sessionStorage에서 redirectUrl 읽기
 				let redirectUrl = sessionStorage.getItem('redirectUrl') || '/home'
