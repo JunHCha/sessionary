@@ -19,20 +19,22 @@
 	"dependencies": {
 		"@coderline/alphatab": "^1.8.1",
 		"@sveltejs/adapter-node": "^5.5.1",
-		"@sveltejs/kit": "^2.50.0",
-		"axios": "^1.12.0",
+		"@sveltejs/kit": "^2.70.2",
+		"axios": "^1.18.0",
 		"cookie": "^0.7.0",
-		"esbuild": "^0.25.0",
+		"esbuild": "^0.28.1",
 		"flowbite-svelte": "^1.30.1",
 		"flowbite-svelte-icons": "^2.0.0",
 		"hls.js": "^1.6.15",
-		"svelte": "^5.48.0",
+		"svelte": "^5.55.7",
 		"tslib": "^2.4.1"
 	},
 	"type": "module",
 	"resolutions": {
-		"tar": "^7.5.4",
-		"lodash": "^4.17.23",
+		"vite": "^7.3.5",
+		"tar": "^7.5.18",
+		"lodash": "^4.18.0",
+		"handlebars": "^4.7.9",
 		"cookie": "^0.7.0"
 	},
 	"devDependencies": {
@@ -50,14 +52,14 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
 		"globals": "^15.0.0",
-		"postcss": "^8.4.47",
+		"postcss": "^8.5.23",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"svelte-check": "^4.0.0",
 		"tailwindcss": "^4.3.0",
 		"typescript": "^5.5.0",
 		"typescript-eslint": "^8.0.0-alpha.20",
-		"vite": "^7.0.0",
-		"vitest": "^4.0.15"
+		"vite": "^7.3.5",
+		"vitest": "^4.1.11"
 	}
 }

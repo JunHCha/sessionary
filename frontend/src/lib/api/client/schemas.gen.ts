@@ -112,6 +112,7 @@ export const $Body_upload_lesson_sheetmusic_lesson__lesson_id__sheetmusic_post =
         file: {
             type: 'string',
             format: 'binary',
+            contentMediaType: 'application/octet-stream',
             title: 'File'
         }
     },
@@ -125,6 +126,7 @@ export const $Body_upload_lesson_video_lesson__lesson_id__video_post = {
         file: {
             type: 'string',
             format: 'binary',
+            contentMediaType: 'application/octet-stream',
             title: 'File'
         }
     },
@@ -1377,6 +1379,13 @@ export const $ValidationError = {
         type: {
             type: 'string',
             title: 'Error Type'
+        },
+        input: {
+            title: 'Input'
+        },
+        ctx: {
+            type: 'object',
+            title: 'Context'
         }
     },
     type: 'object',
