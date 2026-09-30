@@ -5,6 +5,9 @@ on:
     paths:
       - "backend/**"
 
+permissions:
+  contents: read
+
 jobs:
   be-test:
     runs-on: ubuntu-latest
