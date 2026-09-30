@@ -96,7 +96,7 @@ async def update_lesson(
 @inject
 async def upload_lesson_video(
     lesson_id: int,
-    file: UploadFile = File(...),
+    file: UploadFile = File(..., json_schema_extra={"format": "binary"}),
     user: User = Depends(superuser),
     lesson_service: LessonService = Depends(
         Provide[ApplicationContainer.services.lesson_service]
@@ -116,7 +116,7 @@ async def upload_lesson_video(
 @inject
 async def upload_lesson_sheetmusic(
     lesson_id: int,
-    file: UploadFile = File(...),
+    file: UploadFile = File(..., json_schema_extra={"format": "binary"}),
     user: User = Depends(superuser),
     lesson_service: LessonService = Depends(
         Provide[ApplicationContainer.services.lesson_service]

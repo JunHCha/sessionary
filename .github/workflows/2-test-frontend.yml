@@ -6,6 +6,10 @@ on:
       - "frontend/**"
       # 백엔드 OpenAPI 계약(스냅샷)이 바뀌면 client 동기화 검증을 위해 실행
       - "backend/openapi.json"
+
+permissions:
+  contents: read
+
 jobs:
   fe-test:
     timeout-minutes: 60
