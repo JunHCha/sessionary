@@ -1,6 +1,5 @@
 .env*
 !.env.example
-infra/scripts/setup-staging-secrets.sh
 
 backend/dev-scripts/*.sql
 backend/dev-scripts/seed_admin.py

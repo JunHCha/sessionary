@@ -29,9 +29,7 @@ sessionary/
 │           ├── api/          # OpenAPI 생성 클라이언트
 │           └── utils/        # 유틸리티
 ├── infra/                    # 인프라 설정
-│   ├── dev/                  # Docker Compose (로컬 개발)
-│   ├── staging/              # Fly.io 스테이징
-│   └── prod/                 # 프로덕션
+│   └── dev/                  # Docker Compose (로컬 개발)
 ├── docs/                     # 프로젝트 문서
 │   ├── domain/               # 도메인 문서 (이 디렉토리)
 │   └── cc/                   # Claude Code 관련 문서
